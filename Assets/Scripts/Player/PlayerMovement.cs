@@ -163,7 +163,7 @@ public class PlayerMovement : MonoBehaviour
 		CheckGround();
 
 		if (_isHeadBobEnabled)
-			HeadBob();	
+			HeadBob();
 	}
 
 	private void FixedUpdate()
@@ -246,6 +246,8 @@ public class PlayerMovement : MonoBehaviour
 				if (_hideSprintBarWhenFull && !_isUnlimitedSprint)
 					_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
 			}
+			//else
+			//	_isSprinting = false;
 
 			_rb.AddForce(velocityChange, ForceMode.VelocityChange);
 		}
