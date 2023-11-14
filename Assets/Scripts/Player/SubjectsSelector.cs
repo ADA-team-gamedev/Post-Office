@@ -10,6 +10,7 @@ public class SubejctsSelector : MonoBehaviour
     [SerializeField] private Transform _position;
     private Rigidbody _rb;
     private TakingOnce _fpcParam;
+    private bool _canTake;
     private void Start()
     {
         _rb = GetComponent<Rigidbody>();
@@ -22,7 +23,7 @@ public class SubejctsSelector : MonoBehaviour
         {
             _rb.isKinematic = true;
             _fpcParam.Take = true;
-            this.gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+            this.gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);                     
         }
     }
     private void FixedUpdate()
@@ -31,7 +32,7 @@ public class SubejctsSelector : MonoBehaviour
         {            
             this.gameObject.transform.SetParent(_player);
             this.gameObject.transform.position = _position.position;                                
-            if (Input.GetKeyDown(KeyCode.F))
+            if (Input.GetKeyDown(KeyCode.F) && _canTake)
             {
                 _fpcParam.Take = false;
                 _rb.useGravity = true;
@@ -39,6 +40,20 @@ public class SubejctsSelector : MonoBehaviour
                 _rb.AddForce(Camera.main.transform.forward * _powerOfDrop);
                 this.gameObject.transform.SetParent(null);
             }
+        }
+    }
+    private void OnCollisionEnter(Collision col)
+    {
+        if (!col.gameObject.transform.CompareTag("Player"))
+        {    
+            _canTake = false;
+        }       
+    }
+    private void OnCollisionExit(Collision col)
+    {
+        if (!col.gameObject.transform.CompareTag("Player"))
+        {           
+            _canTake = true;
         }
     }
 }

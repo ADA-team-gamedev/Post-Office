@@ -11,12 +11,12 @@ GameObject:
   - component: {fileID: 6164643127658393809}
   - component: {fileID: 9186489257939227243}
   - component: {fileID: 3845107112593746221}
-  - component: {fileID: 2944390194065546746}
   - component: {fileID: 1546787143024679370}
   - component: {fileID: 8175410697138338814}
+  - component: {fileID: 193743287004948003}
   m_Layer: 0
   m_Name: Box
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -28,13 +28,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7264589417573849588}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.531, y: 0.8348217, z: 3.656}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -3.15, y: 1.01, z: 5.526}
   m_LocalScale: {x: 0.7, y: 0.7, z: 0.7}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &9186489257939227243
 MeshFilter:
@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 0285103740116cb40bfa8cd392b25311, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -86,23 +86,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2944390194065546746
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7264589417573849588}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a6bb79b6e4eb2924a9fcc1a67eb4b575, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _distance: 3
-  _powerOfDrop: 150
-  _player: {fileID: 4459864850019384738, guid: 7b0f5df77020aa743b8be86aa51f08f6, type: 3}
-  _position: {fileID: 2124579086838786926, guid: f31612d5ce8ebac4a8e654b73b3e2f8b,
-    type: 3}
 --- !u!65 &1546787143024679370
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -151,3 +134,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &193743287004948003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7264589417573849588}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 097e979d4568b4e44b29c1509759c343, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: dad2734b7597767479cef65532940a6c, type: 2}
