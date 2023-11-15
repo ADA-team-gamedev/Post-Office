@@ -1,3 +1,5 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(HingeJoint))] //don't forget to set up them, change rigidbody to static
@@ -42,6 +44,8 @@ public class Door : MonoBehaviour
 	[SerializeField] private KeyCode _doorOpenKey = KeyCode.E;
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
 
+	[SerializeField] private GameObject _doorLockedUI;
+	[SerializeField] private float _doorLockedUIDelay = 1f;
 
 	private bool _isClosed; //closed while we don't open it by our key
 
@@ -52,6 +56,8 @@ public class Door : MonoBehaviour
         _playerClickedViewPoint = _doorModel.position;
 
 		_isClosed = IsKeyNeeded;
+
+		_doorLockedUI.SetActive(false);		
 	}
    
     private void Update()
@@ -80,11 +86,21 @@ public class Door : MonoBehaviour
 			}
 			else
 			{
+				StartCoroutine(DisplayClosedDoorUI());
 				Debug.Log("Player doesn't have right key to open this door");
 
 				//play door closed sound
 			}
 		}	
+	}
+
+	private IEnumerator DisplayClosedDoorUI()
+	{
+		_doorLockedUI.SetActive(true);
+
+		yield return new WaitForSeconds(_doorLockedUIDelay);
+
+		_doorLockedUI.SetActive(false);
 	}
 
 	#endregion
