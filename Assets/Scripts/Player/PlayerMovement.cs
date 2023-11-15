@@ -2,6 +2,8 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(CapsuleCollider))]
+[RequireComponent(typeof(Rigidbody))]
 public class PlayerMovement : MonoBehaviour
 {
 	#region Fields
@@ -23,10 +25,9 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] private Image _crosshairImage;
 	[SerializeField] private Color _crosshairColor = Color.white;
 
-	//// Internal Variables
+	// Internal Variables
 	private float _yaw = 0.0f;
-	private float _pitch = 0.0f;
-	
+	private float _pitch = 0.0f;	
 
 	#region Camera zoom
 
@@ -49,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
 	[Header("Movement Settings")]
 
 	[SerializeField] private bool _isPlayerCanMove = true;
+
 	[SerializeField] private float _playerWalkSpeed = 5f;
 	[SerializeField] private float _maxVelocityChange = 10f;
 
@@ -61,10 +63,13 @@ public class PlayerMovement : MonoBehaviour
 
 	[SerializeField] private bool _isSprintEnabled = true;
 	[SerializeField] private bool _isUnlimitedSprint = false;
+
 	[SerializeField] private KeyCode _sprintKey = KeyCode.LeftShift;
+
 	[SerializeField] private float _sprintSpeed = 10f;
 	[SerializeField] private float _sprintDuration = 5f;
 	[SerializeField] private float _sprintCooldown = 0.5f;
+
 	[SerializeField] private float _sprintFOV = 80f;
 	[SerializeField] private float _sprintFOVStepTime = 10f;
 
@@ -111,6 +116,9 @@ public class PlayerMovement : MonoBehaviour
 	#endregion
 
 	private Rigidbody _rb;
+	private CapsuleCollider _capsuleCollider;
+
+	private Vector3 _velocityChange;
 
 	#endregion
 
@@ -118,6 +126,8 @@ public class PlayerMovement : MonoBehaviour
 	{
 		_rb = GetComponent<Rigidbody>();
 
+		_capsuleCollider = GetComponent<CapsuleCollider>();
+		
 		_playerCamera.fieldOfView = _cameraFOV;
 
 		_originalPlayerSize = transform.localScale;
@@ -154,6 +164,8 @@ public class PlayerMovement : MonoBehaviour
 
 	private void Update()
 	{
+		MovementHandleInput();
+
 		CameraHandleInput();
 
 		SprintHandleInput();
@@ -163,12 +175,12 @@ public class PlayerMovement : MonoBehaviour
 		CheckGround();
 
 		if (_isHeadBobEnabled)
-			HeadBob();
+			HeadBob();	
 	}
 
 	private void FixedUpdate()
 	{
-		MovementHandleInput();
+		_rb.AddForce(_velocityChange, ForceMode.VelocityChange);
 	}
 
 	#region Handles
@@ -220,17 +232,19 @@ public class PlayerMovement : MonoBehaviour
 		Vector3 targetVelocity = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
 
 		if (targetVelocity.x != 0 || targetVelocity.z != 0 && _isGrounded)
-			_isWalking = true;		
+			_isWalking = true;	
 		else
 			_isWalking = false;	
 
+		Vector3 velocity = _rb.velocity;
+		Vector3 velocityChange;
+
 		//while sprinting
-		if (_isSprintEnabled && Input.GetKey(_sprintKey) && _sprintRemaining > 0f && !_isSprintCooldown)
+		if (_isSprintEnabled && Input.GetKey(_sprintKey) && _sprintRemaining > 0f && !_isSprintCooldown && _isWalking)
 		{
 			targetVelocity = transform.TransformDirection(targetVelocity) * _sprintSpeed;
 
-			Vector3 velocity = _rb.velocity;
-			Vector3 velocityChange = targetVelocity - velocity;
+			velocityChange = targetVelocity - velocity;
 
 			velocityChange.x = Mathf.Clamp(velocityChange.x, -_maxVelocityChange, _maxVelocityChange);
 			velocityChange.z = Mathf.Clamp(velocityChange.z, -_maxVelocityChange, _maxVelocityChange);
@@ -245,11 +259,7 @@ public class PlayerMovement : MonoBehaviour
 
 				if (_hideSprintBarWhenFull && !_isUnlimitedSprint)
 					_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
-			}
-			//else
-			//	_isSprinting = false;
-
-			_rb.AddForce(velocityChange, ForceMode.VelocityChange);
+			}	
 		}
 		//while walking
 		else
@@ -261,15 +271,14 @@ public class PlayerMovement : MonoBehaviour
 			
 			targetVelocity = transform.TransformDirection(targetVelocity) * _playerWalkSpeed;
 
-			Vector3 velocity = _rb.velocity;
-			Vector3 velocityChange = targetVelocity - velocity;
+			velocityChange = targetVelocity - velocity;
 
 			velocityChange.x = Mathf.Clamp(velocityChange.x, -_maxVelocityChange, _maxVelocityChange);
 			velocityChange.z = Mathf.Clamp(velocityChange.z, -_maxVelocityChange, _maxVelocityChange);
-			velocityChange.y = 0;
-
-			_rb.AddForce(velocityChange, ForceMode.VelocityChange);
+			velocityChange.y = 0;			
 		}
+	
+		_velocityChange = velocityChange;
 	}
 
 	private void SprintHandleInput()
@@ -351,8 +360,6 @@ public class PlayerMovement : MonoBehaviour
 			_isGrounded = false;
 	}
 
-
-
 	private void Crouch()
 	{
 		if (_isCrouched)
@@ -393,5 +400,14 @@ public class PlayerMovement : MonoBehaviour
 			_timer += Time.deltaTime * _bobSpeed;
 
 		_joint.localPosition = new Vector3(_jointOriginalPosition.x + Mathf.Sin(_timer) * _bobAmount.x, _jointOriginalPosition.y + Mathf.Sin(_timer) * _bobAmount.y, _jointOriginalPosition.z + Mathf.Sin(_timer) * _bobAmount.z);
+	}
+
+	private void OnValidate()
+	{
+		if (_sprintSpeed <= _playerWalkSpeed)
+			_sprintSpeed = _playerWalkSpeed + 1;
+
+		if (_sprintFOV <= _cameraFOV)
+			_sprintFOV = _cameraFOV + 1;
 	}
 }

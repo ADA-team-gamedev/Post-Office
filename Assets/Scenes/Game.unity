@@ -841,6 +841,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerCharacter
       objectReference: {fileID: 0}
+    - target: {fileID: 4459864851310106426, guid: 7b0f5df77020aa743b8be86aa51f08f6,
+        type: 3}
+      propertyPath: near clip plane
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
         type: 3}
       propertyPath: _sprintBar
@@ -848,9 +853,39 @@ PrefabInstance:
       objectReference: {fileID: 611399396}
     - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
         type: 3}
+      propertyPath: _sprintFOV
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
+        type: 3}
+      propertyPath: _sprintSpeed
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
+        type: 3}
+      propertyPath: _acceleration
+      value: 2.63
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
+        type: 3}
       propertyPath: _crosshairImage
       value: 
       objectReference: {fileID: 1653263984}
+    - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
+        type: 3}
+      propertyPath: _playerWalkSpeed
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
+        type: 3}
+      propertyPath: _cameraPosition.y
+      value: 0.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
+        type: 3}
+      propertyPath: _isHeadBobEnabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5377396541575411603, guid: 7b0f5df77020aa743b8be86aa51f08f6,
         type: 3}
       propertyPath: _sprintBarCanvasGroup
