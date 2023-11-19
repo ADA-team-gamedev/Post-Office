@@ -111,6 +111,8 @@ public class Door : MonoBehaviour
 		{
 			_isDoorMoving = false;
 
+			_playerClickedViewPoint = transform.position;
+
 			return;
 		}
 
