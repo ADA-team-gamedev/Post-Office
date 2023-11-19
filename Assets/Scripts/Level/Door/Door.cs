@@ -1,5 +1,4 @@
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(HingeJoint))] //don't forget to set up them, change rigidbody to static
@@ -45,7 +44,7 @@ public class Door : MonoBehaviour
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
 
 	[SerializeField] private GameObject _doorLockedUI;
-	[SerializeField] private float _doorLockedUIDelay = 1f;
+	[SerializeField] private float _doorLockedUIDelay = 0.75f;
 
 	private bool _isClosed; //closed while we don't open it by our key
 
@@ -140,11 +139,11 @@ public class Door : MonoBehaviour
     {
         float firstDistance = (_doorModel.position - _playerClickedViewPoint).sqrMagnitude;
 
-        transform.Rotate(Vector3.up);
+		transform.Rotate(Vector3.up);
 
         float secondDistance = (_doorModel.position - _playerClickedViewPoint).sqrMagnitude;
 
-        transform.Rotate(-Vector3.up);
+		transform.Rotate(-Vector3.up);
 
         return secondDistance - firstDistance; 
 	}
@@ -152,7 +151,7 @@ public class Door : MonoBehaviour
 	#endregion
 
 	private bool IsPlayerInInteractionZone()
-		=> Vector3.Distance(_playerCamera.transform.position, _doorModel.position) <= _doorDragingDistance;
+		=> Vector3.Magnitude(_playerCamera.transform.position - _doorModel.position) <= _doorDragingDistance;
 
 	private void OnValidate()
 	{
@@ -169,6 +168,7 @@ public class Door : MonoBehaviour
 		Gizmos.DrawRay(_playerCamera.transform.position, _playerCamera.transform.forward * _doorDragingDistance);
 
 		Gizmos.color = IsPlayerInInteractionZone() ? Color.green : Color.red; //interaction zone; is player can rotate door
+
 		Gizmos.DrawLine(_playerCamera.transform.position, _doorModel.position);
 	}
 }
