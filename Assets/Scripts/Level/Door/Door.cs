@@ -8,25 +8,25 @@ public class Door : MonoBehaviour
 	[Header("Layer")]
 	[SerializeField] private LayerMask _doorLayer;
 
-	#region Parameters
-
-	[Header("Values")]
+	[Header("Parameters")]
 
 	[SerializeField] private float _doorDragingDistance = 3f;
 
 	[SerializeField] private float _doorOpeningForce = 10f;
 	[SerializeField][Range(2000f, 10000f)] private float _doorRotationSpeed = 5000f;
 
-	#endregion
-
 	[Header("Objects")]
 
 	[SerializeField] private Camera _playerCamera;
 	[SerializeField] private Transform _doorModel;
 
+	[SerializeField] private GameObject[] _interactionButtonUI;
+
 	private HingeJoint _hingeJoint;
 
 	private Vector3 _playerClickedViewPoint;
+
+	private float _defaultDoorYRotation;
 
 	private float _doorRotation;
 
@@ -43,9 +43,6 @@ public class Door : MonoBehaviour
 	[SerializeField] private KeyCode _doorOpenKey = KeyCode.E;
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
 
-	[SerializeField] private GameObject _doorLockedUI;
-	[SerializeField] private float _doorLockedUIDelay = 0.75f;
-
 	private bool _isClosed; //closed while we don't open it by our key
 
 	#endregion 
@@ -54,9 +51,12 @@ public class Door : MonoBehaviour
     {
         _playerClickedViewPoint = _doorModel.position;
 
+		_defaultDoorYRotation = transform.rotation.eulerAngles.y;
+
 		_isClosed = IsKeyNeeded;
 
-		_doorLockedUI.SetActive(false);		
+		foreach (GameObject button in _interactionButtonUI)
+			button.SetActive(false);		
 	}
    
     private void Update()
@@ -68,10 +68,21 @@ public class Door : MonoBehaviour
 
 	#region Key open
 
-	public void TryOpenDoorByKey()
+	private void TryOpenDoorByKey()
 	{
 		if (!IsKeyNeeded || !IsPlayerInInteractionZone())
+		{
+			foreach (GameObject button in _interactionButtonUI)
+				button.SetActive(false);
+
 			return;
+		}
+
+		foreach (GameObject button in _interactionButtonUI)
+			button.SetActive(true);
+
+		for (int i = 0; i < _interactionButtonUI.Length; i++)
+			_interactionButtonUI[i].transform.rotation = Quaternion.LookRotation(_interactionButtonUI[i].transform.position - _playerCamera.transform.position);
 
 		if (Input.GetKeyDown(_doorOpenKey))
 		{
@@ -85,21 +96,11 @@ public class Door : MonoBehaviour
 			}
 			else
 			{
-				StartCoroutine(DisplayClosedDoorUI());
 				Debug.Log("Player doesn't have right key to open this door");
 
 				//play door closed sound
 			}
 		}	
-	}
-
-	private IEnumerator DisplayClosedDoorUI()
-	{
-		_doorLockedUI.SetActive(true);
-
-		yield return new WaitForSeconds(_doorLockedUIDelay);
-
-		_doorLockedUI.SetActive(false);
 	}
 
 	#endregion
@@ -125,7 +126,14 @@ public class Door : MonoBehaviour
 		if (_isDoorMoving)
 		{
 			if (Input.GetKeyUp(KeyCode.Mouse0))
+			{
+				if (transform.rotation.eulerAngles.y == _defaultDoorYRotation)
+				{
+					//play fully closed door sound
+				}		
+
 				_isDoorMoving = false;			
+			}
 
 			_playerClickedViewPoint = _playerCamera.transform.position + _playerCamera.transform.forward * _doorDragingDistance;		
 		}
@@ -134,7 +142,7 @@ public class Door : MonoBehaviour
 
 		_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
 
-		transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
+		transform.rotation = Quaternion.Euler(0, _doorRotation, 0);	
 	}
 
     private float GetDoorRotation()
