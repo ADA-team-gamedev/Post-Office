@@ -77,25 +77,24 @@ public class Door : MonoBehaviour
 
 		if (Input.GetKeyDown(_doorOpenKey))
 		{
-			if (InventoryController.GetInventoryItem(InventoryController._curSlotIndex).Model.TryGetComponent(out Key key))
+			if (InventoryController.TryGetInventoryItem(InventoryController._curSlotIndex, out ItemData item) && item.Model.TryGetComponent(out Key key))
 			{
-				if(key.DoorKeyType == DoorKeyType)
+				if (key.DoorKeyType == DoorKeyType)
 				{
-                    //play door opening sound
+					//play door opening sound
 
-                    IsKeyNeeded = false;
+					IsKeyNeeded = false;
 
-                    _isClosed = false;
-                }
+					_isClosed = false;
+				}
 				else
 				{
-                    StartCoroutine(DisplayClosedDoorUI());
-                    Debug.Log("Player doesn't have right key to open this door");
+					StartCoroutine(DisplayClosedDoorUI());
+					Debug.Log("Player doesn't have right key to open this door");
 
-                    //play door closed sound
-                }
-
-            }			
+					//play door closed sound
+				}
+			}          			
 		}	
 	}
 

@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 8247528015058635680}
   - component: {fileID: 6815125045922071954}
   - component: {fileID: 4856759480543528023}
-  - component: {fileID: -6335321943245445802}
-  - component: {fileID: 3519582377140925130}
+  - component: {fileID: -4790603664824497848}
+  - component: {fileID: 5620089572034305032}
   m_Layer: 0
   m_Name: Key Model
   m_TagString: Item
@@ -99,20 +99,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   data: {fileID: 11400000, guid: 6903d009ec4550e42be37f8b8160b7b0, type: 2}
---- !u!114 &-6335321943245445802
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6637275554499735323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6485191b0e2689642b635a73b4b1dd1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <DoorKeyType>k__BackingField: 0
---- !u!65 &3519582377140925130
+--- !u!65 &-4790603664824497848
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -129,7 +116,20 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5620089572034305032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6637275554499735323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6485191b0e2689642b635a73b4b1dd1b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <DoorKeyType>k__BackingField: 0

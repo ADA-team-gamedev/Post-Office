@@ -53,9 +53,16 @@ public class InventoryController : MonoBehaviour
          else if (_curSlotIndex > Inventory.Length - 1) _curSlotIndex = 0;
         ChangeSlot();              
     }
-    public static ItemData GetInventoryItem(int index)
+    public static bool TryGetInventoryItem(int index, out ItemData item)
     {
-        return InventoryController.Inventory[index];
+        item = Inventory[index];
+
+        //return Inventory[index];
+
+        if (item)
+            return true;
+
+        return false;
     }
     private void DropItem()
     {
