@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 63428555789547655}
   - component: {fileID: 4464084082285623422}
   - component: {fileID: 3150501400611129169}
+  - component: {fileID: 569033958358032034}
   m_Layer: 0
   m_Name: Flashlight Model
   m_TagString: Item
@@ -103,6 +104,7 @@ MonoBehaviour:
     type: 3}
   _batteryBar: {fileID: 1295731537557334134, guid: 2313cc287d26ef34da88ee3df3f5f930,
     type: 3}
+  _flashLightInteractionKey: 101
 --- !u!114 &4464084082285623422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,3 +180,26 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &569033958358032034
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8838799551080058970}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 3
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_RenderingLayers: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_ShadowRenderingLayers: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
+  m_SoftShadowQuality: 0

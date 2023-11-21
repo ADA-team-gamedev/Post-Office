@@ -46,6 +46,7 @@ public class Door : MonoBehaviour
 
 	[SerializeField] private GameObject _doorLockedUI;
 	[SerializeField] private float _doorLockedUIDelay = 1f;
+	
 
 	private bool _isClosed; //closed while we don't open it by our key
 
@@ -76,21 +77,25 @@ public class Door : MonoBehaviour
 
 		if (Input.GetKeyDown(_doorOpenKey))
 		{
-			if (KeyHolder.ContainsKey(DoorKeyType))
+			if (InventoryController.GetInventoryItem(InventoryController._curSlotIndex).Model.TryGetComponent(out Key key))
 			{
-				//play door opening sound
+				if(key.DoorKeyType == DoorKeyType)
+				{
+                    //play door opening sound
 
-				IsKeyNeeded = false;
+                    IsKeyNeeded = false;
 
-				_isClosed = false;
-			}
-			else
-			{
-				StartCoroutine(DisplayClosedDoorUI());
-				Debug.Log("Player doesn't have right key to open this door");
+                    _isClosed = false;
+                }
+				else
+				{
+                    StartCoroutine(DisplayClosedDoorUI());
+                    Debug.Log("Player doesn't have right key to open this door");
 
-				//play door closed sound
-			}
+                    //play door closed sound
+                }
+
+            }			
 		}	
 	}
 

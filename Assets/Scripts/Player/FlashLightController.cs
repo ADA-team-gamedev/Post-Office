@@ -10,7 +10,8 @@ public class FlashLightController : MonoBehaviour
     [SerializeField] private Light _flashlight;
     [SerializeField] private Slider _batteryEnergyBar;
     [SerializeField] private GameObject _batteryBar;
-    [SerializeField] private KeyCode _flashLightInteractionKey = KeyCode.E;
+    [SerializeField] private KeyCode _flashLightInteractionKey;
+    private ItemData[] Inventory;
     private void Start()
     {
         _batteryBar = GameObject.Find("BatteryEnergyBar");
@@ -22,7 +23,7 @@ public class FlashLightController : MonoBehaviour
             _batteryEnergyBar.value -= Time.deltaTime / 100;
         if (!_turning && Input.GetKeyDown(_flashLightInteractionKey))
         {
-            Debug.Log(0);
+            Debug.Log(0);            
             _flashlight.enabled = true;
             _turning = true;
             _timesTurnig++;
