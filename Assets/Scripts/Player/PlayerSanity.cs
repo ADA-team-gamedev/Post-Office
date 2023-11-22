@@ -2,7 +2,6 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
-using UnityEngine.Events;
 
 public class PlayerSanity : MonoBehaviour
 {
@@ -28,7 +27,7 @@ public class PlayerSanity : MonoBehaviour
 	[SerializeField] private Slider _sanitySlider;
 	[SerializeField] private float _sanityDecreaseSpeed = 1f;
 
-	[SerializeField] private Volume _volumeSanity;
+	[SerializeField] private Volume _sanityVolume;
 
 	private float percent;
 
@@ -42,13 +41,16 @@ public class PlayerSanity : MonoBehaviour
 
 		_sanitySlider.value = _sanity;
 
-		_volumeSanity.weight = 0;
+		_sanityVolume.weight = 0;
 
 		StartCoroutine(LoseSanity());
 	}
 
 	public void IncreaseSanity(float value)
 	{
+		if (_sanityDecreaseSpeed >= value)
+			Debug.LogWarning("Sanity increase value simillar or less then sanity decreas speed");
+		
 		Sanity += Time.deltaTime * value;
 	}
 
@@ -63,7 +65,7 @@ public class PlayerSanity : MonoBehaviour
 
 			percent = newValue / _maxSanityValue;
 
-			_volumeSanity.weight = percent;
+			_sanityVolume.weight = percent;
 
 			yield return null;
 		}

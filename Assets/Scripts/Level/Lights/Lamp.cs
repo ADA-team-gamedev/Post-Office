@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Experimental.GlobalIllumination;
 
 [RequireComponent(typeof(BoxCollider))]
 public class Lamp : MonoBehaviour
@@ -9,17 +8,7 @@ public class Lamp : MonoBehaviour
 
 	[SerializeField] private GameObject _spotLight;
 
-    public UnityEvent OnEnter;
-	public UnityEvent OnStay;
-    public UnityEvent OnExit;
-
-	private void OnTriggerEnter(Collider other)
-	{
-		if (!IsLampEnabled)
-			return;
-
-		OnEnter.Invoke();
-	}
+	[SerializeField] private UnityEvent OnStay;
 
 	private void OnTriggerStay(Collider other)
 	{
@@ -27,14 +16,6 @@ public class Lamp : MonoBehaviour
 			return;
 
 		OnStay.Invoke();
-	}
-
-	private void OnTriggerExit(Collider other)
-	{
-		if (!IsLampEnabled)
-			return;
-
-		OnExit.Invoke();
 	}
 
 	private void OnValidate()
