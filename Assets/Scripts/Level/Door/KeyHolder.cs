@@ -34,7 +34,7 @@ public class KeyHolder : MonoBehaviour
 			{
 				AddKey(key.DoorKeyType);
 
-				Destroy(key.gameObject); //create a pick up method
+				
 			}
 		}		
 	}

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -7,18 +8,23 @@ using UnityEngine.UI;
 
 public class InventoryController : MonoBehaviour
 {
-    [SerializeField] private Image[] InventoryIcons;
-    [SerializeField] private Transform _itemPlace;
-    public ItemData[] Inventory;
-    [SerializeField] private int _curSlotIndex;
-    //private TakingOnce _fpcParam;
+    [SerializeField] private KeyCode _dropKey;
+    [SerializeField] private KeyCode _openDoorKey;
+
+    //[SerializeField] private Image[] _inventoryIcons;
+    [SerializeField] private Transform _itemPlace; 
+    public static int _curSlotIndex;
+    private static ItemData[] Inventory;
+    [SerializeField][Range(0,3)] private int _inventorySlotsAmount = 3;
+    //ookk
     void Start()
     {
-        ChangeSlot();
-        //_fpcParam = GameObject.Find("First Person Controller").GetComponent<TakingOnce>();
+        Inventory = new ItemData[_inventorySlotsAmount];
+        ChangeSlot();       
     }
     private void Update()
     {
+        Debug.Log(Inventory.Length);
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             _curSlotIndex = 0;
@@ -34,10 +40,11 @@ public class InventoryController : MonoBehaviour
             _curSlotIndex = 2;
             ChangeSlot();
         }
-        if (Input.GetKeyDown(KeyCode.G))
+        if (Input.GetKeyDown(_dropKey))
         {            
              DropItem();
         }
+    
         float scroll = Input.GetAxis("Mouse ScrollWheel");
          if (scroll == 0) return;
         else if (scroll > 0) _curSlotIndex++;
@@ -46,11 +53,22 @@ public class InventoryController : MonoBehaviour
          else if (_curSlotIndex > Inventory.Length - 1) _curSlotIndex = 0;
         ChangeSlot();              
     }
+    public static bool TryGetInventoryItem(int index, out ItemData item)
+    {
+        item = Inventory[index];
+
+        //return Inventory[index];
+
+        if (item)
+            return true;
+
+        return false;
+    }
     private void DropItem()
     {
         Instantiate(Inventory[_curSlotIndex].Object, transform.position, Quaternion.identity);
         Inventory[_curSlotIndex] = null;
-        InventoryIcons[_curSlotIndex].sprite = null;
+       // _inventoryIcons[_curSlotIndex].sprite = null;
         if(_itemPlace.childCount > 0)
         {
             Destroy(_itemPlace.GetChild(0).gameObject);
@@ -63,7 +81,7 @@ public class InventoryController : MonoBehaviour
             if (Inventory[i] == null)
             {
                 Inventory[i] = item;
-                InventoryIcons[i].sprite = item.Icon;
+              //  _inventoryIcons[i].sprite = item.Icon;
                 return;
             }
         }
@@ -71,11 +89,11 @@ public class InventoryController : MonoBehaviour
     }
     private void ChangeSlot()
     {                
-        for(int i = 0; i < InventoryIcons.Length; i++)
-        {
-            InventoryIcons[i].color = new Color(1, 1, 1, 0.5f);
-        }
-        InventoryIcons[_curSlotIndex].color = new Color(1, 1, 1, 1);
+        //for(int i = 0; i < _inventoryIcons.Length; i++)
+        //{
+        //    _inventoryIcons[i].color = new Color(1, 1, 1, 0.5f);
+        //}
+        //_inventoryIcons[_curSlotIndex].color = new Color(1, 1, 1, 1);
         if(_itemPlace.childCount > 0)
         {
             Destroy(_itemPlace.GetChild(0).gameObject);
@@ -87,6 +105,7 @@ public class InventoryController : MonoBehaviour
     {
         if (col.CompareTag("Item") && Input.GetKey(KeyCode.F))
         {
+            
             FillSlot(col.GetComponent<ItemScript>().data);
             ChangeSlot();
             Destroy(col.gameObject);
