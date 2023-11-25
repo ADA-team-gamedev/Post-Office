@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class ItemScript : MonoBehaviour
 {
-    public ItemData data;
+    [SerializeField] private ItemData _data;
 }

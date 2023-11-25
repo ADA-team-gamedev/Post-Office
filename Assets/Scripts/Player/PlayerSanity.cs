@@ -43,6 +43,8 @@ public class PlayerSanity : MonoBehaviour
 
 		_sanityVolume.weight = 0;
 
+		
+
 		StartCoroutine(LoseSanity());
 	}
 
