@@ -88,6 +88,8 @@ public class PlayerMovement : MonoBehaviour
 
 	#region Crouch
 
+	[Header("Crouch")]
+
 	[SerializeField] private bool _isCrouchEnabled = true;
 	[SerializeField] private bool _isNeedHoldToCrouch = true;
 
@@ -95,6 +97,8 @@ public class PlayerMovement : MonoBehaviour
 
 	[SerializeField][Range(0.5f, 1f)] private float _crouchPlayerYCoefficient = 0.8f;
 	[SerializeField][Range(0.1f, 1f)] private float _crouchSpeedReduction = 0.5f;
+
+	[SerializeField] private float _maxCheckDistanceAbovePlayer = 0.5f;
 
 	private bool _isCrouched = false;
 
@@ -124,19 +128,12 @@ public class PlayerMovement : MonoBehaviour
 
 	private Vector3 _velocityChange;
 
-	[SerializeField] private float number;
 	private bool _isPLayerStandUp = true;
 
 	#endregion
 
 	private void Awake()
 	{
-		_rb = GetComponent<Rigidbody>();
-
-		_playerCollider = GetComponent<CapsuleCollider>();
-
-		_playerCamera.fieldOfView = _cameraFOV;
-
 		_originalPlayerColliderY = _playerCollider.height;
 
 		_jointOriginalPosition = _joint.localPosition;
@@ -348,10 +345,9 @@ public class PlayerMovement : MonoBehaviour
 			Crouch();
 		}
 
-
 		if (_isCrouched && !_isPLayerStandUp)
 		{
-			if (!Physics.SphereCast(transform.position, _playerCollider.radius * 1.2f, transform.transform.up, out RaycastHit shit, number))
+			if (IsEmptySpaceAbovePlayer())
 			{
 				_isPLayerStandUp = true;
 				
@@ -378,15 +374,30 @@ public class PlayerMovement : MonoBehaviour
 			_isGrounded = false;
 	}
 
+	#region Crouch
+
+	private bool IsEmptySpaceAbovePlayer()
+	{
+		//return !Physics.SphereCast(transform.position, _playerCollider.radius, transform.transform.up, out RaycastHit _, number);
+
+		Vector3 leftBorderPoint = new(_playerCamera.transform.position.x - _playerCollider.radius, _playerCamera.transform.position.y, transform.position.z);
+		Vector3 rightBorderPoint = new(_playerCamera.transform.position.x + _playerCollider.radius, _playerCamera.transform.position.y, _playerCamera.transform.position.z);
+		Vector3 forwardBorderPoint = new(_playerCamera.transform.position.x, _playerCamera.transform.position.y, _playerCamera.transform.position.z + _playerCollider.radius);
+		Vector3 backwardBorderPoint = new(_playerCamera.transform.position.x, _playerCamera.transform.position.y, _playerCamera.transform.position.z - _playerCollider.radius);
+
+		return !Physics.Raycast(leftBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer) &&
+			!Physics.Raycast(rightBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer) &&
+			!Physics.Raycast(forwardBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer) &&
+			!Physics.Raycast(backwardBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer);
+	}
+
 	private void Crouch()
 	{
 		if (_isCrouched)
 		{
-			if (!Physics.SphereCast(transform.position, _playerCollider.radius * 1.2f, transform.transform.up, out RaycastHit hit, number))
+			if (IsEmptySpaceAbovePlayer())
 			{
 				_isPLayerStandUp = true;
-
-				Debug.DrawRay(_playerCamera.transform.position, transform.transform.up * number, Color.red, 5);
 
 				_playerCollider.height = _originalPlayerColliderY;
 
@@ -406,7 +417,9 @@ public class PlayerMovement : MonoBehaviour
 			_isCrouched = true;
 		}
 	}
-	
+
+	#endregion
+
 	private void HeadBob()
 	{
 		if (!_isWalking)
@@ -431,18 +444,16 @@ public class PlayerMovement : MonoBehaviour
 
 	private void OnValidate()
 	{
+		_rb ??= GetComponent<Rigidbody>();
+
+		_playerCollider ??= GetComponent<CapsuleCollider>();
+
+		_playerCamera.fieldOfView = _cameraFOV;
+
 		if (_sprintSpeed <= _playerWalkSpeed)
 			_sprintSpeed = _playerWalkSpeed + 1;
 
 		if (_sprintFOV <= _cameraFOV)
 			_sprintFOV = _cameraFOV + 1;
-	}
-
-	private void OnDrawGizmos()
-	{
-		Gizmos.color = Color.black;
-
-		//if (something.point != null)
-		//	Gizmos.DrawSphere(something.point, _playerCollider.radius / 3);
 	}
 }
