@@ -90,12 +90,17 @@ public class PlayerMovement : MonoBehaviour
 
 	[SerializeField] private bool _isCrouchEnabled = true;
 	[SerializeField] private bool _isNeedHoldToCrouch = true;
+
 	[SerializeField] private KeyCode _crouchKey = KeyCode.LeftControl;
-	[SerializeField][Range(0.5f, 1f)] private float _crouchPlayerHeight = 0.8f;
+
+	[SerializeField][Range(0.5f, 1f)] private float _crouchPlayerYCoefficient = 0.8f;
 	[SerializeField][Range(0.1f, 1f)] private float _crouchSpeedReduction = 0.5f;
 
 	private bool _isCrouched = false;
-	private Vector3 _originalPlayerSize;
+
+	private float _originalPlayerColliderY;
+
+	private CapsuleCollider _playerCollider;
 
 	#endregion
 
@@ -108,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField] private bool _isHeadBobEnabled = true;
 	[SerializeField] private Transform _joint;
 	[SerializeField] private float _bobSpeed = 10f;
-	[SerializeField] private Vector3 _bobAmount = new(0f, 0.1f, 0f);
+	[SerializeField] private Vector3 _bobAmount = new(0f, 0.05f, 0f);
 
 	private Vector3 _jointOriginalPosition;
 	private float _timer = 0;
@@ -116,9 +121,11 @@ public class PlayerMovement : MonoBehaviour
 	#endregion
 
 	private Rigidbody _rb;
-	private CapsuleCollider _capsuleCollider;
 
 	private Vector3 _velocityChange;
+
+	[SerializeField] private float number;
+	private bool _isPLayerStandUp = true;
 
 	#endregion
 
@@ -126,11 +133,11 @@ public class PlayerMovement : MonoBehaviour
 	{
 		_rb = GetComponent<Rigidbody>();
 
-		_capsuleCollider = GetComponent<CapsuleCollider>();
-		
+		_playerCollider = GetComponent<CapsuleCollider>();
+
 		_playerCamera.fieldOfView = _cameraFOV;
 
-		_originalPlayerSize = transform.localScale;
+		_originalPlayerColliderY = _playerCollider.height;
 
 		_jointOriginalPosition = _joint.localPosition;
 
@@ -173,7 +180,7 @@ public class PlayerMovement : MonoBehaviour
 		CrouchHandleInput();
 
 		CheckGround();
-
+		
 		if (_isHeadBobEnabled)
 			HeadBob();	
 	}
@@ -327,19 +334,30 @@ public class PlayerMovement : MonoBehaviour
 		if (!_isCrouchEnabled)
 			return;
 
-		if (Input.GetKeyDown(_crouchKey) && !_isNeedHoldToCrouch)
+		if (Input.GetKeyDown(_crouchKey) && !_isNeedHoldToCrouch && !_isCrouched)
 			Crouch();
 
-		if (Input.GetKeyDown(_crouchKey) && _isNeedHoldToCrouch)
+		if (Input.GetKeyDown(_crouchKey) && _isNeedHoldToCrouch && !_isCrouched)
 		{
 			_isCrouched = false;
 			Crouch();
 		}
-		else if (Input.GetKeyUp(_crouchKey) && _isNeedHoldToCrouch)
+		else if (Input.GetKeyUp(_crouchKey) && _isNeedHoldToCrouch && _isCrouched)
 		{
 			_isCrouched = true;
 			Crouch();
 		}
+
+
+		if (_isCrouched && !_isPLayerStandUp)
+		{
+			if (!Physics.SphereCast(transform.position, _playerCollider.radius * 1.2f, transform.transform.up, out RaycastHit shit, number))
+			{
+				_isPLayerStandUp = true;
+				
+				Crouch();
+			}
+		}	
 	}
 
 	#endregion
@@ -364,15 +382,24 @@ public class PlayerMovement : MonoBehaviour
 	{
 		if (_isCrouched)
 		{
-			transform.localScale = _originalPlayerSize;
+			if (!Physics.SphereCast(transform.position, _playerCollider.radius * 1.2f, transform.transform.up, out RaycastHit hit, number))
+			{
+				_isPLayerStandUp = true;
 
-			_playerWalkSpeed /= _crouchSpeedReduction;
+				Debug.DrawRay(_playerCamera.transform.position, transform.transform.up * number, Color.red, 5);
 
-			_isCrouched = false;
+				_playerCollider.height = _originalPlayerColliderY;
+
+				_playerWalkSpeed /= _crouchSpeedReduction;
+
+				_isCrouched = false;
+			}
+			else
+				_isPLayerStandUp = false;
 		}
 		else
 		{
-			transform.localScale = new(_originalPlayerSize.x, _crouchPlayerHeight, _originalPlayerSize.z);
+			_playerCollider.height *= _crouchPlayerYCoefficient;
 
 			_playerWalkSpeed *= _crouchSpeedReduction;
 
@@ -409,5 +436,13 @@ public class PlayerMovement : MonoBehaviour
 
 		if (_sprintFOV <= _cameraFOV)
 			_sprintFOV = _cameraFOV + 1;
+	}
+
+	private void OnDrawGizmos()
+	{
+		Gizmos.color = Color.black;
+
+		//if (something.point != null)
+		//	Gizmos.DrawSphere(something.point, _playerCollider.radius / 3);
 	}
 }
