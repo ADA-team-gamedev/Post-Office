@@ -98,7 +98,8 @@ public class PlayerMovement : MonoBehaviour
 	[SerializeField][Range(0.5f, 1f)] private float _crouchPlayerYCoefficient = 0.8f;
 	[SerializeField][Range(0.1f, 1f)] private float _crouchSpeedReduction = 0.5f;
 
-	[SerializeField] private float _maxCheckDistanceAbovePlayer = 0.5f;
+	[SerializeField][Range(0.5f, 1f)] private float _maxCheckDistanceAbovePlayer = 0.9f;
+	[SerializeField][Range(0.5f, 1f)] private float _checkerRadiusPart = 1f;
 
 	private bool _isCrouched = false;
 
@@ -347,7 +348,7 @@ public class PlayerMovement : MonoBehaviour
 
 		if (_isCrouched && !_isPLayerStandUp)
 		{
-			if (IsEmptySpaceAbovePlayer())
+			if (!Physics.SphereCast(transform.position, _playerCollider.radius * _checkerRadiusPart, transform.transform.up, out RaycastHit _, _maxCheckDistanceAbovePlayer))
 			{
 				_isPLayerStandUp = true;
 				
@@ -374,28 +375,11 @@ public class PlayerMovement : MonoBehaviour
 			_isGrounded = false;
 	}
 
-	#region Crouch
-
-	private bool IsEmptySpaceAbovePlayer()
-	{
-		//return !Physics.SphereCast(transform.position, _playerCollider.radius, transform.transform.up, out RaycastHit _, number);
-
-		Vector3 leftBorderPoint = new(_playerCamera.transform.position.x - _playerCollider.radius, _playerCamera.transform.position.y, transform.position.z);
-		Vector3 rightBorderPoint = new(_playerCamera.transform.position.x + _playerCollider.radius, _playerCamera.transform.position.y, _playerCamera.transform.position.z);
-		Vector3 forwardBorderPoint = new(_playerCamera.transform.position.x, _playerCamera.transform.position.y, _playerCamera.transform.position.z + _playerCollider.radius);
-		Vector3 backwardBorderPoint = new(_playerCamera.transform.position.x, _playerCamera.transform.position.y, _playerCamera.transform.position.z - _playerCollider.radius);
-
-		return !Physics.Raycast(leftBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer) &&
-			!Physics.Raycast(rightBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer) &&
-			!Physics.Raycast(forwardBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer) &&
-			!Physics.Raycast(backwardBorderPoint, transform.transform.up, _maxCheckDistanceAbovePlayer);
-	}
-
 	private void Crouch()
 	{
 		if (_isCrouched)
 		{
-			if (IsEmptySpaceAbovePlayer())
+			if (!Physics.SphereCast(transform.position, _playerCollider.radius * _checkerRadiusPart, transform.transform.up, out RaycastHit _, _maxCheckDistanceAbovePlayer))
 			{
 				_isPLayerStandUp = true;
 
@@ -417,8 +401,6 @@ public class PlayerMovement : MonoBehaviour
 			_isCrouched = true;
 		}
 	}
-
-	#endregion
 
 	private void HeadBob()
 	{
