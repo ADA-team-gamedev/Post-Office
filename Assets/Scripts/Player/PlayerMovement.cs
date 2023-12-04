@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Camera _playerCamera;
 
     [SerializeField] private float _cameraFOV = 60f;
-	[SerializeField] private bool _isCameraCanMove = true;
+	public bool CanCameraMove = true;
 	[SerializeField] private bool _isCameraInverted = false;
     [SerializeField] private float _cameraSensitivity = 1f;
     [SerializeField] private float _maxCameraLookAngle = 60f;
@@ -34,7 +34,7 @@ public class PlayerMovement : MonoBehaviour
 	[Header("Zoom")]
 
 	[SerializeField] private bool _isZoomEnabled = true;
-	[SerializeField] private bool _isNeededHoldToZoom = true;
+	[SerializeField] private bool _needHoldToZoom = true;
 	[SerializeField] private KeyCode _zoomKey = KeyCode.Mouse1;
 	[SerializeField] private float _zoomFOV = 30f;
 	[SerializeField] private float _zoomStepTime = 5f;
@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
 	[Header("Movement Settings")]
 
-	[SerializeField] private bool _isPlayerCanMove = true;
+	public bool CanPlayerMove = true;
 
 	[SerializeField] private float _playerWalkSpeed = 5f;
 	[SerializeField] private float _maxVelocityChange = 10f;
@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
 	#region Crouch
 
 	[SerializeField] private bool _isCrouchEnabled = true;
-	[SerializeField] private bool _isNeedHoldToCrouch = true;
+	[SerializeField] private bool _needHoldToCrouch = true;
 	[SerializeField] private KeyCode _crouchKey = KeyCode.LeftControl;
 	[SerializeField][Range(0.5f, 1f)] private float _crouchPlayerHeight = 0.8f;
 	[SerializeField][Range(0.1f, 1f)] private float _crouchSpeedReduction = 0.5f;
@@ -180,14 +180,15 @@ public class PlayerMovement : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		_rb.AddForce(_velocityChange, ForceMode.VelocityChange);
+		if(CanPlayerMove)
+			_rb.AddForce(_velocityChange, ForceMode.VelocityChange);
 	}
 
 	#region Handles
 
 	private void CameraHandleInput()
 	{
-		if (_isCameraCanMove)
+		if (CanCameraMove)
 		{
 			_yaw = transform.localEulerAngles.y + +Input.GetAxis("Mouse X") * _cameraSensitivity;
 
@@ -204,12 +205,12 @@ public class PlayerMovement : MonoBehaviour
 
 		if (_isZoomEnabled)
 		{
-			if (Input.GetKeyDown(_zoomKey) && !_isNeededHoldToZoom && !_isSprinting)
+			if (Input.GetKeyDown(_zoomKey) && !_needHoldToZoom && !_isSprinting)
 			{
 				_isZoomed = !_isZoomed ? true : false;
 			}
 
-			if (_isNeededHoldToZoom && !_isSprinting)
+			if (_needHoldToZoom && !_isSprinting)
 			{
 				if (Input.GetKeyDown(_zoomKey))
 					_isZoomed = true;		
@@ -226,7 +227,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private void MovementHandleInput()
 	{
-		if (!_isPlayerCanMove)
+		if (!CanPlayerMove)
 			return;
 		
 		Vector3 targetVelocity = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
@@ -327,15 +328,15 @@ public class PlayerMovement : MonoBehaviour
 		if (!_isCrouchEnabled)
 			return;
 
-		if (Input.GetKeyDown(_crouchKey) && !_isNeedHoldToCrouch)
+		if (Input.GetKeyDown(_crouchKey) && !_needHoldToCrouch)
 			Crouch();
 
-		if (Input.GetKeyDown(_crouchKey) && _isNeedHoldToCrouch)
+		if (Input.GetKeyDown(_crouchKey) && _needHoldToCrouch)
 		{
 			_isCrouched = false;
 			Crouch();
 		}
-		else if (Input.GetKeyUp(_crouchKey) && _isNeedHoldToCrouch)
+		else if (Input.GetKeyUp(_crouchKey) && _needHoldToCrouch)
 		{
 			_isCrouched = true;
 			Crouch();
