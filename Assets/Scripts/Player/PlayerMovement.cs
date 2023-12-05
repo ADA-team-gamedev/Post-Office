@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Camera _playerCamera;
 
     [SerializeField] private float _cameraFOV = 60f;
-	[SerializeField] private bool _isCameraCanMove = true;
+	public bool CanCameraMove = true;
 	[SerializeField] private bool _isCameraInverted = false;
     [SerializeField] private float _cameraSensitivity = 1f;
     [SerializeField] private float _maxCameraLookAngle = 60f;
@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
 
 	[Header("Movement Settings")]
 
-	[SerializeField] private bool _isPlayerCanMove = true;
+	public bool CanPlayerMove = true;
 
 	[SerializeField] private float _playerWalkSpeed = 5f;
 	[SerializeField] private float _maxVelocityChange = 10f;
@@ -185,14 +185,15 @@ public class PlayerMovement : MonoBehaviour
 
 	private void FixedUpdate()
 	{
-		_rb.AddForce(_velocityChange, ForceMode.VelocityChange);
+		if (CanPlayerMove)
+			_rb.AddForce(_velocityChange, ForceMode.VelocityChange);
 	}
 
 	#region Handles
 
 	private void CameraHandleInput()
 	{
-		if (_isCameraCanMove)
+		if (CanCameraMove)
 		{
 			_yaw = transform.localEulerAngles.y + +Input.GetAxis("Mouse X") * _cameraSensitivity;
 
@@ -231,7 +232,7 @@ public class PlayerMovement : MonoBehaviour
 
 	private void MovementHandleInput()
 	{
-		if (!_isPlayerCanMove)
+		if (!CanPlayerMove)
 			return;
 		
 		Vector3 targetVelocity = new(Input.GetAxis("Horizontal"), 0, Input.GetAxis("Vertical"));
