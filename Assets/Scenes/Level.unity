@@ -650,10 +650,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 0}
-  pauseKey: 0
-  pauseMenu: {fileID: 0}
-  exitWindow: {fileID: 0}
-  settingsWindow: {fileID: 1181639952}
+  _pauseKey: 0
+  PauseMenu: {fileID: 0}
+  ExitWindow: {fileID: 0}
+  SettingsWindow: {fileID: 1181639952}
 --- !u!1001 &206816485
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1495,10 +1495,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 0}
-  pauseKey: 0
-  pauseMenu: {fileID: 0}
-  exitWindow: {fileID: 575937907}
-  settingsWindow: {fileID: 0}
+  _pauseKey: 0
+  PauseMenu: {fileID: 0}
+  ExitWindow: {fileID: 575937907}
+  SettingsWindow: {fileID: 0}
 --- !u!1 &318924858
 GameObject:
   m_ObjectHideFlags: 0
@@ -1880,9 +1880,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0770c316c8fb8e549b1ab7e618e05747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitConfirmationWindow: {fileID: 0}
+  quitConfirmWindow: {fileID: 0}
   settingsWindow: {fileID: 0}
-  settingsSectionsWindows:
+  settingsSections:
   - {fileID: 1148590805}
   - {fileID: 854104296}
   - {fileID: 1971800466}
@@ -2562,10 +2562,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 0}
-  pauseKey: 0
-  pauseMenu: {fileID: 0}
-  exitWindow: {fileID: 0}
-  settingsWindow: {fileID: 0}
+  _pauseKey: 0
+  PauseMenu: {fileID: 0}
+  ExitWindow: {fileID: 0}
+  SettingsWindow: {fileID: 0}
 --- !u!1 &536174267
 GameObject:
   m_ObjectHideFlags: 0
@@ -2805,10 +2805,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 0}
-  pauseKey: 0
-  pauseMenu: {fileID: 0}
-  exitWindow: {fileID: 0}
-  settingsWindow: {fileID: 0}
+  _pauseKey: 0
+  PauseMenu: {fileID: 0}
+  ExitWindow: {fileID: 0}
+  SettingsWindow: {fileID: 0}
 --- !u!114 &592393411
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3658,10 +3658,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 0}
-  pauseKey: 0
-  pauseMenu: {fileID: 0}
-  exitWindow: {fileID: 0}
-  settingsWindow: {fileID: 1181639952}
+  _pauseKey: 0
+  PauseMenu: {fileID: 0}
+  ExitWindow: {fileID: 0}
+  SettingsWindow: {fileID: 1181639952}
 --- !u!1 &842001312
 GameObject:
   m_ObjectHideFlags: 0
@@ -4399,10 +4399,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 0}
-  pauseKey: 0
-  pauseMenu: {fileID: 0}
-  exitWindow: {fileID: 575937907}
-  settingsWindow: {fileID: 0}
+  _pauseKey: 0
+  PauseMenu: {fileID: 0}
+  ExitWindow: {fileID: 575937907}
+  SettingsWindow: {fileID: 0}
 --- !u!1 &990469585
 GameObject:
   m_ObjectHideFlags: 0
@@ -5127,10 +5127,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 1748621703}
-  pauseKey: 0
-  pauseMenu: {fileID: 1385023933}
-  exitWindow: {fileID: 0}
-  settingsWindow: {fileID: 0}
+  _pauseKey: 0
+  PauseMenu: {fileID: 1385023933}
+  ExitWindow: {fileID: 0}
+  SettingsWindow: {fileID: 0}
 --- !u!114 &1191975854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5475,9 +5475,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0770c316c8fb8e549b1ab7e618e05747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitConfirmationWindow: {fileID: 0}
+  quitConfirmWindow: {fileID: 0}
   settingsWindow: {fileID: 0}
-  settingsSectionsWindows:
+  settingsSections:
   - {fileID: 1148590805}
   - {fileID: 854104296}
   - {fileID: 1971800466}
@@ -5900,6 +5900,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsLampEnabled: 1
+  _playerTag: Player
   _spotLight: {fileID: 2114822265}
   OnStay:
     m_PersistentCalls:
@@ -6021,9 +6022,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0770c316c8fb8e549b1ab7e618e05747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitConfirmationWindow: {fileID: 0}
+  quitConfirmWindow: {fileID: 0}
   settingsWindow: {fileID: 0}
-  settingsSectionsWindows: []
+  settingsSections: []
   type: 0
 --- !u!114 &1563523118
 MonoBehaviour:
@@ -6255,9 +6256,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0770c316c8fb8e549b1ab7e618e05747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitConfirmationWindow: {fileID: 0}
+  quitConfirmWindow: {fileID: 0}
   settingsWindow: {fileID: 0}
-  settingsSectionsWindows: []
+  settingsSections: []
   type: 1
 --- !u!114 &1594644799
 MonoBehaviour:
@@ -6632,10 +6633,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerMovement: {fileID: 1748621703}
-  pauseKey: 112
-  pauseMenu: {fileID: 1385023933}
-  exitWindow: {fileID: 0}
-  settingsWindow: {fileID: 0}
+  _pauseKey: 27
+  PauseMenu: {fileID: 1385023933}
+  ExitWindow: {fileID: 575937907}
+  SettingsWindow: {fileID: 1181639952}
 --- !u!1 &1812005035
 GameObject:
   m_ObjectHideFlags: 0
@@ -6722,9 +6723,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0770c316c8fb8e549b1ab7e618e05747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitConfirmationWindow: {fileID: 0}
+  quitConfirmWindow: {fileID: 0}
   settingsWindow: {fileID: 0}
-  settingsSectionsWindows:
+  settingsSections:
   - {fileID: 1148590805}
   - {fileID: 854104296}
   - {fileID: 1971800466}
@@ -6947,9 +6948,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0770c316c8fb8e549b1ab7e618e05747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitConfirmationWindow: {fileID: 0}
+  quitConfirmWindow: {fileID: 0}
   settingsWindow: {fileID: 0}
-  settingsSectionsWindows:
+  settingsSections:
   - {fileID: 1148590805}
   - {fileID: 854104296}
   - {fileID: 1971800466}
@@ -7685,9 +7686,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0770c316c8fb8e549b1ab7e618e05747, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  quitConfirmationWindow: {fileID: 0}
+  quitConfirmWindow: {fileID: 0}
   settingsWindow: {fileID: 0}
-  settingsSectionsWindows: []
+  settingsSections: []
   type: 1
 --- !u!114 &2071000412
 MonoBehaviour:
