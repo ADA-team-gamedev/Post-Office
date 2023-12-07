@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,13 +21,13 @@ public class BoxEnemy : MonoBehaviour
 	#endregion
 
 	[Header("Patrol points")]
-	[SerializeField] private List<Transform> _pointsToMove;
+	[SerializeField] private List<Transform> _patrolPoints;
 
 	[Header("Hidden spots")]
 	[SerializeField] private List<Transform> _hiddenPoints;
 
 	private Vector3 _currentPointToMove;
-	private int _pointToMoveIndex = 0;
+	private int _currentPatrolPointIndex = 0;
 
 	private EnemyState _enemyState = EnemyState.Patroling;
 
@@ -54,7 +53,7 @@ public class BoxEnemy : MonoBehaviour
 	private void Update()
 	{
 		CheckVision();
-
+		
 		HandleStateLauncher();
 	}
 
@@ -74,7 +73,7 @@ public class BoxEnemy : MonoBehaviour
 				Patroling();
 				break;
 			case EnemyState.Fleeing:
-				StartFleeing();
+				Fleeing();
 				break;
 			default:
 				Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
@@ -86,12 +85,12 @@ public class BoxEnemy : MonoBehaviour
 
 	private void MoveTo()
 	{
-		if (_pointsToMove.Count <= 0)
+		if (_patrolPoints.Count <= 0)
 			return;
 
-		_pointToMoveIndex = _pointToMoveIndex < _pointsToMove.Count - 1 ? _pointToMoveIndex + 1 : _pointToMoveIndex = 0;
+		_currentPatrolPointIndex = Random.Range(0, _patrolPoints.Count); //possible simillar points
 
-		_currentPointToMove = _pointsToMove[_pointToMoveIndex].position;
+		_currentPointToMove = _patrolPoints[_currentPatrolPointIndex].position;
 
 		_agent.SetDestination(_currentPointToMove);
 	}
@@ -100,7 +99,7 @@ public class BoxEnemy : MonoBehaviour
 	{
 		if (_isPatroling)
 		{
-			if (!_isWaiting && _agent.remainingDistance <= _agent.stoppingDistance )
+			if (!_isWaiting && _agent.remainingDistance <= _agent.stoppingDistance)
 			{
 				_isWaiting = true;
 
@@ -128,7 +127,7 @@ public class BoxEnemy : MonoBehaviour
 
 	#region Fleeing
 
-	private void StartFleeing()
+	private void Fleeing()
 	{
 		if (_isFleeing)
 			return;
@@ -137,21 +136,20 @@ public class BoxEnemy : MonoBehaviour
 
 		_agent.speed = _runningSpeed;
 
-		if (_hiddenPoints.Count > 0)
-		{
-			_agent.SetDestination(_hiddenPoints[UnityEngine.Random.Range(0, _hiddenPoints.Count - 1)].position);
-		}
+		_agent.SetDestination(_hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position);	
 	}
 
 	#endregion
 
-	//private void OnTriggerEnter(Collider other)
-	//{
-	//	Debug.Log(other);
+	private void OnTriggerEnter(Collider other)
+	{
+		if (_playerLayer.value == 1 << other.gameObject.layer) 
+		{
+			StopAllCoroutines();
 
-	//	if (other.CompareTag("Player"))
-	//		_enemyState = EnemyState.Fleeing;
-	//}
+			_enemyState = EnemyState.Fleeing;
+		}
+	}
 
 	private void OnValidate()
 	{

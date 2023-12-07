@@ -518,6 +518,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 7
       objectReference: {fileID: 0}
+    - target: {fileID: 6637275554499735323, guid: a235ae8aba9f3fe48a1e8ef3329de862,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -7104151763188768047, guid: a235ae8aba9f3fe48a1e8ef3329de862, type: 3}
     m_RemovedGameObjects: []
@@ -3154,7 +3159,7 @@ MonoBehaviour:
   _patrolPointsRestDelay: 5
   _walkingSpeed: 4
   _runningSpeed: 10
-  _pointsToMove:
+  _patrolPoints:
   - {fileID: 348021181}
   - {fileID: 535767128}
   - {fileID: 1119985274}
@@ -4249,6 +4254,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Layer
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7264589417573849588, guid: d6795fc5b17ec344b9f1f2bee8757c90,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
@@ -6479,6 +6489,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8838799551080058970, guid: c296c460b6ab0594281a31ceeb195d82,
+        type: 3}
+      propertyPath: m_TagString
+      value: Untagged
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
