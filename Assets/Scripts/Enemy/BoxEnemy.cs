@@ -143,27 +143,32 @@ public class BoxEnemy : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (_playerLayer.value == 1 << other.gameObject.layer) 
-		{
-			StopAllCoroutines();
+		Vector3 directionToTarget = (other.transform.position - transform.position).normalized;
 
+		float distanceToTarget = Vector3.Distance(transform.position, other.transform.position);
+
+		if (Physics.Raycast(transform.position, directionToTarget, out RaycastHit hit, distanceToTarget) && _playerLayer.value == 1 << hit.transform.gameObject.layer)
+		{
 			_enemyState = EnemyState.Fleeing;
+
+			StopAllCoroutines();
 		}
 	}
-
+	
 	private void OnValidate()
 	{
 		_agent ??= GetComponent<NavMeshAgent>();
 		_agent.speed = _walkingSpeed;
 
 		_fieldOfView ??= GetComponent<FieldOfView>();
-
+		
 		_sphereCollider ??= GetComponent<SphereCollider>();
 
 		_sphereCollider.isTrigger = true;
 		_sphereCollider.radius = _fieldOfView.InstantDetectionRadius;
-
+		
 		if (_walkingSpeed >= _runningSpeed)
 			_runningSpeed = _walkingSpeed + 1;
 	}
+
 }
