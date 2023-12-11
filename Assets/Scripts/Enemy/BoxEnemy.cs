@@ -4,19 +4,26 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(FieldOfView))]
-[RequireComponent(typeof(SphereCollider))]
-public class BoxEnemy : MonoBehaviour
+public class BoxEnemy : MonoBehaviour, IPickable
 {
-	[Header("Layer")]
-	[SerializeField] private LayerMask _playerLayer;
+	[Header("Player Sanity")]
+	[SerializeField] private PlayerSanity _playerSanity;
 
 	#region Values
 
 	[Header("Values")]
 	[SerializeField] private float _patrolPointsRestDelay = 10f;
 
-	[SerializeField] private float _walkingSpeed = 3f;
+	[SerializeField] private float _patrolingSpeed = 3f;
 	[SerializeField] private float _runningSpeed = 6f;
+
+	[Header("Phases starts")]
+
+	[SerializeField] private float _patrolPhaseStart = 40f;
+	[SerializeField] private float _attackPhaseStart = 10f;
+
+	[Space(10)]
+	[SerializeField] private float _delayBeforeTranfromToEnemy = 5f;
 
 	#endregion
 
@@ -33,28 +40,32 @@ public class BoxEnemy : MonoBehaviour
 
 	private NavMeshAgent _agent;
 	private FieldOfView _fieldOfView;
-	private SphereCollider _sphereCollider;
 
 	private bool _isFleeing = false;
 	private bool _isPatroling = false;
 	private bool _isWaiting = false;
+
+	private bool _isPicked = false;
 
 	private void Awake()
 	{
 		_currentPointToMove = transform.position;
 		
 		_agent.isStopped = false;
-		_agent.speed = _walkingSpeed;
-
-		_sphereCollider.isTrigger = true;
-		_sphereCollider.radius = _fieldOfView.InstantDetectionRadius;
+		_agent.speed = _patrolingSpeed;
 	}
 
 	private void Update()
 	{
-		CheckVision();
-		
-		HandleStateLauncher();
+		if (_playerSanity.Sanity <= _attackPhaseStart) //still in progress
+			_enemyState = EnemyState.Attacking;
+
+		if (!_isPicked && _playerSanity.Sanity <= _patrolPhaseStart)
+		{
+			CheckVision();
+
+			HandleStateLauncher();
+		}			
 	}
 
 	private void CheckVision()
@@ -74,6 +85,17 @@ public class BoxEnemy : MonoBehaviour
 				break;
 			case EnemyState.Fleeing:
 				Fleeing();
+				break;
+			case EnemyState.Idle:
+				if (!_isWaiting)
+				{
+					_isWaiting = true;
+
+					StartCoroutine(TakeRestOnTime(_patrolPointsRestDelay));
+				}
+				break;
+			case EnemyState.Attacking:
+				Debug.LogWarning("ENEMY ATTACK STILL IN PROGRESS");
 				break;
 			default:
 				Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
@@ -99,17 +121,19 @@ public class BoxEnemy : MonoBehaviour
 	{
 		if (_isPatroling)
 		{
-			if (!_isWaiting && _agent.remainingDistance <= _agent.stoppingDistance)
+			if (_agent.remainingDistance <= _agent.stoppingDistance)
 			{
-				_isWaiting = true;
+				_isPatroling = false;
 
-				StartCoroutine(TakeRestOnTime(_patrolPointsRestDelay));
+				_enemyState = EnemyState.Idle;
 			}
 
 			return;
 		}
 
 		_isPatroling = true;
+
+		_agent.speed = _patrolingSpeed;
 
 		MoveTo();
 	}
@@ -118,9 +142,9 @@ public class BoxEnemy : MonoBehaviour
 	{
 		yield return new WaitForSeconds(delay);
 
-		_isPatroling = false;
-
 		_isWaiting = false;
+
+		_enemyState = EnemyState.Patroling;
 	}
 
 	#endregion
@@ -132,6 +156,8 @@ public class BoxEnemy : MonoBehaviour
 		if (_isFleeing)
 			return;
 
+		StopAllCoroutines();
+
 		_isFleeing = true;
 
 		_agent.speed = _runningSpeed;
@@ -141,34 +167,68 @@ public class BoxEnemy : MonoBehaviour
 
 	#endregion
 
-	private void OnTriggerEnter(Collider other)
+	#region Inventory interaction
+
+	public void PickUpItem()
 	{
-		Vector3 directionToTarget = (other.transform.position - transform.position).normalized;
+		StopAllCoroutines();
 
-		float distanceToTarget = Vector3.Distance(transform.position, other.transform.position);
+		_agent.enabled = true;
 
-		if (Physics.Raycast(transform.position, directionToTarget, out RaycastHit hit, distanceToTarget) && _playerLayer.value == 1 << hit.transform.gameObject.layer)
-		{
-			_enemyState = EnemyState.Fleeing;
+		_agent.isStopped = true;
 
-			StopAllCoroutines();
-		}
+		_agent.enabled = false;
+
+		_isPicked = true;
+
+		_isPatroling = false;
+		_isFleeing = false;
+		_isWaiting = false;
+
+		_enemyState = EnemyState.None;
 	}
+
+	public void DropItem()
+	{
+		StartCoroutine(TransformFromBoxToInsect(_delayBeforeTranfromToEnemy));		
+	}
+
+	private IEnumerator TransformFromBoxToInsect(float delay)
+	{
+		yield return new WaitForSeconds(delay);
+
+		_isPicked = false;
+
+		_agent.enabled = true;
+
+		_agent.isStopped = false;
+
+		_enemyState = EnemyState.Patroling;
+	}
+
+	#endregion
 	
 	private void OnValidate()
 	{
 		_agent ??= GetComponent<NavMeshAgent>();
-		_agent.speed = _walkingSpeed;
+		_agent.speed = _patrolingSpeed;
 
 		_fieldOfView ??= GetComponent<FieldOfView>();
 		
-		_sphereCollider ??= GetComponent<SphereCollider>();
-
-		_sphereCollider.isTrigger = true;
-		_sphereCollider.radius = _fieldOfView.InstantDetectionRadius;
-		
-		if (_walkingSpeed >= _runningSpeed)
-			_runningSpeed = _walkingSpeed + 1;
+		if (_patrolingSpeed >= _runningSpeed)
+			_runningSpeed = _patrolingSpeed + 1;
 	}
 
+	private void OnDrawGizmosSelected()
+	{
+		Gizmos.color = Color.red;
+
+		foreach (var point in _patrolPoints)
+			Gizmos.DrawSphere(point.position, 0.3f);
+
+		Gizmos.color = Color.green;
+
+		foreach (var point in _hiddenPoints)
+			Gizmos.DrawSphere(point.position, 0.3f);
+	}
 }

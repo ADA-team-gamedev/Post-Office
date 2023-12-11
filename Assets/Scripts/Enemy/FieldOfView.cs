@@ -31,10 +31,18 @@ public class FieldOfView : MonoBehaviour
 
 			Vector3 directionToTarget = (target.position - transform.position).normalized;
 
-			if (Vector3.Angle(transform.forward, directionToTarget) < ViewedAngle / 2)
-			{
-				float distanceToTarget = Vector3.Distance(transform.position, target.position);
+			float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
+			if (distanceToTarget <= InstantDetectionRadius) //instant radius checker
+			{
+				if (!Physics.Raycast(transform.position, directionToTarget, _obstacleLayer))
+					CanSeePLayer = true;
+				else
+					CanSeePLayer = false;
+			} 
+				
+			if (Vector3.Angle(transform.forward, directionToTarget) < ViewedAngle / 2) //FOV checker
+			{
 				if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstacleLayer))
 					CanSeePLayer = true;
 				else

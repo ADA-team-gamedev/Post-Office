@@ -10,7 +10,17 @@ public enum DoorKeyTypes
 }
 
 [RequireComponent(typeof(BoxCollider))] //set it triggered
-public class Key : MonoBehaviour
+public class Key : MonoBehaviour, IPickable
 {
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
+
+	public void DropItem()
+	{
+	
+	}
+
+	public void PickUpItem()
+	{
+		
+	}
 }
