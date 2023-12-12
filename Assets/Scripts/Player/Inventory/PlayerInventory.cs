@@ -53,7 +53,7 @@ public class PlayerInventory : MonoBehaviour
     private void Update()
     {
 		TryPickupObject();
-
+		
 		HandleInventoryInput();
 	}
 
@@ -152,7 +152,7 @@ public class PlayerInventory : MonoBehaviour
 
 	public bool TryGetCurrentItem(out GameObject item)
 	{
-		if (_currentSlotIndex > 0 && _currentSlotIndex < _inventorySlotsAmount)
+		if (_currentSlotIndex >= 0 && _currentSlotIndex < _inventorySlotsAmount)
 			item = Inventory[_currentSlotIndex];
 		else
 			item = null;
