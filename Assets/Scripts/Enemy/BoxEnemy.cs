@@ -23,7 +23,7 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	[SerializeField] private float _attackPhaseStart = 10f;
 
 	[Space(10)]
-	[SerializeField] private float _delayBeforeTranfromToEnemy = 5f;
+	[SerializeField] private float _tranfromToEnemyDelay = 5f;
 
 	#endregion
 
@@ -41,31 +41,44 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	private NavMeshAgent _agent;
 	private FieldOfView _fieldOfView;
 
+	//flags
 	private bool _isFleeing = false;
 	private bool _isPatroling = false;
 	private bool _isWaiting = false;
+	private bool _canAttackPlayer = false;
+
+	private bool _isEnemyPhasesStart = false;
 
 	private bool _isPicked = false;
+	private bool _isTranformedIntoInsect = false;
 
 	private void Awake()
 	{
 		_currentPointToMove = transform.position;
 		
-		_agent.isStopped = false;
 		_agent.speed = _patrolingSpeed;
+
+		DisableAI();
 	}
 
 	private void Update()
 	{
-		if (_playerSanity.Sanity <= _attackPhaseStart) //still in progress
-			_enemyState = EnemyState.Attacking;
+		if (_isPicked)
+			return;
 
-		if (!_isPicked && _playerSanity.Sanity <= _patrolPhaseStart)
+		if (!_isEnemyPhasesStart && _playerSanity.Sanity <= _patrolPhaseStart)
+		{
+			_isEnemyPhasesStart = true;
+
+			EnableAI();
+		}
+
+		if (_isEnemyPhasesStart && _isTranformedIntoInsect)
 		{
 			CheckVision();
 
 			HandleStateLauncher();
-		}			
+		}				
 	}
 
 	private void CheckVision()
@@ -73,7 +86,7 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_fieldOfView.VisionCheck();
 
 		if (_fieldOfView.CanSeePLayer)	
-			_enemyState = EnemyState.Fleeing;		
+			_enemyState = _playerSanity.Sanity <= _attackPhaseStart ? EnemyState.Attacking : EnemyState.Fleeing;		
 	}
 
 	private void HandleStateLauncher()
@@ -95,13 +108,15 @@ public class BoxEnemy : MonoBehaviour, IPickable
 				}
 				break;
 			case EnemyState.Attacking:
-				Debug.LogWarning("ENEMY ATTACK STILL IN PROGRESS");
+				Attacking();
 				break;
 			default:
 				Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
 				break;
 		}
 	}
+
+	#region Phases
 
 	#region Patrol
 
@@ -158,6 +173,7 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 		StopAllCoroutines();
 
+		_isPatroling = false;
 		_isFleeing = true;
 
 		_agent.speed = _runningSpeed;
@@ -167,19 +183,46 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 	#endregion
 
+	#region Attacking(WIP)
+
+	private void Attacking()
+	{
+		if (_canAttackPlayer)
+			return;
+
+		StopAllCoroutines();
+
+		_canAttackPlayer = true;
+
+		Debug.LogWarning("Enemy attack phase still in progress");
+	}
+
+	#endregion
+
+	#endregion
+
 	#region Inventory interaction
+
+	#region PickUp
 
 	public void PickUpItem()
 	{
 		StopAllCoroutines();
+
+		_isPicked = true;
+
+		DisableAI();
+	}
+
+	private void DisableAI()
+	{
+		_isTranformedIntoInsect = false;
 
 		_agent.enabled = true;
 
 		_agent.isStopped = true;
 
 		_agent.enabled = false;
-
-		_isPicked = true;
 
 		_isPatroling = false;
 		_isFleeing = false;
@@ -188,16 +231,28 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_enemyState = EnemyState.None;
 	}
 
+	#endregion
+
+	#region Drop
+
 	public void DropItem()
 	{
-		StartCoroutine(TransformFromBoxToInsect(_delayBeforeTranfromToEnemy));		
+		_isPicked = false;
+
+		if (_isEnemyPhasesStart)
+			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));		
 	}
 
 	private IEnumerator TransformFromBoxToInsect(float delay)
 	{
-		yield return new WaitForSeconds(delay);
+		yield return new WaitForSeconds(delay);	
 
-		_isPicked = false;
+		EnableAI();
+	}
+
+	private void EnableAI()
+	{
+		_isTranformedIntoInsect = true;
 
 		_agent.enabled = true;
 
@@ -207,7 +262,9 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	}
 
 	#endregion
-	
+
+	#endregion
+
 	private void OnValidate()
 	{
 		_agent ??= GetComponent<NavMeshAgent>();
