@@ -53,22 +53,20 @@ public class PlayerInventory : MonoBehaviour
     private void Update()
     {
 		TryPickupObject();
-		
+
 		HandleInventoryInput();
 	}
 
 	#region Pickup system
-	public void TryPickupObject() //make interactable
+	private void TryPickupObject() //make interactable
     {
 		if (Input.GetKeyDown(PickupKey) && Inventory.Count < _inventorySlotsAmount)
 		{
-			if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
+			if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange, _pickupLayer))
 			{
 				_currentObjectTransform = hit.transform;
 				_currentObjectRigidbody = hit.rigidbody;
 				_currentObjectCollider = hit.collider;
-
-				pickable.PickUpItem();
 
 				SetPickedItem();
 			}
@@ -77,41 +75,12 @@ public class PlayerInventory : MonoBehaviour
 		if (_currentObjectTransform) //IsEquipped
 		{
 			if (Input.GetKeyDown(DropKey))
-			{
-				if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-					pickable.DropItem();
-
 				DropItem();
-			}
 		}
-
-
-
-		////interactable version >>>
-
-		//if (Inventory.Count >= _inventorySlotsAmount)
-		//	return;
-
-		//if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
-		//{
-		//	_currentObjectTransform = hit.transform;
-		//	_currentObjectRigidbody = hit.rigidbody;
-		//	_currentObjectCollider = hit.collider;
-
-		//	pickable.PickUpItem();
-
-		//	SetPickedItem();
-		//}
 	}
 
-	public void DropItem()
+	private void DropItem()
 	{
-		if (!_currentObjectTransform)
-			return;
-
-		if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-			pickable.DropItem();
-
 		_currentObjectTransform.gameObject.SetActive(true);
 
 		_currentObjectRigidbody.isKinematic = false;
@@ -152,7 +121,7 @@ public class PlayerInventory : MonoBehaviour
 
 	public bool TryGetCurrentItem(out GameObject item)
 	{
-		if (_currentSlotIndex >= 0 && _currentSlotIndex < _inventorySlotsAmount)
+		if (_currentSlotIndex > 0 && _currentSlotIndex < _inventorySlotsAmount)
 			item = Inventory[_currentSlotIndex];
 		else
 			item = null;

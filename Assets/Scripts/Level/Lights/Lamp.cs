@@ -4,7 +4,7 @@ using UnityEngine.Events;
 [RequireComponent(typeof(BoxCollider))]
 public class Lamp : MonoBehaviour
 {
-	public bool IsLampEnabled { get; set; } = true;
+	[field: SerializeField] public bool IsLampEnabled = true;
 
 	[SerializeField] private string _playerTag = "Player";
 
@@ -23,12 +23,5 @@ public class Lamp : MonoBehaviour
 	private void OnValidate()
 	{
 		_spotLight?.SetActive(IsLampEnabled);
-	}
-
-	public void SwitchLampState(bool isEnabled)
-	{
-		IsLampEnabled = isEnabled;
-
-		_spotLight.SetActive(IsLampEnabled);
 	}
 }

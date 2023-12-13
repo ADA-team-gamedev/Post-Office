@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum DoorKeyTypes
@@ -10,17 +12,7 @@ public enum DoorKeyTypes
 }
 
 [RequireComponent(typeof(BoxCollider))] //set it triggered
-public class Key : MonoBehaviour, IPickable
+public class Key : MonoBehaviour
 {
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
-
-	public void DropItem()
-	{
-	
-	}
-
-	public void PickUpItem()
-	{
-		
-	}
 }
