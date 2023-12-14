@@ -2,14 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "new Item", menuName = "ItemData")]
+[CreateAssetMenu(fileName = "new Box", menuName = "BoxData")]
 public class ItemData : ScriptableObject
-{
-    public GameObject Model;
-    public GameObject Object;
-    public string Name;
-    public Sprite Icon;
-    //המהאל ןמע³ל שמסü
-    
-
+{    
+    public string Name;    
 }
