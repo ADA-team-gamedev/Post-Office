@@ -19,7 +19,11 @@ public class PlayerSanity : MonoBehaviour
 		{
 			if (value >= 0 && value <= _maxSanityValue)
 				_sanity = value;
-		}
+			else if (value > _maxSanityValue)
+				_sanity = _maxSanityValue;
+            else if (value < 0) 
+				_sanity = 0;
+        }
 	}
 
 	private float _sanity;

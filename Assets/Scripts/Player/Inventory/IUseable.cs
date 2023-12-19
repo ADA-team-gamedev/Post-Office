@@ -2,7 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TakingOnce : MonoBehaviour
+public interface IUseable
 {
-    public bool Take;
+    
+
+
 }
+
+   
+
+
