@@ -14,7 +14,8 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	[Header("Values")]
 	[SerializeField] private float _patrolPointsRestDelay = 10f;
 
-	[SerializeField] private float _patrolingSpeed = 3f;
+	[SerializeField] private float _patrolingSpeed = 4f;
+	[SerializeField] private float _attackingSpeed = 4f;
 	[SerializeField] private float _runningSpeed = 6f;
 
 	[Header("Phases starts")]
@@ -24,6 +25,13 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 	[Space(10)]
 	[SerializeField] private float _tranfromToEnemyDelay = 5f;
+
+	#endregion
+
+	#region Attacking
+
+	[SerializeField] private Animator _attackingAnimator;
+	[SerializeField] private string _attackingAnimationName = "Jumpscare";
 
 	#endregion
 
@@ -38,6 +46,8 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 	private EnemyState _enemyState = EnemyState.Patroling;
 
+	private Transform _attackingTarget;
+
 	private NavMeshAgent _agent;
 	private FieldOfView _fieldOfView;
 
@@ -45,7 +55,6 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	private bool _isFleeing = false;
 	private bool _isPatroling = false;
 	private bool _isWaiting = false;
-	private bool _canAttackPlayer = false;
 
 	private bool _isEnemyPhasesStart = false;
 
@@ -85,8 +94,29 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	{
 		_fieldOfView.VisionCheck();
 
-		if (_fieldOfView.CanSeePLayer)	
-			_enemyState = _playerSanity.Sanity <= _attackPhaseStart ? EnemyState.Attacking : EnemyState.Fleeing;		
+		if (_fieldOfView.InstantDetectTarget && _enemyState == EnemyState.Attacking)
+			KillPlayer();
+		else if (_fieldOfView.CanSeePLayer || _fieldOfView.InstantDetectTarget)
+		{
+			if (!_isFleeing)
+			{
+				_enemyState = _playerSanity.Sanity <= _attackPhaseStart ? EnemyState.Attacking : EnemyState.Fleeing;
+
+				if (_enemyState == EnemyState.Attacking && !_attackingTarget)
+					_attackingTarget = _fieldOfView.TargetTransform;
+			}				
+		}
+		else //don't see player
+		{
+			if (_enemyState == EnemyState.Attacking && _attackingTarget)
+			{
+				_attackingTarget = null;
+
+				if (_agent.remainingDistance <= _agent.stoppingDistance)
+					_enemyState = EnemyState.Idle;
+			}
+		}	
+				
 	}
 
 	private void HandleStateLauncher()
@@ -183,18 +213,40 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 	#endregion
 
-	#region Attacking(WIP)
+	#region Attacking
 
 	private void Attacking()
 	{
-		if (_canAttackPlayer)
+		if (!_attackingTarget)
+		{
+			if (_agent.remainingDistance <= _agent.stoppingDistance)
+			{
+				_isPatroling = true; //for cases when we lost player. (watch patroling method)
+
+				Patroling();
+			}
+
 			return;
+		}
 
 		StopAllCoroutines();
 
-		_canAttackPlayer = true;
+		_agent.speed = _attackingSpeed;
 
-		Debug.LogWarning("Enemy attack phase still in progress");
+		_isWaiting = false;
+		_isPatroling = false; 
+		//_isFleeing = false;
+
+		_agent.SetDestination(_attackingTarget.position);
+	}
+
+	private void KillPlayer()
+	{
+		_attackingAnimator.SetTrigger(_attackingAnimationName);	
+
+		DisableAI();
+
+		gameObject.SetActive(false);
 	}
 
 	#endregion
@@ -271,7 +323,7 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_agent.speed = _patrolingSpeed;
 
 		_fieldOfView ??= GetComponent<FieldOfView>();
-		
+
 		if (_patrolingSpeed >= _runningSpeed)
 			_runningSpeed = _patrolingSpeed + 1;
 	}
