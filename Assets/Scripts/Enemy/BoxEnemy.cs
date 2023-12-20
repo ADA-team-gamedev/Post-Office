@@ -56,10 +56,11 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	private bool _isPatroling = false;
 	private bool _isWaiting = false;
 
-	private bool _isEnemyPhasesStart = false;
-
 	private bool _isPicked = false;
+
 	private bool _isTranformedIntoInsect = false;
+
+	private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
 
 	private void Awake()
 	{
@@ -75,20 +76,23 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		if (_isPicked)
 			return;
 
-		if (!_isEnemyPhasesStart && _playerSanity.Sanity <= _patrolPhaseStart)
+		if (!_isEnemyPhasesStarts && IsCanStartEnemyLogic()) //AI first start check
 		{
-			_isEnemyPhasesStart = true;
+			_isEnemyPhasesStarts = true;
 
 			EnableAI();
 		}
 
-		if (_isEnemyPhasesStart && _isTranformedIntoInsect)
+		if (_isTranformedIntoInsect)
 		{
 			CheckVision();
 
 			HandleStateLauncher();
 		}				
 	}
+
+	private bool IsCanStartEnemyLogic()
+		=> !_isTranformedIntoInsect && _playerSanity.Sanity <= _patrolPhaseStart;
 
 	private void CheckVision()
 	{
@@ -235,7 +239,6 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 		_isWaiting = false;
 		_isPatroling = false; 
-		//_isFleeing = false;
 
 		_agent.SetDestination(_attackingTarget.position);
 	}
@@ -259,15 +262,17 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 	public void PickUpItem()
 	{
-		StopAllCoroutines();
-
 		_isPicked = true;
+
+		_attackingTarget = null;
 
 		DisableAI();
 	}
 
 	private void DisableAI()
 	{
+		StopAllCoroutines();
+
 		_isTranformedIntoInsect = false;
 
 		_agent.enabled = true;
@@ -291,8 +296,8 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	{
 		_isPicked = false;
 
-		if (_isEnemyPhasesStart)
-			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));		
+		if (IsCanStartEnemyLogic())
+			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));			
 	}
 
 	private IEnumerator TransformFromBoxToInsect(float delay)
