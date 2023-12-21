@@ -194,19 +194,12 @@ MonoBehaviour:
   _playerSanity: {fileID: 0}
   _patrolPointsRestDelay: 5
   _patrolingSpeed: 3
+  _attackingSpeed: 4
   _runningSpeed: 7
   _patrolPhaseStart: 80
-  _attackPhaseStart: 10
+  _attackPhaseStart: 20
   _tranfromToEnemyDelay: 5
-  _patrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _hiddenPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  _attackingAnimator: {fileID: 0}
+  _attackingAnimationName: Jumpscare
+  _patrolPoints: []
+  _hiddenPoints: []

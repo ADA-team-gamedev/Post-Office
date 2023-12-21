@@ -15,9 +15,10 @@ public class FieldOfView : MonoBehaviour
 	[Range(0, 360)] 
 	public float ViewedAngle = 90;
 
-	public Transform PlayerTransform { get; private set; }
+	public Transform TargetTransform { get; private set; }
 
 	public bool CanSeePLayer { get; private set; } = false;
+	public bool InstantDetectTarget { get; private set; } = false;
 
 	public void VisionCheck()
 	{
@@ -27,7 +28,7 @@ public class FieldOfView : MonoBehaviour
 		{
 			Transform target = rangeChecks[0].transform;
 
-			PlayerTransform = target;
+			TargetTransform = target;
 
 			Vector3 directionToTarget = (target.position - transform.position).normalized;
 
@@ -36,11 +37,11 @@ public class FieldOfView : MonoBehaviour
 			if (distanceToTarget <= InstantDetectionRadius) //instant radius checker
 			{
 				if (!Physics.Raycast(transform.position, directionToTarget, _obstacleLayer))
-					CanSeePLayer = true;
+					InstantDetectTarget = true;
 				else
-					CanSeePLayer = false;
-			} 
-				
+					InstantDetectTarget = false;
+			}
+
 			if (Vector3.Angle(transform.forward, directionToTarget) < ViewedAngle / 2) //FOV checker
 			{
 				if (!Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstacleLayer))
@@ -53,6 +54,8 @@ public class FieldOfView : MonoBehaviour
 		}
 		else if (CanSeePLayer)
 			CanSeePLayer = false;
+		else if (InstantDetectTarget)
+			InstantDetectTarget = false;
 	}
 
 	private void OnValidate()

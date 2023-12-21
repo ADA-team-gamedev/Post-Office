@@ -71,21 +71,14 @@ public class PlayerInventory : MonoBehaviour
 				pickable.PickUpItem();
 
 				SetPickedItem();
-			}
+			}	
 		}
 
 		if (_currentObjectTransform) //IsEquipped
 		{
 			if (Input.GetKeyDown(DropKey))
-			{
-				if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-					pickable.DropItem();
-
-				DropItem();
-			}
+				DropItem();		
 		}
-
-
 
 		////interactable version >>>
 
@@ -107,12 +100,12 @@ public class PlayerInventory : MonoBehaviour
 	public void DropItem()
 	{
 		if (!_currentObjectTransform)
-			return;
+			return;	
+
+		_currentObjectTransform.gameObject.SetActive(true);
 
 		if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
 			pickable.DropItem();
-
-		_currentObjectTransform.gameObject.SetActive(true);
 
 		_currentObjectRigidbody.isKinematic = false;
 		_currentObjectRigidbody.useGravity = true;
@@ -120,11 +113,11 @@ public class PlayerInventory : MonoBehaviour
 		_currentObjectTransform.SetParent(null);
 
 		_currentObjectRigidbody.AddForce(_playerCamera.forward * _dropForce, ForceMode.Impulse);
-		_currentObjectRigidbody.AddForce(_playerCamera.up * _dropUpForce, ForceMode.Impulse);
+		_currentObjectRigidbody.AddForce(_playerCamera.up * _dropUpForce, ForceMode.Impulse);	
 
 		_currentObjectTransform = null;
 		_currentObjectRigidbody = null;
-
+		
 		_currentObjectCollider.enabled = true;
 		_currentObjectCollider = null;
 
