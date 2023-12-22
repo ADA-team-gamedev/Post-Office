@@ -55,8 +55,6 @@ public class PlayerInventory : MonoBehaviour
 		TryPickupObject();
 		
 		HandleInventoryInput();
-
-
 	}
 
 	#region Pickup system
