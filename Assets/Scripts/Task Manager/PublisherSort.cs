@@ -12,7 +12,7 @@ public class SortEvent : UnityEvent<int>
 public class PublisherSort : MonoBehaviour
 {
     [SerializeField] private List<string> _requriedTags;
-    private List<string> _collectedTags;
+    [SerializeField] private List<string> _collectedTags;
     public SortEvent _sortEvent;   
     private void RequriedPartCollected(string Tag)
     {

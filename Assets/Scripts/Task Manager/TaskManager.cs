@@ -10,14 +10,15 @@ public class TaskManager : MonoBehaviour
     [SerializeField] private Transform _taskPanel;
 
     [Header("TasksPublishers")]
-    [SerializeField] private PublisherSort _publisherSort;  
+    [SerializeField] private PublisherSort _publisherSort;
+    [SerializeField] public PublisherSortPlatform _publisherSortPlatform; 
 
 
     [SerializeField] private List<TextMeshProUGUI> _curTaskTexts;
     public string[] Tasks;
     private void Start()
     {
-        SetTask(Random.Range(0, Tasks.Length));
+        SetTask(Random.Range(0, Tasks.Length));      
     }
     private void SetTask(int taskIndex)
     {
@@ -26,6 +27,9 @@ public class TaskManager : MonoBehaviour
         {
             case 0:
                 _publisherSort._sortEvent.AddListener(OnEvent);
+                break;
+            case 1:
+                _publisherSortPlatform.SortEvent.AddListener(OnEvent);
                 break;
         }
         string task = Tasks[taskIndex];
