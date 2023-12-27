@@ -40,7 +40,6 @@ public class GarageDoor : MonoBehaviour
 
 	[field: SerializeField] public bool IsKeyNeeded { get; private set; } = true;
 
-	[SerializeField] private KeyCode _doorOpenKey = KeyCode.E;
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
 
 
@@ -50,6 +49,11 @@ public class GarageDoor : MonoBehaviour
 
 	private void Start()
 	{
+		PlayerHandler.Instance.KeyBinds[InputType.Interact].OnKeyDown += OpenDoorByKey;
+
+		PlayerHandler.Instance.KeyBinds[InputType.Drag].OnKeyDown += StartRotateDoor;
+		PlayerHandler.Instance.KeyBinds[InputType.Drag].OnKeyUp += StopRotateDoor;
+
 		_defaultDoorYPosition = _doorModel.position.y;
 
 		_playerClickedViewPoint = _doorModel.position;
@@ -64,12 +68,12 @@ public class GarageDoor : MonoBehaviour
 	{
 		TryRaiseDoor();
 
-		TryOpenDoorByKey();
+		ShowInteractionUI();
 	}
 
 	#region Key open
 
-	private void TryOpenDoorByKey()
+	private void ShowInteractionUI()
 	{
 		if (!IsKeyNeeded || !IsPlayerInInteractionZone())
 		{
@@ -84,8 +88,11 @@ public class GarageDoor : MonoBehaviour
 
 		for (int i = 0; i < _interactionButtonUI.Length; i++)
 			_interactionButtonUI[i].transform.rotation = Quaternion.LookRotation(_interactionButtonUI[i].transform.position - _playerCamera.transform.position);
+	}
 
-		if (Input.GetKeyDown(_doorOpenKey))
+	private void OpenDoorByKey()
+	{
+		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
 		{
 			if (PlayerInventory.Instance.TryGetCurrentItem(out GameObject item) && item.TryGetComponent(out Key key))
 			{
@@ -121,26 +128,8 @@ public class GarageDoor : MonoBehaviour
 			return;
 		}
 
-		if (Input.GetKeyDown(KeyCode.Mouse0))
-		{
-			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
-				_isDoorMoving = true;
-		}
-
 		if (_isDoorMoving)
-		{
-			if (Input.GetKeyUp(KeyCode.Mouse0))
-			{
-				if (_doorModel.position.y == _defaultDoorYPosition)
-				{
-					//play fully closed door sound
-				}
-
-				_isDoorMoving = false;
-			}
-		
-			_playerClickedViewPoint = _playerCamera.transform.position + _playerCamera.transform.forward * _doorDragingDistance;
-		}
+			_playerClickedViewPoint = _playerCamera.transform.position + _playerCamera.transform.forward * _doorDragingDistance;	
 
 		if (_isDoorMoving) //the code below must work only if door moving 
 		{
@@ -150,6 +139,34 @@ public class GarageDoor : MonoBehaviour
 
 			_doorModel.position = new(_doorModel.position.x, _doorPosition, _doorModel.position.z);
 		}
+	}
+
+	private void StartRotateDoor()
+	{
+		if (_isClosed || !IsPlayerInInteractionZone())
+		{
+			_isDoorMoving = false;
+
+			_playerClickedViewPoint = _doorModel.position;
+
+			return;
+		}
+
+		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
+			_isDoorMoving = true;
+	}
+
+	private void StopRotateDoor()
+	{
+		if (!_isDoorMoving)
+			return;
+
+		if (_doorModel.position.y == _defaultDoorYPosition)
+		{
+			//play fully closed door sound
+		}
+
+		_isDoorMoving = false;
 	}
 
 	#endregion

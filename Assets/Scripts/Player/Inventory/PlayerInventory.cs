@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,20 +48,21 @@ public class PlayerInventory : MonoBehaviour
 
 	void Start()
     {
-		Inventory = new(_inventorySlotsAmount);     
+		Inventory = new(_inventorySlotsAmount);
+
+		PlayerHandler.Instance.KeyBinds[InputType.Drop].OnKeyDown += DropItem;
+		PlayerHandler.Instance.KeyBinds[InputType.Interact].OnKeyDown += TryPickupObject;
 	}
 
     private void Update()
     {
-		TryPickupObject();
-		
 		HandleInventoryInput();
 	}
 
 	#region Pickup system
-	public void TryPickupObject() //make interactable
+	public void TryPickupObject() 
     {
-		if (Input.GetKeyDown(PickupKey) && Inventory.Count < _inventorySlotsAmount)
+		if (Inventory.Count < _inventorySlotsAmount)
 		{
 			if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
 			{
@@ -71,30 +73,10 @@ public class PlayerInventory : MonoBehaviour
 				pickable.PickUpItem();
 
 				SetPickedItem();
-			}	
+
+				AddItem(_currentObjectTransform.gameObject);
+			}
 		}
-
-		if (_currentObjectTransform) //IsEquipped
-		{
-			if (Input.GetKeyDown(DropKey))
-				DropItem();		
-		}
-
-		////interactable version >>>
-
-		//if (Inventory.Count >= _inventorySlotsAmount)
-		//	return;
-
-		//if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
-		//{
-		//	_currentObjectTransform = hit.transform;
-		//	_currentObjectRigidbody = hit.rigidbody;
-		//	_currentObjectCollider = hit.collider;
-
-		//	pickable.PickUpItem();
-
-		//	SetPickedItem();
-		//}
 	}
 
 	public void DropItem()
@@ -135,8 +117,6 @@ public class PlayerInventory : MonoBehaviour
 
 		_currentObjectTransform.position = _playerHand.position;
 		_currentObjectTransform.rotation = _playerHand.rotation;
-
-		AddItem(_currentObjectTransform.gameObject);
 	}
 
 	#endregion
@@ -158,24 +138,12 @@ public class PlayerInventory : MonoBehaviour
 
 	private void HandleInventoryInput()
 	{
-		if (Input.GetKeyDown(KeyCode.Alpha1) && Inventory.Count > 0)
-		{
-			_currentSlotIndex = 0;
-
-			ChangeSelectedSlot();
-		}
-		else if (Input.GetKeyDown(KeyCode.Alpha2) && Inventory.Count > 1)
-		{
-			_currentSlotIndex = 1;
-
-			ChangeSelectedSlot();
-		}
-		else if (Input.GetKeyDown(KeyCode.Alpha3) && Inventory.Count > 2)
-		{
-			_currentSlotIndex = 2;
-
-			ChangeSelectedSlot();
-		}
+		if (Input.GetKeyDown(KeyCode.Alpha1)) //if possible create it by using normal input system
+			AlphaInventorySlotChange(1);	
+		else if (Input.GetKeyDown(KeyCode.Alpha2))
+			AlphaInventorySlotChange(2);	
+		else if (Input.GetKeyDown(KeyCode.Alpha3))
+			AlphaInventorySlotChange(3);	
 
 		if (Inventory.Count > 0)
 		{
@@ -198,6 +166,18 @@ public class PlayerInventory : MonoBehaviour
 		}
 	}
 
+	private void AlphaInventorySlotChange(int keyCodeNumber)
+	{
+		keyCodeNumber--;
+
+		if (Inventory.Count <= keyCodeNumber)
+			return;
+
+		_currentSlotIndex = keyCodeNumber;
+
+		ChangeSelectedSlot();
+	}
+
 	private void AddItem(GameObject item)
 	{
 		Inventory.Add(item);
@@ -206,8 +186,10 @@ public class PlayerInventory : MonoBehaviour
 
 		Inventory[_currentSlotIndex].SetActive(false);
 
-		if (Inventory.Count == 1 || _changeItemWhenPickup)
-			ChangeSelectedSlot(); 
+		if (Inventory.Count != 1 && !_changeItemWhenPickup)
+			_currentSlotIndex--;	
+
+		ChangeSelectedSlot();
 	}
 
 	private void RemoveItem()
@@ -237,7 +219,7 @@ public class PlayerInventory : MonoBehaviour
 			Inventory[_currentSlotIndex].SetActive(true);
 
 		_currentObjectTransform = Inventory[_currentSlotIndex].transform;
-
+		
 		Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectRigidbody);
 
 		Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectCollider);
