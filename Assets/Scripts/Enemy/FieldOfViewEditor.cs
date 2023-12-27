@@ -39,7 +39,7 @@ public class FieldOfViewEditor : Editor
 		{
 			Handles.color = Color.green;
 			
-			Handles.DrawLine(fieldOfView.transform.position, fieldOfView.PlayerTransform.position);
+			Handles.DrawLine(fieldOfView.transform.position, fieldOfView.TargetTransform.position);
 		}
 	}
 

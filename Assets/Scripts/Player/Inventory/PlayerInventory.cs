@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -5,9 +6,9 @@ public class PlayerInventory : MonoBehaviour
 {
     public static PlayerInventory Instance { get; private set; }
 
-    #region Pickup fields 
+	#region Pickup fields 
 
-    [SerializeField] private LayerMask _pickupLayer;
+	[SerializeField] private LayerMask _pickupLayer;
 
     [field: SerializeField] public KeyCode PickupKey { get; set; } = KeyCode.E;
     [field: SerializeField] public KeyCode DropKey { get; set; } = KeyCode.G;
@@ -15,249 +16,214 @@ public class PlayerInventory : MonoBehaviour
     [Header("Values")]
     [SerializeField] private float _pickupRange = 3f;
     [SerializeField] private float _dropUpForce = 2f;
-    [SerializeField] private float _dropForce = 1f;
+	[SerializeField] private float _dropForce = 1f;
 
-    [SerializeField] private bool _changeItemWhenPickup = false;
+	[SerializeField] private bool _changeItemWhenPickup = false;
 
-    [Header("Objects")]
+	[Header("Objects")]
     [SerializeField] private Transform _playerHand;
     [SerializeField] private Transform _playerCamera;
 
-    private Transform _currentObjectTransform;
-    private Rigidbody _currentObjectRigidbody;
+	private Transform _currentObjectTransform;
+	private Rigidbody _currentObjectRigidbody;
     private Collider _currentObjectCollider;
 
-    #endregion
+	#endregion
 
-    #region Inventory fields
+	#region Inventory fields
 
-    [SerializeField][Range(1, 10)] private int _inventorySlotsAmount = 3;
+	[SerializeField][Range(1, 10)] private int _inventorySlotsAmount = 3;	
 
-    private int _currentSlotIndex = -1;
+	private int _currentSlotIndex = -1;
 
-    private List<GameObject> Inventory;
+	private List<GameObject> Inventory;
 
-    #endregion
+	#endregion
 
-    private void Awake()
+	private void Awake()
+	{
+		if (Instance == null)
+			Instance = this;
+	}
+
+	void Start()
     {
-        if (Instance == null)
-            Instance = this;
-    }
+		Inventory = new(_inventorySlotsAmount);
 
-    void Start()
-    {
-        Inventory = new(_inventorySlotsAmount);
-    }
+		PlayerHandler.Instance.KeyBinds[InputType.Drop].OnKeyDown += DropItem;
+		PlayerHandler.Instance.KeyBinds[InputType.Interact].OnKeyDown += TryPickupObject;
+	}
 
     private void Update()
     {
-        TryPickupObject();
+		HandleInventoryInput();
+	}
 
-        HandleInventoryInput();
-
-        if (Input.GetKeyDown(KeyCode.F))
-        {    
-            if (PlayerInventory.Instance.TryGetCurrentItem(out GameObject item) && 
-                item.TryGetComponent(out IUsable usable))
-            {             
-                usable.Use();
-            }          
-        }
-    }
-
-    #region Pickup system
-    public void TryPickupObject() //make interactable
+	#region Pickup system
+	public void TryPickupObject() 
     {
-        if (Input.GetKeyDown(PickupKey) && Inventory.Count < _inventorySlotsAmount)
-        {
-            if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
-            {
-                _currentObjectTransform = hit.transform;
-                _currentObjectRigidbody = hit.rigidbody;
-                _currentObjectCollider = hit.collider;
+		if (Inventory.Count < _inventorySlotsAmount)
+		{
+			if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
+			{
+				_currentObjectTransform = hit.transform;
+				_currentObjectRigidbody = hit.rigidbody;
+				_currentObjectCollider = hit.collider;
 
-                pickable.PickUpItem();
+				pickable.PickUpItem();
 
-                SetPickedItem();
-            }
-        }
+				SetPickedItem();
 
-        if (_currentObjectTransform) //IsEquipped
-        {
-            if (Input.GetKeyDown(DropKey))
-            {
-                if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-                    pickable.DropItem();
+				AddItem(_currentObjectTransform.gameObject);
+			}
+		}
+	}
 
-                DropItem();
-            }
-        }
+	public void DropItem()
+	{
+		if (!_currentObjectTransform)
+			return;	
 
+		_currentObjectTransform.gameObject.SetActive(true);
 
+		if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
+			pickable.DropItem();
 
-        ////interactable version >>>
+		_currentObjectRigidbody.isKinematic = false;
+		_currentObjectRigidbody.useGravity = true;
 
-        //if (Inventory.Count >= _inventorySlotsAmount)
-        //	return;
+		_currentObjectTransform.SetParent(null);
 
-        //if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
-        //{
-        //	_currentObjectTransform = hit.transform;
-        //	_currentObjectRigidbody = hit.rigidbody;
-        //	_currentObjectCollider = hit.collider;
+		_currentObjectRigidbody.AddForce(_playerCamera.forward * _dropForce, ForceMode.Impulse);
+		_currentObjectRigidbody.AddForce(_playerCamera.up * _dropUpForce, ForceMode.Impulse);	
 
-        //	pickable.PickUpItem();
+		_currentObjectTransform = null;
+		_currentObjectRigidbody = null;
+		
+		_currentObjectCollider.enabled = true;
+		_currentObjectCollider = null;
 
-        //	SetPickedItem();
-        //}
-    }
+		RemoveItem();
+	}
 
-    public void DropItem()
-    {
-        if (!_currentObjectTransform)
-            return;
+	private void SetPickedItem()
+	{
+		_currentObjectTransform.SetParent(_playerHand);
 
-        if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-            pickable.DropItem();
+		_currentObjectRigidbody.isKinematic = true;
+		_currentObjectRigidbody.useGravity = false;
 
-        _currentObjectTransform.gameObject.SetActive(true);
+		_currentObjectCollider.enabled = false;
 
-        _currentObjectRigidbody.isKinematic = false;
-        _currentObjectRigidbody.useGravity = true;
+		_currentObjectTransform.position = _playerHand.position;
+		_currentObjectTransform.rotation = _playerHand.rotation;
+	}
 
-        _currentObjectTransform.SetParent(null);
+	#endregion
 
-        _currentObjectRigidbody.AddForce(_playerCamera.forward * _dropForce, ForceMode.Impulse);
-        _currentObjectRigidbody.AddForce(_playerCamera.up * _dropUpForce, ForceMode.Impulse);
+	#region Inventory system
 
-        _currentObjectTransform = null;
-        _currentObjectRigidbody = null;
+	public bool TryGetCurrentItem(out GameObject item)
+	{
+		if (_currentSlotIndex >= 0 && _currentSlotIndex < _inventorySlotsAmount)
+			item = Inventory[_currentSlotIndex];
+		else
+			item = null;
 
-        _currentObjectCollider.enabled = true;
-        _currentObjectCollider = null;
+		if (item)
+			return true;
 
-        RemoveItem();
-    }
+		return false;
+	}
 
-    private void SetPickedItem()
-    {
-        _currentObjectTransform.SetParent(_playerHand);
+	private void HandleInventoryInput()
+	{
+		if (Input.GetKeyDown(KeyCode.Alpha1)) //if possible create it by using normal input system
+			AlphaInventorySlotChange(1);	
+		else if (Input.GetKeyDown(KeyCode.Alpha2))
+			AlphaInventorySlotChange(2);	
+		else if (Input.GetKeyDown(KeyCode.Alpha3))
+			AlphaInventorySlotChange(3);	
 
-        _currentObjectRigidbody.isKinematic = true;
-        _currentObjectRigidbody.useGravity = false;
+		if (Inventory.Count > 0)
+		{
+			float scroll = -Input.GetAxis("Mouse ScrollWheel");
 
-        _currentObjectCollider.enabled = false;
+			if (scroll != 0)
+			{
+				if (scroll > 0)
+					_currentSlotIndex++;
+				else
+					_currentSlotIndex--;
 
-        _currentObjectTransform.position = _playerHand.position;
-        _currentObjectTransform.rotation = _playerHand.rotation;
+				if (_currentSlotIndex < 0)
+					_currentSlotIndex = Inventory.Count - 1;
+				else if (_currentSlotIndex > Inventory.Count - 1)
+					_currentSlotIndex = 0;
 
-        AddItem(_currentObjectTransform.gameObject);
-    }
+				ChangeSelectedSlot();
+			}		
+		}
+	}
 
-    #endregion
+	private void AlphaInventorySlotChange(int keyCodeNumber)
+	{
+		keyCodeNumber--;
 
-    #region Inventory system
+		if (Inventory.Count <= keyCodeNumber)
+			return;
 
-    public bool TryGetCurrentItem(out GameObject item)
-    {
-        if (_currentSlotIndex >= 0 && _currentSlotIndex < _inventorySlotsAmount)
-            item = Inventory[_currentSlotIndex];
-        else
-            item = null;
+		_currentSlotIndex = keyCodeNumber;
 
-        if (item)
-            return true;
+		ChangeSelectedSlot();
+	}
 
-        return false;
-    }
+	private void AddItem(GameObject item)
+	{
+		Inventory.Add(item);
 
-    private void HandleInventoryInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1) && Inventory.Count > 0)
-        {
-            _currentSlotIndex = 0;
+		_currentSlotIndex++;
 
-            ChangeSelectedSlot();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2) && Inventory.Count > 1)
-        {
-            _currentSlotIndex = 1;
+		Inventory[_currentSlotIndex].SetActive(false);
 
-            ChangeSelectedSlot();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3) && Inventory.Count > 2)
-        {
-            _currentSlotIndex = 2;
+		if (Inventory.Count != 1 && !_changeItemWhenPickup)
+			_currentSlotIndex--;	
 
-            ChangeSelectedSlot();
-        }
+		ChangeSelectedSlot();
+	}
 
-        if (Inventory.Count > 0)
-        {
-            float scroll = -Input.GetAxis("Mouse ScrollWheel");
+	private void RemoveItem()
+	{
+		Inventory.RemoveAt(_currentSlotIndex);
 
-            if (scroll != 0)
-            {
-                if (scroll > 0)
-                    _currentSlotIndex++;
-                else
-                    _currentSlotIndex--;
+		if (_currentSlotIndex == 0)
+			_currentSlotIndex = Inventory.Count - 1;
+		else if (_currentSlotIndex > 0)
+			_currentSlotIndex--;
 
-                if (_currentSlotIndex < 0)
-                    _currentSlotIndex = Inventory.Count - 1;
-                else if (_currentSlotIndex > Inventory.Count - 1)
-                    _currentSlotIndex = 0;
+		ChangeSelectedSlot();
+	}
 
-                ChangeSelectedSlot();
-            }
-        }
-    }
+	private void ChangeSelectedSlot()
+	{
+		if (Inventory.Count <= 0)
+			return;
 
-    private void AddItem(GameObject item)
-    {
-        Inventory.Add(item);
+		foreach (GameObject item in Inventory)
+		{
+			if (item)
+				item.SetActive(false);
+		}      
 
-        _currentSlotIndex++;
+		if (Inventory[_currentSlotIndex])
+			Inventory[_currentSlotIndex].SetActive(true);
 
-        Inventory[_currentSlotIndex].SetActive(false);
+		_currentObjectTransform = Inventory[_currentSlotIndex].transform;
+		
+		Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectRigidbody);
 
-        if (Inventory.Count == 1 || _changeItemWhenPickup)
-            ChangeSelectedSlot();
-    }
+		Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectCollider);
+	}
 
-    private void RemoveItem()
-    {
-        Inventory.RemoveAt(_currentSlotIndex);
-
-        if (_currentSlotIndex == 0)
-            _currentSlotIndex = Inventory.Count - 1;
-        else if (_currentSlotIndex > 0)
-            _currentSlotIndex--;
-
-        ChangeSelectedSlot();
-    }
-
-    private void ChangeSelectedSlot()
-    {
-        if (Inventory.Count <= 0)
-            return;
-
-        foreach (GameObject item in Inventory)
-        {
-            if (item)
-                item.SetActive(false);
-        }
-
-        if (Inventory[_currentSlotIndex])
-            Inventory[_currentSlotIndex].SetActive(true);
-
-        _currentObjectTransform = Inventory[_currentSlotIndex].transform;
-
-        Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectRigidbody);
-
-        Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectCollider);
-    }
-
-    #endregion
+	#endregion 
 }
