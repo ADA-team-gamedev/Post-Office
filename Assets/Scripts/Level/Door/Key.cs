@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public enum DoorKeyTypes
@@ -9,7 +10,6 @@ public enum DoorKeyTypes
 	Kitchen,
 }
 
-[RequireComponent(typeof(BoxCollider))] //set it triggered
 public class Key : MonoBehaviour, IPickable
 {
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }

@@ -178,15 +178,14 @@ public class PlayerMovement : MonoBehaviour
 		CrouchHandleInput();
 
 		CheckGround();
-		
+
 		if (_isHeadBobEnabled)
-			HeadBob();	
+			HeadBob();
 	}
 
 	private void FixedUpdate()
 	{
-		if (CanPlayerMove)
-			_rb.AddForce(_velocityChange, ForceMode.VelocityChange);
+		_rb.AddForce(_velocityChange, ForceMode.VelocityChange);
 	}
 
 	#region Handles
@@ -195,7 +194,7 @@ public class PlayerMovement : MonoBehaviour
 	{
 		if (CanCameraMove)
 		{
-			_yaw = transform.localEulerAngles.y + +Input.GetAxis("Mouse X") * _cameraSensitivity;
+			_yaw = transform.localEulerAngles.y + Input.GetAxis("Mouse X") * _cameraSensitivity;
 
 			if (!_isCameraInverted)
 				_pitch -= _cameraSensitivity * Input.GetAxis("Mouse Y");
@@ -262,7 +261,7 @@ public class PlayerMovement : MonoBehaviour
 
 				if (_isCrouched)
 					Crouch();
-
+				
 				if (_hideSprintBarWhenFull && !_isUnlimitedSprint)
 					_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
 			}	

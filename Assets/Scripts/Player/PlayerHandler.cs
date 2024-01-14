@@ -45,9 +45,9 @@ public class KeyBind
 {
 	public KeyCode KeyCode;
 
-	public Action OnKeyDown;
-	public Action OnKeyHold;
-	public Action OnKeyUp;
+	public event Action OnKeyDown;
+	public event Action OnKeyHold;
+	public event Action OnKeyUp;
 
 	public KeyBind(KeyCode keycode)
 	{

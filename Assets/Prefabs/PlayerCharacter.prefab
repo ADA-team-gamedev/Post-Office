@@ -211,9 +211,10 @@ GameObject:
   - component: {fileID: 4125420444716701817}
   - component: {fileID: 7386348978866902956}
   - component: {fileID: 2522685010216670029}
-  - component: {fileID: 5310181393634417955}
   - component: {fileID: 3704652563438788470}
   - component: {fileID: 6769344906170867826}
+  - component: {fileID: 1142724495835145722}
+  - component: {fileID: 5809742044504164802}
   m_Layer: 8
   m_Name: PlayerCharacter
   m_TagString: Player
@@ -235,7 +236,7 @@ Transform:
   m_Children:
   - {fileID: 7057136121975270745}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!136 &7386348978866902956
 CapsuleCollider:
@@ -287,58 +288,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &5310181393634417955
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4413249738172113739}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5792ad55d02f2943a650be1984bbe5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _playerCamera: {fileID: 7791015770491937123}
-  _cameraFOV: 60
-  CanCameraMove: 1
-  _isCameraInverted: 0
-  _cameraSensitivity: 1
-  _maxCameraLookAngle: 80
-  _isLockCursor: 1
-  _isCrosshair: 1
-  _crosshairImage: {fileID: 0}
-  _crosshairColor: {r: 1, g: 1, b: 1, a: 1}
-  _isZoomEnabled: 0
-  _isNeededHoldToZoom: 1
-  _zoomKey: 324
-  _zoomFOV: 30
-  _zoomStepTime: 5
-  CanPlayerMove: 1
-  _playerWalkSpeed: 4
-  _maxVelocityChange: 10
-  _isSprintEnabled: 1
-  _isUnlimitedSprint: 0
-  _sprintKey: 304
-  _sprintSpeed: 6
-  _sprintDuration: 5
-  _sprintCooldown: 0.5
-  _sprintFOV: 70
-  _sprintFOVStepTime: 10
-  _hideSprintBarWhenFull: 1
-  _sprintBar: {fileID: 0}
-  _sprintBarCanvasGroup: {fileID: 0}
-  _isCrouchEnabled: 1
-  _isNeedHoldToCrouch: 1
-  _crouchKey: 306
-  _crouchPlayerYCoefficient: 0.8
-  _crouchSpeedReduction: 0.5
-  _maxCheckDistanceAbovePlayer: 0.9
-  _checkerRadiusPart: 1
-  _isHeadBobEnabled: 1
-  _joint: {fileID: 7057136121975270745}
-  _bobSpeed: 10
-  _bobAmount: {x: 0, y: 0.05, z: 0}
 --- !u!114 &3704652563438788470
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -379,3 +328,67 @@ MonoBehaviour:
   _playerHand: {fileID: 6357360379663284118}
   _playerCamera: {fileID: 1086076573438443106}
   _inventorySlotsAmount: 3
+--- !u!114 &1142724495835145722
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4413249738172113739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01e8979ec8f37a041b8f85ca8ca22592, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &5809742044504164802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4413249738172113739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5792ad55d02f2943a650be1984bbe5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerCamera: {fileID: 7791015770491937123}
+  _cameraFOV: 60
+  CanCameraMove: 1
+  _isCameraInverted: 0
+  _cameraSensitivity: 1
+  _maxCameraLookAngle: 60
+  _isLockCursor: 1
+  _isCrosshair: 1
+  _crosshairImage: {fileID: 0}
+  _crosshairColor: {r: 1, g: 1, b: 1, a: 1}
+  _isZoomEnabled: 1
+  _isNeededHoldToZoom: 1
+  _zoomKey: 324
+  _zoomFOV: 30
+  _zoomStepTime: 5
+  CanPlayerMove: 1
+  _playerWalkSpeed: 5
+  _maxVelocityChange: 10
+  _isSprintEnabled: 1
+  _isUnlimitedSprint: 0
+  _sprintKey: 304
+  _sprintSpeed: 10
+  _sprintDuration: 5
+  _sprintCooldown: 0.5
+  _sprintFOV: 80
+  _sprintFOVStepTime: 10
+  _hideSprintBarWhenFull: 1
+  _sprintBar: {fileID: 0}
+  _sprintBarCanvasGroup: {fileID: 0}
+  _isCrouchEnabled: 1
+  _isNeedHoldToCrouch: 1
+  _crouchKey: 306
+  _crouchPlayerYCoefficient: 0.8
+  _crouchSpeedReduction: 0.5
+  _maxCheckDistanceAbovePlayer: 0.9
+  _checkerRadiusPart: 1
+  _isHeadBobEnabled: 1
+  _joint: {fileID: 7057136121975270745}
+  _bobSpeed: 10
+  _bobAmount: {x: 0, y: 0.05, z: 0}

@@ -46,7 +46,7 @@ public class PlayerInventory : MonoBehaviour
 			Instance = this;
 	}
 
-	void Start()
+	private void Start()
     {
 		Inventory = new(_inventorySlotsAmount);
 
