@@ -1,4 +1,3 @@
-using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -12,6 +11,8 @@ public enum MovementState
 }
 public class PlayerMovementHandler : MonoBehaviour
 {
+	#region Basic movement
+
 	[Header("Movement")]
 
 	[SerializeField] private float _playerWalkSpeed = 7f;
@@ -28,6 +29,8 @@ public class PlayerMovementHandler : MonoBehaviour
 	private float _playerSpeed;
 
 	public MovementState MovementState { get; private set; } = MovementState.Idle;
+
+	#endregion
 
 	#region Sprint 
 
@@ -60,6 +63,7 @@ public class PlayerMovementHandler : MonoBehaviour
 	private CapsuleCollider _playerCollider;
 
 	private bool _isPlayerStandUp = true;
+	private bool _isTryingToStandUp = false;
 
 	#endregion
 
@@ -122,7 +126,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 		Sprint();
 
-		if (!_isPlayerStandUp && CanPlayerStandUp() && MovementState != MovementState.Crouching)
+		if (_isTryingToStandUp)
 			Crouch();
 
 		if (HeadBobEnabled)
@@ -147,23 +151,23 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void Sprint()
 	{
-		if (MovementState == MovementState.Sprinting && _sprintRemaining > 0)
+		if (MovementState == MovementState.Sprinting && _sprintRemaining > 0f)
 		{
-			if (_sprintRemaining > 0f && !_isSprintCooldown)
+			if (!_isSprintCooldown)
 				_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
-			else if (_sprintRemaining == _sprintDuration)
-				_sprintBarCanvasGroup.alpha -= 3 * Time.deltaTime;
 
 			_sprintRemaining -= 1 * Time.deltaTime;
 			
 			if (_sprintRemaining <= 0)
 			{
-				MovementState = MovementState.Walking;
-				
 				_playerSpeed = _playerWalkSpeed;
 
 				_isSprintCooldown = true;			
 			}
+		}
+		else if (_sprintRemaining == _sprintDuration)
+		{
+			_sprintBarCanvasGroup.alpha -= 3 * Time.deltaTime;
 		}
 		else
 		{
@@ -187,16 +191,28 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void Crouch()
 	{
-		if (MovementState != MovementState.Crouching || !_isPlayerStandUp)
+		if (MovementState != MovementState.Crouching || _isTryingToStandUp)
 		{
 			if (!_isPlayerStandUp && CanPlayerStandUp())
 			{
 				_isPlayerStandUp = true;
 
+				_isTryingToStandUp = false;
+
 				_playerCollider.height = _originalPlayerColliderHeight;
 
-				if (MovementState == MovementState.Walking || MovementState == MovementState.Idle) //For moment when we can't stand up, but we moved with not walking speed(sprint, as an example)
-					_playerSpeed = _playerWalkSpeed;
+				_playerSpeed = _playerWalkSpeed;
+
+				if (MoveDirection == Vector2.zero)
+					MovementState = MovementState.Idle;
+				else if (_playerInput.Player.Sprint.IsPressed())
+				{
+					MovementState = MovementState.Sprinting;
+
+					_playerSpeed = _playerSprintSpeed;
+				}
+				else
+					MovementState = MovementState.Walking;
 			}
 
 			return;
@@ -273,13 +289,27 @@ public class PlayerMovementHandler : MonoBehaviour
 	private void OnMove(InputAction.CallbackContext context)
 	{
 		MoveDirection = context.action.ReadValue<Vector2>();
-
+		
 		if (context.performed && MoveDirection != Vector2.zero && MovementState == MovementState.Idle)
 		{
-			MovementState = MovementState.Walking;	
+			if (_playerInput.Player.Sprint.IsPressed())
+			{
+				_playerSpeed = _playerSprintSpeed;
+
+				MovementState = MovementState.Sprinting;
+			}
+			else
+				MovementState = MovementState.Walking;	
 		}
 		else if (context.canceled && MoveDirection == Vector2.zero)
 		{
+			if (MovementState == MovementState.Sprinting)
+			{
+				_playerSpeed = _playerWalkSpeed;
+
+				MovementState = MovementState.Idle;
+			}
+
 			if (MovementState != MovementState.Crouching)
 				MovementState = MovementState.Idle;
 		}
@@ -287,7 +317,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void OnSprint(InputAction.CallbackContext context)
 	{
-		if (context.performed)
+		if (context.performed && MovementState != MovementState.Idle && MovementState != MovementState.Crouching)
 		{
 			MovementState = MovementState.Sprinting;
 
@@ -295,9 +325,12 @@ public class PlayerMovementHandler : MonoBehaviour
 		}
 		else if (context.canceled)
 		{
-			MovementState = MovementState.Walking;
-
 			_playerSpeed = _playerWalkSpeed;
+
+			if (MoveDirection == Vector2.zero)
+				MovementState = MovementState.Idle;
+			else
+				MovementState = MovementState.Walking;
 		}
 	}
 
@@ -309,11 +342,16 @@ public class PlayerMovementHandler : MonoBehaviour
 
 			_playerSpeed = _playerCrouchSpeed;
 		}
-		else if (context.canceled && CanPlayerStandUp())
+		else if (context.canceled)
 		{
-			MovementState = MovementState.Idle;
+			_isTryingToStandUp = true;
 
-			_playerSpeed = _playerWalkSpeed;
+			if (CanPlayerStandUp())
+			{
+				MovementState = MovementState.Idle;
+
+				_playerSpeed = _playerWalkSpeed;
+			}	
 		}
 
 		Crouch();
