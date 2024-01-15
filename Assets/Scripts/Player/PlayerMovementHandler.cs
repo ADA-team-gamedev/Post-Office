@@ -19,14 +19,15 @@ public class PlayerMovementHandler : MonoBehaviour
 	[SerializeField] private float _groundDrag = 1f;
 
 	[SerializeField] private LayerMask _groundMask;
+	[SerializeField] private LayerMask _obstacleMask;
 
-	private Vector2 _moveDirection;
+	public Vector2 MoveDirection { get; private set; }
 
 	private Vector3 _velocityChange;
 
 	private float _playerSpeed;
 
-	private MovementState _movementState = MovementState.Idle;
+	public MovementState MovementState { get; private set; } = MovementState.Idle;
 
 	#region Sprint 
 
@@ -54,26 +55,27 @@ public class PlayerMovementHandler : MonoBehaviour
 	[SerializeField][Range(0.5f, 1f)] private float _crouchPlayerHeightPercent = 0.8f;
 	[SerializeField] private float _playerCrouchSpeed = 5;
 
-	//[SerializeField][Range(0.5f, 1f)] private float _maxCheckDistanceAbovePlayer = 0.9f;
-	//[SerializeField][Range(0.5f, 1f)] private float _checkerRadiusPart = 1f;
-
 	private float _originalPlayerColliderHeight;
 
 	private CapsuleCollider _playerCollider;
+
+	private bool _isPlayerStandUp = true;
 
 	#endregion
 
 	#region Head Bob
 
-	//[Header("Head bob")]
+	[field: Header("Head bob")]
 
-	//[SerializeField] private bool _isHeadBobEnabled = true;
-	//[SerializeField] private Transform _joint;
-	//[SerializeField] private float _bobSpeed = 10f;
-	//[SerializeField] private Vector3 _bobAmount = new(0f, 0.05f, 0f);
+	[field: SerializeField] public bool HeadBobEnabled { get; private set; } = true;
 
-	//private Vector3 _jointOriginalPosition;
-	//private float _timer = 0;
+	[SerializeField] private float _bobSpeed = 10f;
+	[SerializeField] private Vector3 _bobAmount = new(0f, 0.05f, 0f);
+
+	[SerializeField] private Transform _joint;
+
+	private Vector3 _jointOriginalPosition;
+	private float _timer = 0;
 
 	#endregion
 
@@ -90,6 +92,8 @@ public class PlayerMovementHandler : MonoBehaviour
 		_sprintCooldownReset = _sprintCooldown;
 
 		_originalPlayerColliderHeight = _playerCollider.height;
+
+		_jointOriginalPosition = _joint.localPosition;
 
 		_playerInput = new();
 
@@ -117,14 +121,20 @@ public class PlayerMovementHandler : MonoBehaviour
 		Move();
 
 		Sprint();
+
+		if (!_isPlayerStandUp && CanPlayerStandUp() && MovementState != MovementState.Crouching)
+			Crouch();
+
+		if (HeadBobEnabled)
+			HeadBob();
 	}
 
 	private void Move()
 	{
-		if (_movementState == MovementState.Idle)
+		if (MovementState == MovementState.Idle)
 			return;
 
-		Vector3 targetVelocity = new Vector3(_moveDirection.x, 0, _moveDirection.y) * _playerSpeed;
+		Vector3 targetVelocity = new Vector3(MoveDirection.x, 0, MoveDirection.y) * _playerSpeed;
 
 		targetVelocity = transform.TransformDirection(targetVelocity);
 
@@ -135,23 +145,9 @@ public class PlayerMovementHandler : MonoBehaviour
 		_rb.AddForce(_velocityChange);
 	}
 
-	private void Crouch()
-	{
-		if (_movementState != MovementState.Crouching)
-		{
-			_playerCollider.height = _originalPlayerColliderHeight;
-
-			return;
-		}
-
-		_playerCollider.height *= _crouchPlayerHeightPercent;
-
-		_rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);  
-	}
-
 	private void Sprint()
 	{
-		if (_movementState == MovementState.Sprinting)
+		if (MovementState == MovementState.Sprinting && _sprintRemaining > 0)
 		{
 			if (_sprintRemaining > 0f && !_isSprintCooldown)
 				_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
@@ -161,10 +157,18 @@ public class PlayerMovementHandler : MonoBehaviour
 			_sprintRemaining -= 1 * Time.deltaTime;
 			
 			if (_sprintRemaining <= 0)
+			{
+				MovementState = MovementState.Walking;
+				
+				_playerSpeed = _playerWalkSpeed;
+
 				_isSprintCooldown = true;			
+			}
 		}
 		else
+		{
 			_sprintRemaining = Mathf.Clamp(_sprintRemaining += 1 * Time.deltaTime, 0, _sprintDuration);	
+		}
 
 		if (_isSprintCooldown)
 		{
@@ -174,9 +178,81 @@ public class PlayerMovementHandler : MonoBehaviour
 				_isSprintCooldown = false;
 		}
 		else
+		{
 			_sprintCooldown = _sprintCooldownReset;
+		}
 
 		_sprintBar.value = _sprintRemaining / _sprintDuration;
+	}
+
+	private void Crouch()
+	{
+		if (MovementState != MovementState.Crouching || !_isPlayerStandUp)
+		{
+			if (!_isPlayerStandUp && CanPlayerStandUp())
+			{
+				_isPlayerStandUp = true;
+
+				_playerCollider.height = _originalPlayerColliderHeight;
+
+				if (MovementState == MovementState.Walking || MovementState == MovementState.Idle) //For moment when we can't stand up, but we moved with not walking speed(sprint, as an example)
+					_playerSpeed = _playerWalkSpeed;
+			}
+
+			return;
+		}
+
+		_isPlayerStandUp = false;
+
+		float crouchPlayerHeight = _originalPlayerColliderHeight * _crouchPlayerHeightPercent;
+
+		_playerCollider.height = crouchPlayerHeight;
+
+		_rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);  
+	}
+
+	private void HeadBob()
+	{
+		float x, y, z;
+
+		if (MovementState == MovementState.Idle || MoveDirection == Vector2.zero) // For moments, when we aren't moving, but anyway it's not idle state(crouch idle, as an example)
+		{
+			_timer = 0;
+
+			x = Mathf.Lerp(_joint.localPosition.x, _jointOriginalPosition.x, Time.deltaTime * _bobSpeed);
+			y = Mathf.Lerp(_joint.localPosition.y, _jointOriginalPosition.y, Time.deltaTime * _bobSpeed);
+			z = Mathf.Lerp(_joint.localPosition.z, _jointOriginalPosition.z, Time.deltaTime * _bobSpeed);
+
+			_joint.localPosition = new(x, y, z);
+
+			return;
+		}
+
+		float playerSpeedPercent = _playerSpeed / _playerWalkSpeed;
+
+		_timer += Time.deltaTime * _bobSpeed * playerSpeedPercent;
+
+		x = _jointOriginalPosition.x + Mathf.Sin(_timer) * _bobAmount.x;
+		y = _jointOriginalPosition.y + Mathf.Sin(_timer) * _bobAmount.y;
+		z = _jointOriginalPosition.z + Mathf.Sin(_timer) * _bobAmount.z;
+
+		_joint.localPosition = new Vector3(x, y, z);
+	}
+
+	#region Chekers
+
+	private bool CanPlayerStandUp()
+	{
+		Vector3 playerCurrentHeadPoint = new(transform.position.x, _playerCollider.height - _playerCollider.radius, transform.position.z);
+
+		Vector3 playerOriginalHeadPoint = new(transform.position.x, _originalPlayerColliderHeight - _playerCollider.radius, transform.position.z);
+
+		float maxDistance = Vector3.Distance(playerCurrentHeadPoint, playerOriginalHeadPoint);
+
+		if (Physics.SphereCast(playerCurrentHeadPoint, _playerCollider.radius, transform.transform.up, out RaycastHit _, maxDistance, _obstacleMask))
+			return false;	
+
+		return true;
 	}
 
 	private void CheckGround()
@@ -190,17 +266,52 @@ public class PlayerMovementHandler : MonoBehaviour
 		_rb.drag = isGrounded ? _groundDrag : 0;
 	}
 
+	#endregion 
+
+	#region Input entry points
+
+	private void OnMove(InputAction.CallbackContext context)
+	{
+		MoveDirection = context.action.ReadValue<Vector2>();
+
+		if (context.performed && MoveDirection != Vector2.zero && MovementState == MovementState.Idle)
+		{
+			MovementState = MovementState.Walking;	
+		}
+		else if (context.canceled && MoveDirection == Vector2.zero)
+		{
+			if (MovementState != MovementState.Crouching)
+				MovementState = MovementState.Idle;
+		}
+	}
+
+	private void OnSprint(InputAction.CallbackContext context)
+	{
+		if (context.performed)
+		{
+			MovementState = MovementState.Sprinting;
+
+			_playerSpeed = _playerSprintSpeed;
+		}
+		else if (context.canceled)
+		{
+			MovementState = MovementState.Walking;
+
+			_playerSpeed = _playerWalkSpeed;
+		}
+	}
+
 	private void OnCrouch(InputAction.CallbackContext context)
 	{
 		if (context.performed)
 		{
-			_movementState = MovementState.Crouching;
+			MovementState = MovementState.Crouching;
 
 			_playerSpeed = _playerCrouchSpeed;
 		}
-		else if (context.canceled)
+		else if (context.canceled && CanPlayerStandUp())
 		{
-			_movementState = MovementState.Walking;
+			MovementState = MovementState.Idle;
 
 			_playerSpeed = _playerWalkSpeed;
 		}
@@ -208,33 +319,7 @@ public class PlayerMovementHandler : MonoBehaviour
 		Crouch();
 	}
 
-	private void OnSprint(InputAction.CallbackContext context)
-	{
-		if (context.performed)
-		{
-			_movementState = MovementState.Sprinting;
-
-			_playerSpeed = _playerSprintSpeed;
-		}
-		else if (context.canceled)
-		{
-			_movementState = MovementState.Walking;
-
-			_playerSpeed = _playerWalkSpeed;
-		}
-	}
-
-	private void OnMove(InputAction.CallbackContext context)
-	{
-		_moveDirection = context.action.ReadValue<Vector2>();
-
-		if (context.performed)
-		{
-			_movementState = MovementState.Walking;
-		}
-		else if (context.canceled)
-			_movementState = MovementState.Idle;
-	}
+	#endregion
 
 	private void OnEnable()
 	{

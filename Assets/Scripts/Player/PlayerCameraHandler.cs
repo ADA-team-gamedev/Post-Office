@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -31,13 +28,11 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	#endregion
 
+	[SerializeField] private PlayerMovementHandler _playerMovement;
+
 	private PlayerInput _playerInput;
 
 	private Vector2 _lookDirection;
-
-	private bool _isSprinting = false;
-
-	private Vector2 _moveDirection;
 
 	private void Awake()
 	{
@@ -45,29 +40,13 @@ public class PlayerCameraHandler : MonoBehaviour
 
 		_playerInput.Player.Look.performed += OnLook;
 		_playerInput.Player.Look.canceled += OnLook;
-
-		_playerInput.Player.Sprint.performed += OnSprint;
-		_playerInput.Player.Sprint.canceled += OnSprint;
-
-		_playerInput.Player.Move.performed += OnMove;
-		_playerInput.Player.Move.canceled += OnMove;
 	}
 
 	private void Start()
 	{
 		Cursor.lockState = CursorLockMode.Locked;
 
-		_playerCamera.fieldOfView = _isSprinting ? _sprintFOV : _deffaultFOV;
-	}
-
-	private void OnEnable()
-	{
-		_playerInput.Enable();
-	}
-
-	private void OnDisable()
-	{
-		_playerInput.Disable();
+		_playerCamera.fieldOfView = _playerMovement.MovementState == MovementState.Sprinting ? _sprintFOV : _deffaultFOV;
 	}
 
 	private void Update()
@@ -102,7 +81,7 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	private void ChangeFOV()
 	{
-		if (!_isSprinting || _moveDirection == Vector2.zero)
+		if (_playerMovement.MovementState != MovementState.Sprinting || _playerMovement.MoveDirection == Vector2.zero)
 		{
 			_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _deffaultFOV, _sprintFOVStepTime * Time.deltaTime);
 
@@ -112,17 +91,14 @@ public class PlayerCameraHandler : MonoBehaviour
 		_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _sprintFOV, _sprintFOVStepTime * Time.deltaTime);
 	}
 
-	private void OnSprint(InputAction.CallbackContext context)
+	private void OnEnable()
 	{
-		if (context.performed)
-			_isSprinting = true;		
-		else if (context.canceled)
-			_isSprinting = false;	
+		_playerInput.Enable();
 	}
 
-	private void OnMove(InputAction.CallbackContext context)
+	private void OnDisable()
 	{
-		_moveDirection = _playerInput.Player.Move.ReadValue<Vector2>();
+		_playerInput.Disable();
 	}
 
 	private void OnValidate()
