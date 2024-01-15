@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class PauseScript : MonoBehaviour
 {
-    [SerializeField] private PlayerMovement _playerMovement;
+    //[SerializeField] private PlayerMovement _playerMovement;
     [SerializeField] private KeyCode _pauseKey;
     public GameObject PauseMenu, ExitWindow, SettingsWindow;
     
@@ -21,8 +21,8 @@ public class PauseScript : MonoBehaviour
             {
                 Time.timeScale = 0;
                 PauseMenu.SetActive(true);
-                _playerMovement.CanCameraMove = false;
-                _playerMovement.CanPlayerMove = false;
+                //_playerMovement.CanCameraMove = false;
+                //_playerMovement.CanPlayerMove = false;
                 Cursor.lockState = CursorLockMode.None;
             }
             else
@@ -38,8 +38,8 @@ public class PauseScript : MonoBehaviour
     {
         Time.timeScale = 1.0f;
         PauseMenu.SetActive(false);
-        _playerMovement.CanCameraMove = true;
-        _playerMovement.CanPlayerMove = true;
+        //_playerMovement.CanCameraMove = true;
+        //_playerMovement.CanPlayerMove = true;
         Cursor.lockState = CursorLockMode.Locked;
     }
 
