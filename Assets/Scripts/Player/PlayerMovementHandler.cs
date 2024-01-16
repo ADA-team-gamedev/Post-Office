@@ -162,7 +162,9 @@ public class PlayerMovementHandler : MonoBehaviour
 			{
 				_playerSpeed = _playerWalkSpeed;
 
-				_isSprintCooldown = true;			
+				_isSprintCooldown = true;
+
+				MovementState = MovementState.Walking;
 			}
 		}
 		else if (_sprintRemaining == _sprintDuration)
@@ -320,7 +322,7 @@ public class PlayerMovementHandler : MonoBehaviour
 		if (context.performed && MovementState != MovementState.Idle && MovementState != MovementState.Crouching)
 		{
 			MovementState = MovementState.Sprinting;
-
+			
 			_playerSpeed = _playerSprintSpeed;
 		}
 		else if (context.canceled)

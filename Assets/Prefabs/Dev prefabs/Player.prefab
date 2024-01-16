@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4617922322312773518}
   - component: {fileID: 4152361350249659197}
   - component: {fileID: 3256557322491942236}
-  - component: {fileID: 8128414580526248384}
+  - component: {fileID: 8533011177447955157}
   - component: {fileID: 49599496615779658}
   m_Layer: 8
   m_Name: Player
@@ -28,7 +28,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 457066223571937136}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -14.59, y: 1.287, z: 32.26}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -118,7 +118,7 @@ MonoBehaviour:
   _bobSpeed: 10
   _bobAmount: {x: 0, y: 0.05, z: 0}
   _joint: {fileID: 4796582343973759012}
---- !u!114 &8128414580526248384
+--- !u!114 &8533011177447955157
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -130,18 +130,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3bd5aa5e4a39294294876b170e504a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _pickupLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  <PickupKey>k__BackingField: 101
-  <DropKey>k__BackingField: 103
   _pickupRange: 3
   _dropUpForce: 2
   _dropForce: 1
   _changeItemWhenPickup: 0
-  _playerHand: {fileID: 0}
-  _playerCamera: {fileID: 0}
-  _inventorySlotsAmount: 3
+  _playerHand: {fileID: 4101414200311884438}
+  _playerCamera: {fileID: 8911315623381627940}
 --- !u!114 &49599496615779658
 MonoBehaviour:
   m_ObjectHideFlags: 0

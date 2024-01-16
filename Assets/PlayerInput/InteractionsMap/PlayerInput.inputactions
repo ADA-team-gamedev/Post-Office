@@ -24,6 +24,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "ScrollWheelY",
+                    "type": "Value",
+                    "id": "66b1a4ac-5e5b-420c-a558-81ef94fc13df",
+                    "expectedControlType": "Axis",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Interact",
                     "type": "Button",
                     "id": "a6a0d13a-f36c-4bc9-b9bf-acf01c278247",
@@ -54,6 +63,33 @@
                     "name": "Crouch",
                     "type": "Button",
                     "id": "9755774f-8efb-4196-9f9d-7abdae77a9fd",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Hotbar 1",
+                    "type": "Button",
+                    "id": "5172efa0-1d64-4ebf-bb22-3ad09ff41248",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Hotbar 2",
+                    "type": "Button",
+                    "id": "956f25fc-9653-4bc6-a846-b7f0daba5fc4",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Hotbar 3",
+                    "type": "Button",
+                    "id": "a219cbf6-713f-472e-9021-0ea1582195f8",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -201,6 +237,50 @@
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e5cb3cd4-90f5-4f1a-92d1-6527d1a43f4d",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "ScrollWheelY",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "88f26189-1aba-4606-a833-f4f1c48e31f5",
+                    "path": "<Keyboard>/3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Hotbar 3",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bcca3cad-2a91-444d-ab25-60d10aaf3683",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Hotbar 1",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fd1ecb54-e277-4da9-8079-e874c9514041",
+                    "path": "<Keyboard>/2",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Hotbar 2",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
