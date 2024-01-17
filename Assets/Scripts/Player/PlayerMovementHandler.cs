@@ -46,8 +46,9 @@ public class PlayerMovementHandler : MonoBehaviour
 	[SerializeField] private CanvasGroup _sprintBarCanvasGroup;
 
 	private float _sprintRemaining;
-	private bool _isSprintCooldown = false;
 	private float _sprintCooldownReset;
+
+	private bool _isSprintOnCooldown = false;
 
 	#endregion
 
@@ -151,9 +152,9 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void Sprint()
 	{
-		if (MovementState == MovementState.Sprinting && _sprintRemaining > 0f)
+		if (MovementState == MovementState.Sprinting && _sprintRemaining > 0f && !_isSprintOnCooldown)
 		{
-			if (!_isSprintCooldown)
+			if (!_isSprintOnCooldown)
 				_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
 
 			_sprintRemaining -= 1 * Time.deltaTime;
@@ -162,26 +163,27 @@ public class PlayerMovementHandler : MonoBehaviour
 			{
 				_playerSpeed = _playerWalkSpeed;
 
-				_isSprintCooldown = true;
+				_isSprintOnCooldown = true;
 
 				MovementState = MovementState.Walking;
 			}
-		}
-		else if (_sprintRemaining == _sprintDuration)
-		{
-			_sprintBarCanvasGroup.alpha -= 3 * Time.deltaTime;
 		}
 		else
 		{
 			_sprintRemaining = Mathf.Clamp(_sprintRemaining += 1 * Time.deltaTime, 0, _sprintDuration);	
 		}
 
-		if (_isSprintCooldown)
+		if (_sprintRemaining == _sprintDuration)
+		{
+			_sprintBarCanvasGroup.alpha -= 3 * Time.deltaTime;
+		}
+
+		if (_isSprintOnCooldown)
 		{
 			_sprintCooldown -= 1 * Time.deltaTime;
 
 			if (_sprintCooldown <= 0)
-				_isSprintCooldown = false;
+				_isSprintOnCooldown = false;
 		}
 		else
 		{
@@ -319,7 +321,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void OnSprint(InputAction.CallbackContext context)
 	{
-		if (context.performed && MovementState != MovementState.Idle && MovementState != MovementState.Crouching)
+		if (context.performed && MovementState != MovementState.Idle && MovementState != MovementState.Crouching && !_isSprintOnCooldown)
 		{
 			MovementState = MovementState.Sprinting;
 			
