@@ -38,7 +38,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	[SerializeField] private float _playerSprintSpeed = 12f;
 	[SerializeField] private float _sprintDuration = 5f;
-	[SerializeField] private float _sprintCooldown = 0.5f;
+	[SerializeField] private float _sprintCooldownDelay = 1f;
 
 	[Space(10)]
 
@@ -46,7 +46,7 @@ public class PlayerMovementHandler : MonoBehaviour
 	[SerializeField] private CanvasGroup _sprintBarCanvasGroup;
 
 	private float _sprintRemaining;
-	private float _sprintCooldownReset;
+	private float _sprintCooldown;
 
 	private bool _isSprintOnCooldown = false;
 
@@ -94,7 +94,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 		_sprintRemaining = _sprintDuration;
 
-		_sprintCooldownReset = _sprintCooldown;
+		_sprintCooldown = _sprintCooldownDelay;
 
 		_originalPlayerColliderHeight = _playerCollider.height;
 
@@ -152,45 +152,48 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void Sprint()
 	{
-		if (MovementState == MovementState.Sprinting && _sprintRemaining > 0f && !_isSprintOnCooldown)
-		{
-			if (!_isSprintOnCooldown)
-				_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
-
-			_sprintRemaining -= 1 * Time.deltaTime;
-			
-			if (_sprintRemaining <= 0)
-			{
-				_playerSpeed = _playerWalkSpeed;
-
-				_isSprintOnCooldown = true;
-
-				MovementState = MovementState.Walking;
-			}
-		}
-		else
-		{
-			_sprintRemaining = Mathf.Clamp(_sprintRemaining += 1 * Time.deltaTime, 0, _sprintDuration);	
-		}
-
-		if (_sprintRemaining == _sprintDuration)
-		{
-			_sprintBarCanvasGroup.alpha -= 3 * Time.deltaTime;
-		}
-
-		if (_isSprintOnCooldown)
-		{
-			_sprintCooldown -= 1 * Time.deltaTime;
-
-			if (_sprintCooldown <= 0)
-				_isSprintOnCooldown = false;
-		}
-		else
-		{
-			_sprintCooldown = _sprintCooldownReset;
-		}
-
 		_sprintBar.value = _sprintRemaining / _sprintDuration;
+
+		if (_isSprintOnCooldown || MovementState != MovementState.Sprinting)
+		{
+			_sprintRemaining = Mathf.Clamp(_sprintRemaining += Time.deltaTime, 0, _sprintDuration);
+
+			if (_sprintRemaining == _sprintDuration)
+				_sprintBarCanvasGroup.alpha -= 3 * Time.deltaTime;
+
+			if (_isSprintOnCooldown)
+			{
+				_playerSpeed = _playerCrouchSpeed;
+
+				_sprintCooldown -= Time.deltaTime;
+
+				if (_sprintCooldown <= 0)
+				{
+					_playerSpeed = _playerWalkSpeed;
+
+					_isSprintOnCooldown = false;
+				}
+			}
+			else
+			{
+				_sprintCooldown = _sprintCooldownDelay;
+			}
+
+			return;
+		}
+
+		_sprintBarCanvasGroup.alpha += 5 * Time.deltaTime;
+
+		_sprintRemaining -= Time.deltaTime;
+
+		if (_sprintRemaining <= 0)
+		{
+			_playerSpeed = _playerWalkSpeed;
+
+			_isSprintOnCooldown = true;
+
+			MovementState = MovementState.Walking;
+		}
 	}
 
 	private void Crouch()
@@ -228,7 +231,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 		_playerCollider.height = crouchPlayerHeight;
 
-		_rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);  
+		_rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
 	}
 
 	private void HeadBob()
@@ -270,7 +273,7 @@ public class PlayerMovementHandler : MonoBehaviour
 		float maxDistance = Vector3.Distance(playerCurrentHeadPoint, playerOriginalHeadPoint);
 
 		if (Physics.SphereCast(playerCurrentHeadPoint, _playerCollider.radius, transform.transform.up, out RaycastHit _, maxDistance, _obstacleMask))
-			return false;	
+			return false;
 
 		return true;
 	}
@@ -286,24 +289,24 @@ public class PlayerMovementHandler : MonoBehaviour
 		_rb.drag = isGrounded ? _groundDrag : 0;
 	}
 
-	#endregion 
+	#endregion
 
 	#region Input entry points
 
 	private void OnMove(InputAction.CallbackContext context)
 	{
 		MoveDirection = context.action.ReadValue<Vector2>();
-		
+
 		if (context.performed && MoveDirection != Vector2.zero && MovementState == MovementState.Idle)
 		{
-			if (_playerInput.Player.Sprint.IsPressed())
+			if (_playerInput.Player.Sprint.IsPressed() && !_isSprintOnCooldown)
 			{
 				_playerSpeed = _playerSprintSpeed;
 
 				MovementState = MovementState.Sprinting;
 			}
 			else
-				MovementState = MovementState.Walking;	
+				MovementState = MovementState.Walking;
 		}
 		else if (context.canceled && MoveDirection == Vector2.zero)
 		{
@@ -324,7 +327,7 @@ public class PlayerMovementHandler : MonoBehaviour
 		if (context.performed && MovementState != MovementState.Idle && MovementState != MovementState.Crouching && !_isSprintOnCooldown)
 		{
 			MovementState = MovementState.Sprinting;
-			
+
 			_playerSpeed = _playerSprintSpeed;
 		}
 		else if (context.canceled)
@@ -355,7 +358,7 @@ public class PlayerMovementHandler : MonoBehaviour
 				MovementState = MovementState.Idle;
 
 				_playerSpeed = _playerWalkSpeed;
-			}	
+			}
 		}
 
 		Crouch();
