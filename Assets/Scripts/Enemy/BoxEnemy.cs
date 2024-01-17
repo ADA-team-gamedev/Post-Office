@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Box))]
 [RequireComponent(typeof(FieldOfView))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class BoxEnemy : MonoBehaviour, IPickable
 {
 	[Header("Player Sanity")]
@@ -62,6 +63,8 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	private bool _isTranformedIntoInsect = false;
 
 	private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
+
+	private Box _box;
 
 	private void Awake()
 	{
@@ -213,7 +216,10 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 		_agent.speed = _runningSpeed;
 
-		_agent.SetDestination(_hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position);	
+		if (_hiddenPoints.Count > 0)
+			_agent.SetDestination(_hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position);
+		else
+			Debug.Log($"Can't start fleeing because the {gameObject} doesn't have points to hide");
 	}
 
 	#endregion
@@ -329,6 +335,8 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_agent.speed = _patrolingSpeed;
 
 		_fieldOfView ??= GetComponent<FieldOfView>();
+
+		_box ??= GetComponent<Box>();
 
 		if (_patrolingSpeed >= _runningSpeed)
 			_runningSpeed = _patrolingSpeed + 1;

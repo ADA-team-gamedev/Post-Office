@@ -1964,6 +1964,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3256557322491942236, guid: f4ad5f9f89eb50b45944620d43499b19,
         type: 3}
+      propertyPath: _sprintCooldownDelay
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3256557322491942236, guid: f4ad5f9f89eb50b45944620d43499b19,
+        type: 3}
       propertyPath: _sprintBarCanvasGroup
       value: 
       objectReference: {fileID: 1245588398}
