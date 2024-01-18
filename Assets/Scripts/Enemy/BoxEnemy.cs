@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(Box))]
 [RequireComponent(typeof(FieldOfView))]
-public class BoxEnemy : MonoBehaviour, IPickable
+[RequireComponent(typeof(NavMeshAgent))]
+public class BoxEnemy : MonoBehaviour
 {
 	[Header("Player Sanity")]
 	[SerializeField] private PlayerSanity _playerSanity;
@@ -49,7 +51,10 @@ public class BoxEnemy : MonoBehaviour, IPickable
 	private Transform _attackingTarget;
 
 	private NavMeshAgent _agent;
+	private Rigidbody _rigidbody;
 	private FieldOfView _fieldOfView;
+
+	private Box _box;
 
 	//flags
 	private bool _isFleeing = false;
@@ -69,6 +74,10 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_agent.speed = _patrolingSpeed;
 
 		DisableAI();
+
+		_box.OnPickUpItem += PickUpItem;
+
+		_box.OnDropItem += DropItem;
 	}
 
 	private void Update()
@@ -119,8 +128,7 @@ public class BoxEnemy : MonoBehaviour, IPickable
 				if (_agent.remainingDistance <= _agent.stoppingDistance)
 					_enemyState = EnemyState.Idle;
 			}
-		}	
-				
+		}				
 	}
 
 	private void HandleStateLauncher()
@@ -212,7 +220,10 @@ public class BoxEnemy : MonoBehaviour, IPickable
 
 		_agent.speed = _runningSpeed;
 
-		_agent.SetDestination(_hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position);	
+		if (_hiddenPoints.Count > 0)
+			_agent.SetDestination(_hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position);
+		else
+			Debug.Log($"Can't start fleeing because the {gameObject} doesn't have points to hide");
 	}
 
 	#endregion
@@ -316,6 +327,8 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_agent.isStopped = false;
 
 		_enemyState = EnemyState.Patroling;
+
+		_rigidbody.isKinematic = true;
 	}
 
 	#endregion
@@ -328,6 +341,10 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_agent.speed = _patrolingSpeed;
 
 		_fieldOfView ??= GetComponent<FieldOfView>();
+
+		_box ??= GetComponent<Box>();
+
+		_rigidbody ??= GetComponent<Rigidbody>();
 
 		if (_patrolingSpeed >= _runningSpeed)
 			_runningSpeed = _patrolingSpeed + 1;

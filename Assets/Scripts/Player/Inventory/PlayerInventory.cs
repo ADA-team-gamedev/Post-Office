@@ -1,38 +1,34 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerInventory : MonoBehaviour
 {
-    public static PlayerInventory Instance { get; private set; }
+	public static PlayerInventory Instance { get; private set; }
 
 	#region Pickup fields 
 
-	[SerializeField] private LayerMask _pickupLayer;
-
-    [field: SerializeField] public KeyCode PickupKey { get; set; } = KeyCode.E;
-    [field: SerializeField] public KeyCode DropKey { get; set; } = KeyCode.G;
-
-    [Header("Values")]
-    [SerializeField] private float _pickupRange = 3f;
-    [SerializeField] private float _dropUpForce = 2f;
+	[Header("Values")]
+	[SerializeField] private float _pickupRange = 3f;
+	[SerializeField] private float _dropUpForce = 2f;
 	[SerializeField] private float _dropForce = 1f;
 
 	[SerializeField] private bool _changeItemWhenPickup = false;
 
 	[Header("Objects")]
-    [SerializeField] private Transform _playerHand;
-    [SerializeField] private Transform _playerCamera;
+	[SerializeField] private Transform _playerHand;
+	[SerializeField] private Transform _playerCamera;
 
 	private Transform _currentObjectTransform;
 	private Rigidbody _currentObjectRigidbody;
-    private Collider _currentObjectCollider;
+	private Collider _currentObjectCollider;
 
 	#endregion
 
 	#region Inventory fields
 
-	[SerializeField][Range(1, 10)] private int _inventorySlotsAmount = 3;	
+	private const byte _inventorySlotsAmount = 3;
 
 	private int _currentSlotIndex = -1;
 
@@ -40,28 +36,34 @@ public class PlayerInventory : MonoBehaviour
 
 	#endregion
 
+	private PlayerInput _playerInput;
+
 	private void Awake()
 	{
+		_playerInput = new();
+
 		if (Instance == null)
 			Instance = this;
 	}
 
-	void Start()
-    {
+	private void Start()
+	{
 		Inventory = new(_inventorySlotsAmount);
 
-		PlayerHandler.Instance.KeyBinds[InputType.Drop].OnKeyDown += DropItem;
-		PlayerHandler.Instance.KeyBinds[InputType.Interact].OnKeyDown += TryPickupObject;
-	}
+		_playerInput.Player.Interact.performed += OnPickUpItem;
 
-    private void Update()
-    {
-		HandleInventoryInput();
+		_playerInput.Player.DropItem.performed += OnDropItem;
+
+		_playerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
+
+		_playerInput.Player.Hotbar1.performed += Hotbar1;
+		_playerInput.Player.Hotbar2.performed += Hotbar2;
+		_playerInput.Player.Hotbar3.performed += Hotbar3;
 	}
 
 	#region Pickup system
-	public void TryPickupObject() 
-    {
+	public void TryPickupObject()
+	{
 		if (Inventory.Count < _inventorySlotsAmount)
 		{
 			if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
@@ -70,11 +72,11 @@ public class PlayerInventory : MonoBehaviour
 				_currentObjectRigidbody = hit.rigidbody;
 				_currentObjectCollider = hit.collider;
 
-				pickable.PickUpItem();
-
 				SetPickedItem();
 
 				AddItem(_currentObjectTransform.gameObject);
+
+				pickable.OnPickUpItem?.Invoke();
 			}
 		}
 	}
@@ -82,12 +84,12 @@ public class PlayerInventory : MonoBehaviour
 	public void DropItem()
 	{
 		if (!_currentObjectTransform)
-			return;	
+			return;
 
 		_currentObjectTransform.gameObject.SetActive(true);
 
 		if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-			pickable.DropItem();
+			pickable.OnDropItem?.Invoke();
 
 		_currentObjectRigidbody.isKinematic = false;
 		_currentObjectRigidbody.useGravity = true;
@@ -95,11 +97,11 @@ public class PlayerInventory : MonoBehaviour
 		_currentObjectTransform.SetParent(null);
 
 		_currentObjectRigidbody.AddForce(_playerCamera.forward * _dropForce, ForceMode.Impulse);
-		_currentObjectRigidbody.AddForce(_playerCamera.up * _dropUpForce, ForceMode.Impulse);	
+		_currentObjectRigidbody.AddForce(_playerCamera.up * _dropUpForce, ForceMode.Impulse);
 
 		_currentObjectTransform = null;
 		_currentObjectRigidbody = null;
-		
+
 		_currentObjectCollider.enabled = true;
 		_currentObjectCollider = null;
 
@@ -136,37 +138,7 @@ public class PlayerInventory : MonoBehaviour
 		return false;
 	}
 
-	private void HandleInventoryInput()
-	{
-		if (Input.GetKeyDown(KeyCode.Alpha1)) //if possible create it by using normal input system
-			AlphaInventorySlotChange(1);	
-		else if (Input.GetKeyDown(KeyCode.Alpha2))
-			AlphaInventorySlotChange(2);	
-		else if (Input.GetKeyDown(KeyCode.Alpha3))
-			AlphaInventorySlotChange(3);	
-
-		if (Inventory.Count > 0)
-		{
-			float scroll = -Input.GetAxis("Mouse ScrollWheel");
-
-			if (scroll != 0)
-			{
-				if (scroll > 0)
-					_currentSlotIndex++;
-				else
-					_currentSlotIndex--;
-
-				if (_currentSlotIndex < 0)
-					_currentSlotIndex = Inventory.Count - 1;
-				else if (_currentSlotIndex > Inventory.Count - 1)
-					_currentSlotIndex = 0;
-
-				ChangeSelectedSlot();
-			}		
-		}
-	}
-
-	private void AlphaInventorySlotChange(int keyCodeNumber)
+	private void HotbarSlotChange(int keyCodeNumber)
 	{
 		keyCodeNumber--;
 
@@ -187,7 +159,7 @@ public class PlayerInventory : MonoBehaviour
 		Inventory[_currentSlotIndex].SetActive(false);
 
 		if (Inventory.Count != 1 && !_changeItemWhenPickup)
-			_currentSlotIndex--;	
+			_currentSlotIndex--;
 
 		ChangeSelectedSlot();
 	}
@@ -213,17 +185,84 @@ public class PlayerInventory : MonoBehaviour
 		{
 			if (item)
 				item.SetActive(false);
-		}      
+		}
 
 		if (Inventory[_currentSlotIndex])
 			Inventory[_currentSlotIndex].SetActive(true);
 
 		_currentObjectTransform = Inventory[_currentSlotIndex].transform;
-		
+
 		Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectRigidbody);
 
 		Inventory[_currentSlotIndex].TryGetComponent(out _currentObjectCollider);
 	}
 
-	#endregion 
+	#endregion
+
+	#region Input entry points
+
+	private void OnPickUpItem(InputAction.CallbackContext context)
+	{
+		TryPickupObject();
+	}
+
+	private void OnDropItem(InputAction.CallbackContext context)
+	{
+		if (!context.performed)
+			return;
+
+		DropItem();
+	}
+
+
+	private void OnScrollWheelYChanged(InputAction.CallbackContext context)
+	{
+		if (Inventory.Count <= 0)
+			return;
+
+		float scrollWheelValue = context.ReadValue<float>();
+
+		if (scrollWheelValue != 0)
+		{
+			if (scrollWheelValue > 0)
+				_currentSlotIndex++;
+			else
+				_currentSlotIndex--;
+
+			if (_currentSlotIndex < 0)
+				_currentSlotIndex = Inventory.Count - 1;
+			else if (_currentSlotIndex > Inventory.Count - 1)
+				_currentSlotIndex = 0;
+
+			ChangeSelectedSlot();
+		}
+	}
+
+
+	private void Hotbar1(InputAction.CallbackContext context)
+	{
+		HotbarSlotChange(1);
+	}
+
+	private void Hotbar2(InputAction.CallbackContext context)
+	{
+		HotbarSlotChange(2);
+	}
+
+	private void Hotbar3(InputAction.CallbackContext context)
+	{
+		HotbarSlotChange(3);
+	}
+
+	#endregion
+
+	private void OnEnable()
+	{
+		_playerInput.Enable();
+	}
+
+	private void OnDisable()
+	{
+		_playerInput.Disable();
+	}
 }
