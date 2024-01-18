@@ -72,11 +72,11 @@ public class PlayerInventory : MonoBehaviour
 				_currentObjectRigidbody = hit.rigidbody;
 				_currentObjectCollider = hit.collider;
 
-				pickable.OnPickUpItem?.Invoke();
-
 				SetPickedItem();
 
 				AddItem(_currentObjectTransform.gameObject);
+
+				pickable.OnPickUpItem?.Invoke();
 			}
 		}
 	}
