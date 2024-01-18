@@ -6,7 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Box))]
 [RequireComponent(typeof(FieldOfView))]
 [RequireComponent(typeof(NavMeshAgent))]
-public class BoxEnemy : MonoBehaviour, IPickable
+public class BoxEnemy : MonoBehaviour
 {
 	[Header("Player Sanity")]
 	[SerializeField] private PlayerSanity _playerSanity;
@@ -73,6 +73,10 @@ public class BoxEnemy : MonoBehaviour, IPickable
 		_agent.speed = _patrolingSpeed;
 
 		DisableAI();
+
+		_box.OnPickUpItem += PickUpItem;
+
+		_box.OnDropItem += DropItem;
 	}
 
 	private void Update()
@@ -123,8 +127,7 @@ public class BoxEnemy : MonoBehaviour, IPickable
 				if (_agent.remainingDistance <= _agent.stoppingDistance)
 					_enemyState = EnemyState.Idle;
 			}
-		}	
-				
+		}				
 	}
 
 	private void HandleStateLauncher()

@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,15 +13,26 @@ public class FlashLight : MonoBehaviour, IPickable, IUsable
     [SerializeField] private int _numberOfActivations = 0;
     [SerializeField][Range(1, 100)] private float _dischargeRate;
 
-     private bool _isCanTurnOn = false;
+    private bool _isCanTurnOn = false;
 
-     private bool _isWorking = false;
+    private bool _isWorking = false;
 
-     private bool _charged = true;
+    private bool _charged = true;
 
-    #region Pickable
+    public Action OnPickUpItem { get; set; }
 
-    public void PickUpItem()
+    public Action OnDropItem { get; set; }
+
+	private void Awake()
+	{
+		OnPickUpItem += PickUpItem;
+
+        OnDropItem += DropItem;
+	}
+
+	#region Pickable
+
+	public void PickUpItem()
     {
         _isCanTurnOn = true;
         Debug.Log("canturn");
@@ -84,6 +94,4 @@ public class FlashLight : MonoBehaviour, IPickable, IUsable
 
         _energyBar.SetActive(true);
     }
-
-
 }

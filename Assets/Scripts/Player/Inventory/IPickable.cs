@@ -1,6 +1,8 @@
+using System;
+
 public interface IPickable
 {
-    public void DropItem();
+	public Action OnPickUpItem { get; set; }
 
-    public void PickUpItem();
+	public Action OnDropItem { get; set; }
 }

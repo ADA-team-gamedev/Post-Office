@@ -72,7 +72,7 @@ public class PlayerInventory : MonoBehaviour
 				_currentObjectRigidbody = hit.rigidbody;
 				_currentObjectCollider = hit.collider;
 
-				pickable.PickUpItem();
+				pickable.OnPickUpItem?.Invoke();
 
 				SetPickedItem();
 
@@ -89,7 +89,7 @@ public class PlayerInventory : MonoBehaviour
 		_currentObjectTransform.gameObject.SetActive(true);
 
 		if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-			pickable.DropItem();
+			pickable.OnDropItem?.Invoke();
 
 		_currentObjectRigidbody.isKinematic = false;
 		_currentObjectRigidbody.useGravity = true;

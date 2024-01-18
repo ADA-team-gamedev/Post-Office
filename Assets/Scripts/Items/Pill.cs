@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -12,19 +13,8 @@ public class Pill : MonoBehaviour, IPickable, IUsable
 
     private bool _isUsing = false;
 
-    #region Pickable
-
-    public void PickUpItem()
-    {
-
-    }
-
-    public void DropItem()
-    {
-
-    }
-
-    #endregion
+	public Action OnPickUpItem { get; set; }
+	public Action OnDropItem { get; set; }
 
     public void Use()
     {

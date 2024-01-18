@@ -31,13 +31,6 @@ public class Box : MonoBehaviour, IPickable
 
 	[field: SerializeField] public BoxTemperatureType BoxTemperatureType { get; private set; } = BoxTemperatureType.Normal;
 
-	public void DropItem()
-	{
-		
-	}
-
-	public void PickUpItem()
-	{
-		
-	}
+	public Action OnPickUpItem { get; set; }
+	public Action OnDropItem { get; set; }
 }

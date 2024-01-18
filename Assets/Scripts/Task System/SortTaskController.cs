@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class QuestGiverTEST : MonoBehaviour
+public class SortQuest : MonoBehaviour
 {
 	[SerializeField] private Task _addedTask = new(TaskType.BoxMoving, "Розчистка території", "Віднесіть задані коробки до пункту прийому");
 
