@@ -51,7 +51,10 @@ public class BoxEnemy : MonoBehaviour
 	private Transform _attackingTarget;
 
 	private NavMeshAgent _agent;
+	private Rigidbody _rigidbody;
 	private FieldOfView _fieldOfView;
+
+	private Box _box;
 
 	//flags
 	private bool _isFleeing = false;
@@ -63,8 +66,6 @@ public class BoxEnemy : MonoBehaviour
 	private bool _isTranformedIntoInsect = false;
 
 	private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
-
-	private Box _box;
 
 	private void Awake()
 	{
@@ -326,6 +327,8 @@ public class BoxEnemy : MonoBehaviour
 		_agent.isStopped = false;
 
 		_enemyState = EnemyState.Patroling;
+
+		_rigidbody.isKinematic = true;
 	}
 
 	#endregion
@@ -340,6 +343,8 @@ public class BoxEnemy : MonoBehaviour
 		_fieldOfView ??= GetComponent<FieldOfView>();
 
 		_box ??= GetComponent<Box>();
+
+		_rigidbody ??= GetComponent<Rigidbody>();
 
 		if (_patrolingSpeed >= _runningSpeed)
 			_runningSpeed = _patrolingSpeed + 1;
