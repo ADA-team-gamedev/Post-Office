@@ -1,10 +1,11 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class SortQuest : MonoBehaviour
 {
-	[SerializeField] private Task _addedTask = new(TaskType.BoxMoving, "Розчистка території", "Віднесіть задані коробки до пункту прийому");
+	[SerializeField] private TaskData _addedTask;
 
 	[SerializeField] private List<Box> _neededBoxes;
 	
@@ -14,13 +15,13 @@ public class SortQuest : MonoBehaviour
 
 	private void Start()
 	{
-		if (TaskManager.Instance.TryGetTaskByType(_addedTask.Type, out Task neededTask))
-			neededTask.OnCompleted += FinishMovingTask;
+		if (TaskManager.Instance.TryGetTaskByType(_addedTask.Task.Type, out TaskData neededTask))
+			neededTask.Task.OnCompleted += FinishMovingTask;
 	}
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.CompareTag("Player") && TaskManager.Instance.CurrentTask != _addedTask)
+		if (other.CompareTag("Player") && TaskManager.Instance.CurrentTask != _addedTask.Task)
 		{
 			TaskManager.Instance.TryAddNewTask(_addedTask);
 
@@ -35,7 +36,9 @@ public class SortQuest : MonoBehaviour
 		{
 			_addedBoxes.Add(box);
 
-			if (IsTaskConditionsCompleted() && TaskManager.Instance.CurrentTask == _addedTask)
+			box.OnPickUpItem += RemoveBox;
+
+			if (IsTaskConditionsCompleted() && TaskManager.Instance.CurrentTask == _addedTask.Task)
 				TaskManager.Instance.CurrentTask.Complete();		
 		}
 	}
@@ -61,6 +64,12 @@ public class SortQuest : MonoBehaviour
 		}
 
 		return true;
+	}
+
+	private void RemoveBox()
+	{
+		if (PlayerInventory.Instance.TryGetCurrentItem(out GameObject item) && item.TryGetComponent(out Box box))	
+			_addedBoxes.Remove(box);
 	}
 
 	private void FinishMovingTask()
