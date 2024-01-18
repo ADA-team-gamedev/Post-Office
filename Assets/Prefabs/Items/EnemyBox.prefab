@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 338257224079013674}
   - component: {fileID: 972479548654710194}
   - component: {fileID: 7608440238013716114}
+  - component: {fileID: 2560219530404659450}
   m_Layer: 9
   m_Name: EnemyBox
   m_TagString: Untagged
@@ -203,3 +204,15 @@ MonoBehaviour:
   _attackingAnimationName: Jumpscare
   _patrolPoints: []
   _hiddenPoints: []
+--- !u!114 &2560219530404659450
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6399873120319574516}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1d12371ec5987544814dbd200d72d7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
