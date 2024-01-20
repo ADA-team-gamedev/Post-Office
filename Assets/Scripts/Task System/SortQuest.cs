@@ -11,7 +11,7 @@ public class SortQuest : MonoBehaviour
 	
 	private List<Box> _addedBoxes = new();
 
-	[SerializeField] private TextMeshProUGUI text;
+	[SerializeField] private TextMeshProUGUI _text;
 
 	private void Start()
 	{
@@ -29,7 +29,7 @@ public class SortQuest : MonoBehaviour
 			
 			TaskManager.Instance.CurrentTask.OnCompleted += FinishMovingTask;
 
-			text.text = TaskManager.Instance.CurrentTask.Description;
+			_text.text = TaskManager.Instance.CurrentTask.Description;
 		}
 
 		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))
@@ -74,6 +74,8 @@ public class SortQuest : MonoBehaviour
 
 	private void FinishMovingTask()
 	{
+		_text.text = string.Empty;
+
 		Debug.Log("Moving task has been completed");
 	}
 }
