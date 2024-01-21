@@ -11,25 +11,15 @@ public class SortQuest : MonoBehaviour
 	
 	private List<Box> _addedBoxes = new();
 
-	[SerializeField] private TextMeshProUGUI _text;
-
-	private void Start()
-	{
-		if (TaskManager.Instance.TryGetTaskByType(_addedTask.Task.Type, out TaskData neededTask))
-			neededTask.Task.OnCompleted += FinishMovingTask;
-	}
+	[SerializeField] private NoteBook _noteBook;
 
 	private void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("Player") && TaskManager.Instance.CurrentTask != _addedTask.Task)
 		{
-			TaskManager.Instance.TryAddNewTask(_addedTask);
-
 			TaskManager.Instance.SetNewCurrentTask(_addedTask);
-			
-			TaskManager.Instance.CurrentTask.OnCompleted += FinishMovingTask;
 
-			_text.text = TaskManager.Instance.CurrentTask.Description;
+			_noteBook.AddExtraText("Необхідно перенести деякі коробки нижче на склад, на полицю, біля автівок. Ця партія коробк має відправитись дуже скоро: \n- Коробка зі склом\n- Коробка зі склом\n- Коробка з книгами");
 		}
 
 		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))
@@ -49,6 +39,9 @@ public class SortQuest : MonoBehaviour
 		{
 			if (_addedBoxes.Contains(box))
 				_addedBoxes.Remove(box);
+
+			if (IsTaskConditionsCompleted() && TaskManager.Instance.CurrentTask == _addedTask.Task)
+				TaskManager.Instance.CurrentTask.Complete();
 		}
 	}
 
@@ -70,12 +63,5 @@ public class SortQuest : MonoBehaviour
 	{
 		if (PlayerInventory.Instance.TryGetCurrentItem(out GameObject item) && item.TryGetComponent(out Box box))	
 			_addedBoxes.Remove(box);
-	}
-
-	private void FinishMovingTask()
-	{
-		_text.text = string.Empty;
-
-		Debug.Log("Moving task has been completed");
 	}
 }

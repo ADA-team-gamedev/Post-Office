@@ -18,6 +18,9 @@ public class TaskManager : MonoBehaviour
 
 	public event Action OnNewTaskSet;
 
+	public event Action<Task> OnNewCurrentTaskSet;
+	public event Action CurrentTaskCompleted;
+
 	[SerializeField] private List<TaskData> _tasks = new();
 
 	private void Awake()
@@ -32,7 +35,7 @@ public class TaskManager : MonoBehaviour
 	{
 		foreach (var task in _tasks)
 		{
-			task.Task.OnCompleted += RemoveTask;
+			task.Task.OnCompleted += RemoveCurrentTask;
 		}
 	}
 
@@ -64,7 +67,7 @@ public class TaskManager : MonoBehaviour
 
 		CurrentTask = taskData.Task;
 
-		OnNewTaskSet?.Invoke();
+		OnNewCurrentTaskSet?.Invoke(taskData.Task);
 	}
 
 	public void SetNewCurrentTask(TaskType type)
@@ -78,7 +81,7 @@ public class TaskManager : MonoBehaviour
 
 		CurrentTask = taskData.Task;
 
-		OnNewTaskSet?.Invoke();
+		OnNewCurrentTaskSet?.Invoke(taskData.Task);
 	}
 
 	public bool TryAddNewTask(TaskData taskData) 
@@ -92,7 +95,9 @@ public class TaskManager : MonoBehaviour
 
 		_tasks.Add(taskData);
 
-		taskData.Task.OnCompleted += RemoveTask;
+		taskData.Task.OnCompleted += RemoveCurrentTask;
+
+		OnNewTaskSet?.Invoke();
 
 		return true;
 	}
@@ -108,7 +113,7 @@ public class TaskManager : MonoBehaviour
 		return false;
 	}
 
-	private void RemoveTask()
+	private void RemoveCurrentTask()
 	{
 		for (int i = 0; i < _tasks.Count; i++)
 		{
@@ -116,6 +121,8 @@ public class TaskManager : MonoBehaviour
 			{
 				if (CurrentTask == _tasks[i].Task)
 					CurrentTask = null;
+
+				CurrentTaskCompleted?.Invoke();
 
 				_tasks.Remove(_tasks[i]);		
 			}
