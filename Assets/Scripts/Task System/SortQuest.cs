@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class SortQuest : MonoBehaviour
 {
@@ -13,13 +11,17 @@ public class SortQuest : MonoBehaviour
 
 	[SerializeField] private NoteBook _noteBook;
 
+	private bool _isTaskAdded = false;
+
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.CompareTag("Player") && TaskManager.Instance.CurrentTask != _addedTask.Task)
-		{
-			TaskManager.Instance.SetNewCurrentTask(_addedTask);
+		if (other.CompareTag("Player") && !_isTaskAdded && TaskManager.Instance.CurrentTask != _addedTask.Task)
+		{		
+			TaskManager.Instance.SetNewCurrentTask(_addedTask.Task);
 
-			_noteBook.AddExtraText("Необхідно перенести деякі коробки нижче на склад, на полицю, біля автівок. Ця партія коробк має відправитись дуже скоро: \n- Коробка зі склом\n- Коробка зі склом\n- Коробка з книгами");
+			_isTaskAdded = true;
+
+			_noteBook.AddExtraText("Необхідно перенести деякі коробки нижче на склад, на полицю, біля автівок. Ця партія коробок має відправитись дуже скоро: \n- Коробка зі склом\n- Коробка зі склом\n- Коробка з книгами");		
 		}
 
 		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))

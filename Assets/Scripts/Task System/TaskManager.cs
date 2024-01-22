@@ -16,12 +16,20 @@ public class TaskManager : MonoBehaviour
 
 	public int TaskCount => _tasks.Count;
 
+	#region Actions
+
 	public event Action OnNewTaskSet;
 
 	public event Action<Task> OnNewCurrentTaskSet;
 	public event Action CurrentTaskCompleted;
 
-	[SerializeField] private List<TaskData> _tasks = new();
+	#endregion
+
+	[SerializeField] private bool _setCurrentTaskOnStart = false;
+
+	[SerializeField] private List<TaskData> _taskDatas = new();
+
+	private List<Task> _tasks = new();
 
 	private void Awake()
 	{
@@ -29,73 +37,81 @@ public class TaskManager : MonoBehaviour
 			Instance = this;
 		else
 			Debug.LogWarning("TaskManager Instance already exists!");
+
+		foreach (var item in _taskDatas)
+		{
+			_tasks.Add(item.Task);
+		}
+
+		foreach (var task in _tasks)
+		{
+			task.OnCompleted += RemoveCurrentTask;
+		}
 	}
 
 	private void Start()
 	{
-		foreach (var task in _tasks)
-		{
-			task.Task.OnCompleted += RemoveCurrentTask;
-		}
+		if (_setCurrentTaskOnStart)
+			SetNewCurrentTask(_tasks[0]);	
 	}
 
-	public bool TryGetTaskByType(TaskType type, out TaskData taskData)
+	public bool TryGetTaskByType(TaskType type, out Task task)
 	{
 		foreach (var item in _tasks)
 		{
-			if (item.Task.Type == type)
+			if (item.Type == type)
 			{
-				taskData = item;
+				task = item;
 				
 				return true;
 			}				
 		}
 
-		taskData = null;
+		task = null;
 
 		return false;
 	}
 
-	public void SetNewCurrentTask(TaskData taskData)
+	public void SetNewCurrentTask(Task task)
 	{
-		if (!TryGetTaskByType(taskData.Task.Type, out TaskData _))
+		if (!TryGetTaskByType(task.Type, out Task _))
 		{
 			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
 
-			TryAddNewTask(taskData);
+			TryAddNewTask(task);
 		}
 
-		CurrentTask = taskData.Task;
+		CurrentTask = task;
 
-		OnNewCurrentTaskSet?.Invoke(taskData.Task);
+		OnNewCurrentTaskSet?.Invoke(task);
 	}
 
 	public void SetNewCurrentTask(TaskType type)
 	{
-		if (!TryGetTaskByType(type, out TaskData taskData))
+		if (!TryGetTaskByType(type, out Task task))
 		{
 			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
 
-			TryAddNewTask(taskData);
+			TryAddNewTask(task);
 		}
 
-		CurrentTask = taskData.Task;
+		CurrentTask = task;
 
-		OnNewCurrentTaskSet?.Invoke(taskData.Task);
+		OnNewCurrentTaskSet?.Invoke(task);
 	}
 
-	public bool TryAddNewTask(TaskData taskData) 
+	public bool TryAddNewTask(Task task) 
 	{
-		if (IsContainTaskByType(taskData.Task.Type))
+		if (IsContainTaskByType(task.Type))
 		{
 			Debug.LogWarning("You are trying to add task which already exists in task collection");
 
 			return false;
 		}
 
-		_tasks.Add(taskData);
+		_tasks.Add(task);
 
-		taskData.Task.OnCompleted += RemoveCurrentTask;
+		task.OnCompleted += RemoveCurrentTask;
 
 		OnNewTaskSet?.Invoke();
 
@@ -106,7 +122,7 @@ public class TaskManager : MonoBehaviour
 	{
 		foreach (var task in _tasks)
 		{
-			if (task.Task.Type == type)
+			if (task.Type == type)
 				return true;
 		}
 
@@ -117,9 +133,9 @@ public class TaskManager : MonoBehaviour
 	{
 		for (int i = 0; i < _tasks.Count; i++)
 		{
-			if (_tasks[i].Task.IsCompleted)
+			if (_tasks[i].IsCompleted)
 			{
-				if (CurrentTask == _tasks[i].Task)
+				if (CurrentTask == _tasks[i])
 					CurrentTask = null;
 
 				CurrentTaskCompleted?.Invoke();

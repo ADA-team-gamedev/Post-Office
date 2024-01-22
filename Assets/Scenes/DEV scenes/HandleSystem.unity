@@ -2224,7 +2224,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5a92cfd8c7faba419c10855c05533c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tasks:
+  _isSetCurrentTaskOnStart: 0
+  _taskDatas:
   - {fileID: 11400000, guid: beedb1b734566f0489936d928eb5471e, type: 2}
   - {fileID: 11400000, guid: 81c1dc52624da8447aebc98bae759900, type: 2}
 --- !u!4 &1695011009

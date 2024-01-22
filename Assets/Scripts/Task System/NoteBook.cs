@@ -26,10 +26,7 @@ public class NoteBook : MonoBehaviour
 
 		_playerInput.UI.NoteBook.performed += OnNoteBook;
 		_playerInput.UI.NoteBook.canceled += OnNoteBook;
-	}
 
-	private void Start()
-	{
 		ClearNotebook();
 
 		TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
@@ -69,11 +66,6 @@ public class NoteBook : MonoBehaviour
 		transform.position = Vector3.Lerp(transform.position, _defaultPosition, Time.deltaTime * _animationSpeed);
 	}
 
-	public void RewriteTaskDescription(string newText)
-	{
-		_taskDescription.text = newText;
-	}
-
 	public void AddExtraText(string extraText)
     {
 		string currentText = _taskDescription.text;
@@ -92,7 +84,7 @@ public class NoteBook : MonoBehaviour
 
 	private void ClearNotebook()
 	{
-		_taskName.text = "-----";
+		_taskName.text = "";
 
 		_taskDescription.text = "";
 	}
