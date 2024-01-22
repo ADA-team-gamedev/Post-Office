@@ -94,7 +94,7 @@ public class GarageDoor : MonoBehaviour
 	{
 		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
 		{
-			if (PlayerInventory.Instance.TryGetCurrentItem(out GameObject item) && item.TryGetComponent(out Key key))
+			if (PlayerInventory.Instance.TryGetCurrentItem(out Key key))
 			{
 				if (key.DoorKeyType == DoorKeyType)
 				{

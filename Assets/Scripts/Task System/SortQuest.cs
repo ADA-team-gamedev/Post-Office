@@ -63,7 +63,7 @@ public class SortQuest : MonoBehaviour
 
 	private void RemoveBox()
 	{
-		if (PlayerInventory.Instance.TryGetCurrentItem(out GameObject item) && item.TryGetComponent(out Box box))	
+		if (PlayerInventory.Instance.TryGetCurrentItem(out Box box))	
 			_addedBoxes.Remove(box);
 	}
 }

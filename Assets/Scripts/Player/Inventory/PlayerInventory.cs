@@ -125,14 +125,9 @@ public class PlayerInventory : MonoBehaviour
 
 	#region Inventory system
 
-	public bool TryGetCurrentItem(out GameObject item)
+	public bool TryGetCurrentItem<T>(out T item) where T : IPickable
 	{
-		if (_currentSlotIndex >= 0 && _currentSlotIndex < _inventorySlotsAmount)
-			item = Inventory[_currentSlotIndex];
-		else
-			item = null;
-
-		if (item)
+		if (Inventory[_currentSlotIndex].TryGetComponent(out item))
 			return true;
 
 		return false;
@@ -237,7 +232,6 @@ public class PlayerInventory : MonoBehaviour
 			ChangeSelectedSlot();
 		}
 	}
-
 
 	private void Hotbar1(InputAction.CallbackContext context)
 	{
