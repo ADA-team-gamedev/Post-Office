@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
-public enum GarageAutomaticDoorPhase
+public enum GarageDoorPhase
 {
 	None,
 	Opening,
@@ -10,122 +9,33 @@ public enum GarageAutomaticDoorPhase
 
 public class GarageDoor : MonoBehaviour
 {
-	#region Door rotation
-	[Header("Layer")]
-	[SerializeField] private LayerMask _doorLayer;
-
-	#region Parameters
-
 	[Header("Values")]
 
 	[SerializeField] private float _doorMaxHeight;
 
-	[SerializeField] private float _doorDragingDistance = 3f;
-
-	[SerializeField][Range(1, 10)] private float _doorRaisingSpeed = 5;
-
-	#endregion
+	[SerializeField][Range(0.5f, 5)] private float _doorRaisingSpeed = 1f;
 
 	[Header("Objects")]
 
-	[SerializeField] private Camera _playerCamera;
 	[SerializeField] private Transform _doorModel;
 
-	private Vector3 _playerClickedViewPoint;
-
 	private float _defaultDoorYPosition;
-	private float _doorPosition;
 
-	private bool _isDoorMoving = false;
-
-	#endregion
-
-	#region Key open
-
-	[field: Header("Key Opening")]
-
-	[field: SerializeField] public bool IsKeyNeeded { get; private set; } = true;
-
-	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
-
-
-	private bool _isClosed; //closed while we don't open it by our key
-
-	#endregion
-
-	private GarageAutomaticDoorPhase _garageDoorPhase = GarageAutomaticDoorPhase.None;
+	private GarageDoorPhase _garageDoorPhase = GarageDoorPhase.None;
 	private bool _isOpenedAutomatically = false;
-
-	private PlayerInput _playerInput;
-
-	private void OnEnable()
-	{
-		_playerInput.Enable();
-	}
-
-	private void OnDisable()
-	{
-		_playerInput.Disable();
-	}
-
-	private void Awake()
-	{
-		_playerInput = new();
-
-		_playerInput.Player.Interact.performed += OpenDoorByKey;
-		_playerInput.Player.Interact.performed += StartRotateDoor;
-		_playerInput.Player.Interact.canceled += StopRotateDoor;
-	}
 
 	private void Start()
 	{
 		_defaultDoorYPosition = _doorModel.position.y;
-
-		_playerClickedViewPoint = _doorModel.position;
-
-		_isClosed = IsKeyNeeded;
 	}
 
 	private void Update()
 	{
-		TryRaiseDoor();
-
-		if (_garageDoorPhase == GarageAutomaticDoorPhase.Opening)
+		if (_garageDoorPhase == GarageDoorPhase.Opening)
 			OpenDoorAutomatically();
-		else if (_garageDoorPhase == GarageAutomaticDoorPhase.Closing)
+		else if (_garageDoorPhase == GarageDoorPhase.Closing)
 			CloseDoorAutomatically();
 	}
-
-	#region Key open
-
-	private void OpenDoorByKey(InputAction.CallbackContext context)
-	{
-		if (!_isClosed)
-			return;
-
-		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
-		{
-			if (PlayerInventory.Instance.TryGetCurrentItem(out Key key))
-			{
-				if (key.DoorKeyType == DoorKeyType)
-				{
-					//play door key opening sound
-
-					IsKeyNeeded = false;
-
-					_isClosed = false;
-				}
-				else
-				{
-					Debug.Log("Player doesn't have right key to open this door");
-
-					//play door key closed sound
-				}
-			}
-		}
-	}
-
-	#endregion
 
 	#region Door raising
 
@@ -135,19 +45,19 @@ public class GarageDoor : MonoBehaviour
 		{
 			_isOpenedAutomatically = false;
 
-			_garageDoorPhase = GarageAutomaticDoorPhase.Closing;
+			_garageDoorPhase = GarageDoorPhase.Closing;
 		}
 		else
 		{
 			_isOpenedAutomatically = true;
 
-			_garageDoorPhase = GarageAutomaticDoorPhase.Opening;
+			_garageDoorPhase = GarageDoorPhase.Opening;
 		}
 	}
 
 	private void OpenDoorAutomatically()
 	{
-		if (_garageDoorPhase != GarageAutomaticDoorPhase.Opening)
+		if (_garageDoorPhase != GarageDoorPhase.Opening)
 		{
 			return;
 		}
@@ -155,98 +65,34 @@ public class GarageDoor : MonoBehaviour
 		Vector3 raisedDoorPosiiton = new(_doorModel.position.x, _doorMaxHeight, _doorModel.position.z);
 
 		if (_doorModel.position.y == raisedDoorPosiiton.y)
-			_garageDoorPhase = GarageAutomaticDoorPhase.None;
+			_garageDoorPhase = GarageDoorPhase.None;
 
 		_doorModel.position = Vector3.Lerp(_doorModel.position, raisedDoorPosiiton, Time.deltaTime * _doorRaisingSpeed);
 	}
 
 	private void CloseDoorAutomatically()
 	{	
-		if (_garageDoorPhase != GarageAutomaticDoorPhase.Closing)
+		if (_garageDoorPhase != GarageDoorPhase.Closing)
 			return;
 
 		Vector3 defaultDoorPosition = new(_doorModel.position.x, _defaultDoorYPosition, _doorModel.position.z);
 
 		if (_doorModel.position.y == defaultDoorPosition.y)
-			_garageDoorPhase = GarageAutomaticDoorPhase.None;		
+			_garageDoorPhase = GarageDoorPhase.None;		
 
 		_doorModel.position = Vector3.Lerp(_doorModel.position, defaultDoorPosition, Time.deltaTime * _doorRaisingSpeed);
 	}
 
-	private void TryRaiseDoor()
-	{
-		if (_isClosed || !IsPlayerInInteractionZone())
-		{
-			_isDoorMoving = false;
-
-			_playerClickedViewPoint = _doorModel.position;
-
-			return;
-		}
-
-		if (_isDoorMoving)
-			_playerClickedViewPoint = _playerCamera.transform.position + _playerCamera.transform.forward * _doorDragingDistance;	
-
-		if (_isDoorMoving) //the code below must work only if door moving 
-		{
-			_doorPosition = Mathf.Lerp(_doorPosition, _playerClickedViewPoint.y, _doorRaisingSpeed * Time.deltaTime);
-
-			_doorPosition = Mathf.Clamp(_doorPosition, _defaultDoorYPosition, _doorMaxHeight);
-
-			_doorModel.position = new(_doorModel.position.x, _doorPosition, _doorModel.position.z);
-		}
-	}
-
-	private void StartRotateDoor(InputAction.CallbackContext context)
-	{
-		if (_isClosed || !IsPlayerInInteractionZone())
-		{
-			_isDoorMoving = false;
-
-			_playerClickedViewPoint = _doorModel.position;
-
-			return;
-		}
-
-		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
-			_isDoorMoving = true;
-	}
-
-	private void StopRotateDoor(InputAction.CallbackContext context)
-	{
-		if (!_isDoorMoving)
-			return;
-
-		if (_doorModel.position.y == _defaultDoorYPosition)
-		{
-			//play fully closed door sound
-		}
-
-		_isDoorMoving = false;
-	}
-
 	#endregion
-
-	private bool IsPlayerInInteractionZone()
-		=> Vector3.Magnitude(_playerCamera.transform.position - _doorModel.position) <= _doorDragingDistance;
 
 	private void OnValidate()
 	{
-		_defaultDoorYPosition = _doorModel.position.y;
+		if (_doorMaxHeight < transform.position.y)
+			_doorMaxHeight++;
 	}
 
 	private void OnDrawGizmosSelected()
 	{
-		Gizmos.color = Color.red;
-
-		Gizmos.DrawSphere(_playerClickedViewPoint, 0.1f);
-
-		Gizmos.color = Color.blue;
-		Gizmos.DrawRay(_playerCamera.transform.position, _playerCamera.transform.forward * _doorDragingDistance);
-
-		Gizmos.color = IsPlayerInInteractionZone() ? Color.green : Color.red; //interaction zone; is player can rotate door
-		Gizmos.DrawLine(_playerCamera.transform.position, _doorModel.position);
-
 		//door possible max position
 		Gizmos.color = Color.cyan;
 
