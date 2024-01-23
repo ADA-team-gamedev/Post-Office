@@ -1,4 +1,12 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
+
+public enum GarageAutomaticDoorPhase
+{
+	None,
+	Opening,
+	Closing,
+}
 
 public class GarageDoor : MonoBehaviour
 {
@@ -47,13 +55,32 @@ public class GarageDoor : MonoBehaviour
 
 	#endregion
 
+	private GarageAutomaticDoorPhase _garageDoorPhase = GarageAutomaticDoorPhase.None;
+	private bool _isOpenedAutomatically = false;
+
+	private PlayerInput _playerInput;
+
+	private void OnEnable()
+	{
+		_playerInput.Enable();
+	}
+
+	private void OnDisable()
+	{
+		_playerInput.Disable();
+	}
+
+	private void Awake()
+	{
+		_playerInput = new();
+
+		_playerInput.Player.Interact.performed += OpenDoorByKey;
+		_playerInput.Player.Interact.performed += StartRotateDoor;
+		_playerInput.Player.Interact.canceled += StopRotateDoor;
+	}
+
 	private void Start()
 	{
-		PlayerHandler.Instance.KeyBinds[InputType.Interact].OnKeyDown += OpenDoorByKey;
-
-		PlayerHandler.Instance.KeyBinds[InputType.Drag].OnKeyDown += StartRotateDoor;
-		PlayerHandler.Instance.KeyBinds[InputType.Drag].OnKeyUp += StopRotateDoor;
-
 		_defaultDoorYPosition = _doorModel.position.y;
 
 		_playerClickedViewPoint = _doorModel.position;
@@ -67,8 +94,13 @@ public class GarageDoor : MonoBehaviour
 	private void Update()
 	{
 		TryRaiseDoor();
-
+		
 		ShowInteractionUI();
+
+		if (_garageDoorPhase == GarageAutomaticDoorPhase.Opening)
+			OpenDoorAutomatically();
+		else if (_garageDoorPhase == GarageAutomaticDoorPhase.Closing)
+			CloseDoorAutomatically();
 	}
 
 	#region Key open
@@ -90,8 +122,11 @@ public class GarageDoor : MonoBehaviour
 			_interactionButtonUI[i].transform.rotation = Quaternion.LookRotation(_interactionButtonUI[i].transform.position - _playerCamera.transform.position);
 	}
 
-	private void OpenDoorByKey()
+	private void OpenDoorByKey(InputAction.CallbackContext context)
 	{
+		if (!_isClosed)
+			return;
+
 		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
 		{
 			if (PlayerInventory.Instance.TryGetCurrentItem(out Key key))
@@ -117,6 +152,49 @@ public class GarageDoor : MonoBehaviour
 	#endregion
 
 	#region Door raising
+
+	public void InteractRemotely()
+	{
+		if (_isOpenedAutomatically)
+		{
+			_isOpenedAutomatically = false;
+
+			_garageDoorPhase = GarageAutomaticDoorPhase.Closing;
+		}
+		else
+		{
+			_isOpenedAutomatically = true;
+
+			_garageDoorPhase = GarageAutomaticDoorPhase.Opening;
+		}
+	}
+
+	private void OpenDoorAutomatically()
+	{
+		if (_garageDoorPhase != GarageAutomaticDoorPhase.Opening)
+			return;
+
+		Vector3 raisedDoorPosiiton = new(_doorModel.position.x, _doorMaxHeight, _doorModel.position.z);
+
+		if (transform.position == raisedDoorPosiiton)
+			_garageDoorPhase = GarageAutomaticDoorPhase.None;
+
+		_doorModel.position = Vector3.Lerp(_doorModel.position, raisedDoorPosiiton, Time.deltaTime);
+	}
+
+	private void CloseDoorAutomatically()
+	{	
+		if (_garageDoorPhase != GarageAutomaticDoorPhase.Closing)
+			return;
+
+		Vector3 defaultDoorPosition = new(_doorModel.position.x, _defaultDoorYPosition, _doorModel.position.z);
+
+		if (transform.position == defaultDoorPosition)
+			_garageDoorPhase = GarageAutomaticDoorPhase.None;
+
+		_doorModel.position = Vector3.Lerp(_doorModel.position, defaultDoorPosition, Time.deltaTime);
+	}
+
 	private void TryRaiseDoor()
 	{
 		if (_isClosed || !IsPlayerInInteractionZone())
@@ -141,7 +219,7 @@ public class GarageDoor : MonoBehaviour
 		}
 	}
 
-	private void StartRotateDoor()
+	private void StartRotateDoor(InputAction.CallbackContext context)
 	{
 		if (_isClosed || !IsPlayerInInteractionZone())
 		{
@@ -156,7 +234,7 @@ public class GarageDoor : MonoBehaviour
 			_isDoorMoving = true;
 	}
 
-	private void StopRotateDoor()
+	private void StopRotateDoor(InputAction.CallbackContext context)
 	{
 		if (!_isDoorMoving)
 			return;
