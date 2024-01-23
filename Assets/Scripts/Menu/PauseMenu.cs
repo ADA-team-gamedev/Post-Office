@@ -13,7 +13,6 @@ public class PauseMenu : MonoBehaviour
 	[SerializeField] private GameObject _playerCrosshair;
 	[SerializeField] private GameObject _playerStaminaBar;
 
-
 	private PlayerInput _playerInput;
 
     private bool _isPaused = false;
@@ -31,9 +30,7 @@ public class PauseMenu : MonoBehaviour
 
 		_pauseMenu.SetActive(false);
 		_exitWindow.SetActive(false);
-		_settingsWindow.SetActive(false);
-		_playerCrosshair.SetActive(false);
-		_playerStaminaBar.SetActive(false);
+		_settingsWindow.SetActive(false);		
 	}
 
 	#region Pause Menu

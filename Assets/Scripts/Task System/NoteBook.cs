@@ -66,6 +66,11 @@ public class NoteBook : MonoBehaviour
 		transform.position = Vector3.Lerp(transform.position, _defaultPosition, Time.deltaTime * _animationSpeed);
 	}
 
+	public void RewriteText(string text)
+	{
+		_taskDescription.text = text;
+	}
+
 	public void AddExtraText(string extraText)
     {
 		string currentText = _taskDescription.text;

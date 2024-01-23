@@ -21,7 +21,7 @@ public class SortQuest : MonoBehaviour
 
 			_isTaskAdded = true;
 
-			_noteBook.AddExtraText("Необхідно перенести деякі коробки нижче на склад, на полицю, біля автівок. Ця партія коробок має відправитись дуже скоро: \n- Коробка зі склом\n- Коробка зі склом\n- Коробка з книгами");		
+			_noteBook.AddExtraText("Необхідно перенести деякі коробки нижче на склад, на полицю, біля автівок. Ця партія коробок має відправитись дуже скоро: \n- Коробка зі склом\n- Коробка з книгами");		
 		}
 
 		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))
