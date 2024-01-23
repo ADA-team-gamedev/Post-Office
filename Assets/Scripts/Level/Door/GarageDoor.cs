@@ -31,8 +31,6 @@ public class GarageDoor : MonoBehaviour
 	[SerializeField] private Camera _playerCamera;
 	[SerializeField] private Transform _doorModel;
 
-	[SerializeField] private GameObject[] _interactionButtonUI;
-
 	private Vector3 _playerClickedViewPoint;
 
 	private float _defaultDoorYPosition;
@@ -86,16 +84,11 @@ public class GarageDoor : MonoBehaviour
 		_playerClickedViewPoint = _doorModel.position;
 
 		_isClosed = IsKeyNeeded;
-
-		foreach (GameObject button in _interactionButtonUI)
-			button.SetActive(false);
 	}
 
 	private void Update()
 	{
 		TryRaiseDoor();
-		
-		ShowInteractionUI();
 
 		if (_garageDoorPhase == GarageAutomaticDoorPhase.Opening)
 			OpenDoorAutomatically();
@@ -104,23 +97,6 @@ public class GarageDoor : MonoBehaviour
 	}
 
 	#region Key open
-
-	private void ShowInteractionUI()
-	{
-		if (!IsKeyNeeded || !IsPlayerInInteractionZone())
-		{
-			foreach (GameObject button in _interactionButtonUI)
-				button.SetActive(false);
-
-			return;
-		}
-
-		foreach (GameObject button in _interactionButtonUI)
-			button.SetActive(true);
-
-		for (int i = 0; i < _interactionButtonUI.Length; i++)
-			_interactionButtonUI[i].transform.rotation = Quaternion.LookRotation(_interactionButtonUI[i].transform.position - _playerCamera.transform.position);
-	}
 
 	private void OpenDoorByKey(InputAction.CallbackContext context)
 	{
@@ -172,14 +148,16 @@ public class GarageDoor : MonoBehaviour
 	private void OpenDoorAutomatically()
 	{
 		if (_garageDoorPhase != GarageAutomaticDoorPhase.Opening)
+		{
 			return;
+		}
 
 		Vector3 raisedDoorPosiiton = new(_doorModel.position.x, _doorMaxHeight, _doorModel.position.z);
 
-		if (transform.position == raisedDoorPosiiton)
+		if (_doorModel.position.y == raisedDoorPosiiton.y)
 			_garageDoorPhase = GarageAutomaticDoorPhase.None;
 
-		_doorModel.position = Vector3.Lerp(_doorModel.position, raisedDoorPosiiton, Time.deltaTime);
+		_doorModel.position = Vector3.Lerp(_doorModel.position, raisedDoorPosiiton, Time.deltaTime * _doorRaisingSpeed);
 	}
 
 	private void CloseDoorAutomatically()
@@ -189,10 +167,10 @@ public class GarageDoor : MonoBehaviour
 
 		Vector3 defaultDoorPosition = new(_doorModel.position.x, _defaultDoorYPosition, _doorModel.position.z);
 
-		if (transform.position == defaultDoorPosition)
-			_garageDoorPhase = GarageAutomaticDoorPhase.None;
+		if (_doorModel.position.y == defaultDoorPosition.y)
+			_garageDoorPhase = GarageAutomaticDoorPhase.None;		
 
-		_doorModel.position = Vector3.Lerp(_doorModel.position, defaultDoorPosition, Time.deltaTime);
+		_doorModel.position = Vector3.Lerp(_doorModel.position, defaultDoorPosition, Time.deltaTime * _doorRaisingSpeed);
 	}
 
 	private void TryRaiseDoor()

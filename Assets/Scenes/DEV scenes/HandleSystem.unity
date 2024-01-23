@@ -1188,7 +1188,7 @@ GameObject:
   - component: {fileID: 1453261856}
   - component: {fileID: 1453261861}
   - component: {fileID: 1453261860}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1398,6 +1398,11 @@ PrefabInstance:
       propertyPath: _playerCamera
       value: 
       objectReference: {fileID: 1709792407}
+    - target: {fileID: 8646543339736587921, guid: a0169cd393e121043b410c66a679ea20,
+        type: 3}
+      propertyPath: _doorRaisingSpeed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8646543339736587921, guid: a0169cd393e121043b410c66a679ea20,
         type: 3}
       propertyPath: <IsKeyNeeded>k__BackingField
