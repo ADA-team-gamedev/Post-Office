@@ -22,18 +22,19 @@ public class PauseMenu : MonoBehaviour
         _playerInput = new();
 
         _playerInput.UI.PauseMenu.performed += OnPauseMenu;
+
+		_exitWindow.SetActive(false);
+
+		_settingsWindow.SetActive(false);
 	}
 
 	private void Start()
     {
-        Time.timeScale = 1.0f;
-
-		_pauseMenu.SetActive(false);
-		_exitWindow.SetActive(false);
-		_settingsWindow.SetActive(false);		
+		OnResumeButton();
 	}
 
 	#region Pause Menu
+
 	private void OnPauseMenu(InputAction.CallbackContext context)
 	{
 		_isPaused = !_isPaused;
@@ -60,7 +61,7 @@ public class PauseMenu : MonoBehaviour
 
 	public void OnResumeButton()
 	{
-		Time.timeScale = 0;
+		Time.timeScale = 1f;
 
 		Cursor.lockState = CursorLockMode.Locked;
 
@@ -75,7 +76,7 @@ public class PauseMenu : MonoBehaviour
 
 	public void OnNewGameButton()
 	{
-		SceneManager.LoadScene(1);
+		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 	}
 
 	public void OnSaveButton()
