@@ -18,7 +18,7 @@ public class PlayerInventory : MonoBehaviour
 
 	[Header("Objects")]
 	[SerializeField] private Transform _playerHand;
-	[SerializeField] private Transform _playerCamera;
+	[SerializeField] private Camera _playerCamera;
 
 	private Transform _currentObjectTransform;
 	private Rigidbody _currentObjectRigidbody;
@@ -50,8 +50,6 @@ public class PlayerInventory : MonoBehaviour
 	{
 		_inventory = new(_inventorySlotsAmount);
 
-		_playerInput.Player.Interact.performed += OnInteract;
-
 		_playerInput.Player.PickUpItem.performed += OnPickUpItem;
 
 		_playerInput.Player.DropItem.performed += OnDropItem;
@@ -71,7 +69,7 @@ public class PlayerInventory : MonoBehaviour
 	{
 		if (_inventory.Count < _inventorySlotsAmount)
 		{
-			if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
+			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
 			{
 				_currentObjectTransform = hit.transform;
 				_currentObjectRigidbody = hit.rigidbody;
@@ -101,8 +99,8 @@ public class PlayerInventory : MonoBehaviour
 
 		_currentObjectTransform.SetParent(null);
 
-		_currentObjectRigidbody.AddForce(_playerCamera.forward * _dropForce, ForceMode.Impulse);
-		_currentObjectRigidbody.AddForce(_playerCamera.up * _dropUpForce, ForceMode.Impulse);
+		_currentObjectRigidbody.AddForce(_playerCamera.transform.forward * _dropForce, ForceMode.Impulse);
+		_currentObjectRigidbody.AddForce(_playerCamera.transform.up * _dropUpForce, ForceMode.Impulse);
 
 		_currentObjectTransform = null;
 		_currentObjectRigidbody = null;
@@ -215,12 +213,6 @@ public class PlayerInventory : MonoBehaviour
 
 	#region Input entry points
 
-	private void OnInteract(InputAction.CallbackContext context)
-	{
-		if (Physics.Raycast(_playerCamera.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IInteractable interactable))
-			interactable.Interact();
-	}
-
 	private void OnPickUpItem(InputAction.CallbackContext context)
 	{
 		TryPickupObject();
@@ -242,7 +234,7 @@ public class PlayerInventory : MonoBehaviour
 			return;
 
 		if (item.TryGetComponent(out IUsable usableItem))
-			usableItem.Use();	
+			usableItem.Use();
 	}
 
 	#region Inventory
