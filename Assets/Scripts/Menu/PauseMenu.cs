@@ -97,19 +97,17 @@ public class PauseMenu : MonoBehaviour
 
 	#region Exit Panel
 
-	#endregion
-
-
-
 	public void OnExitToMenu()
-    {
-        SceneManager.LoadScene(0);
-    }
+	{
+		SceneManager.LoadScene(0);
+	}
 
-    public void OnExitToDesktop()
-    {
-        Application.Quit();
-    }
+	public void OnExitToDesktop()
+	{
+		Application.Quit();
+	}
+
+	#endregion
 
 	private void OnEnable()
 	{
