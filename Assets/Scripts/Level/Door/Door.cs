@@ -1,13 +1,9 @@
-using System.Collections;
-using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(HingeJoint))] //don't forget to set up them, change rigidbody to static
-public class Door : MonoBehaviour
+public class Door : MonoBehaviour, IInteractable
 {
 	#region Door rotation
-	[Header("Layer")]
-	[SerializeField] private LayerMask _doorLayer;
 
 	#region Parameters
 
@@ -22,10 +18,10 @@ public class Door : MonoBehaviour
 
 	[Header("Objects")]
 
-	[SerializeField] private Camera _playerCamera;
 	[SerializeField] private Transform _doorModel;
 
-	[SerializeField] private GameObject[] _interactionButtonUI;
+	[SerializeField] private Interactor _playerInteractor;
+	private Transform _interactorCameraTransform => _playerInteractor.PlayerCamera.transform;
 
 	private HingeJoint _hingeJoint;
 
@@ -45,95 +41,85 @@ public class Door : MonoBehaviour
 	[field: SerializeField] public bool IsKeyNeeded { get; private set; } = true;
 
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
-	
+
 
 	private bool _isClosed; //closed while we don't open it by our key
 
 	#endregion
 
+	private PlayerInput _playerInput;
+
+	private bool _isPlayerDragDoor = false;
+
+	private void OnEnable()
+	{
+		_playerInput.Enable();
+	}
+
+	private void OnDisable()
+	{
+		_playerInput.Disable();
+	}
+
+	private void Awake()
+	{
+		_playerInput = new();
+	}
+
 	private void Start()
-    {
-		PlayerHandler.Instance.KeyBinds[InputType.Interact].OnKeyDown += OpenDoorByKey;
-
-		PlayerHandler.Instance.KeyBinds[InputType.Drag].OnKeyDown += StartRotateDoor;
-		PlayerHandler.Instance.KeyBinds[InputType.Drag].OnKeyUp += StopRotateDoor;
-
+	{
 		_defaultDoorYRotation = transform.rotation.eulerAngles.y;
 
 		_playerClickedViewPoint = _doorModel.position;
 
 		_isClosed = IsKeyNeeded;
-
-		foreach (GameObject button in _interactionButtonUI)
-			button.SetActive(false);
 	}
-   
-    private void Update()
-    {
-		TryRotateDoor();
 
-		ShowInteractionUI();
+	private void Update()
+	{
+		TryRotateDoor();
 	}
 
 	#region Key open
 
-	private void ShowInteractionUI()
+	private void TryOpenDoorByKey()
 	{
-		if (!IsKeyNeeded || !IsPlayerInInteractionZone())
-		{
-			foreach (GameObject button in _interactionButtonUI)
-				button.SetActive(false);
-
+		if (!_isClosed)
 			return;
-		}
 
-		foreach (GameObject button in _interactionButtonUI)
-			button.SetActive(true);
-
-		for (int i = 0; i < _interactionButtonUI.Length; i++)
-			_interactionButtonUI[i].transform.rotation = Quaternion.LookRotation(_interactionButtonUI[i].transform.position - _playerCamera.transform.position);	
-	}
-
-	private void OpenDoorByKey()
-	{
-		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
+		if (PlayerInventory.Instance.TryGetCurrentItem(out Key key))
 		{
-			if (PlayerInventory.Instance.TryGetCurrentItem(out GameObject item) && item.TryGetComponent(out Key key))
+			if (key.DoorKeyType == DoorKeyType)
 			{
-				if (key.DoorKeyType == DoorKeyType)
-				{
-					//play door key opening sound
+				//play door key opening sound
 
-					IsKeyNeeded = false;
+				IsKeyNeeded = false;
 
-					_isClosed = false;
-				}
-				else
-				{
-					Debug.Log("Player doesn't have right key to open this door");
+				_isClosed = false;
+			}
+			else
+			{
+				Debug.Log("Player doesn't have right key to open this door");
 
-					//play door key closed sound
-				}
-			}		
+				//play door key closed sound
+			}
 		}
 	}
 
 	#endregion
 
 	#region Door rotation
+
 	private void TryRotateDoor()
 	{
-		if (_isClosed || !IsPlayerInInteractionZone())
+		if (!_isDoorMoving || !IsPlayerInInteractionZone())
 		{
-			_isDoorMoving = false;
-
-			_playerClickedViewPoint = transform.position;
+			StopRotateDoor();
 
 			return;
 		}
-
-		if (_isDoorMoving)
-			_playerClickedViewPoint = _playerCamera.transform.position + _playerCamera.transform.forward * _doorDragingDistance;			
+	
+		_playerClickedViewPoint = _interactorCameraTransform.position + _interactorCameraTransform.forward * _doorDragingDistance;
 
 		_doorRotation += Mathf.Clamp(-GetDoorRotation() * _doorRotationSpeed * Time.deltaTime, -_doorOpeningForce, _doorOpeningForce);
 
@@ -144,17 +130,12 @@ public class Door : MonoBehaviour
 
 	private void StartRotateDoor()
 	{
-		if (_isClosed || !IsPlayerInInteractionZone())
-		{
-			_isDoorMoving = false;
-
-			_playerClickedViewPoint = transform.position;
-
+		if (_isClosed)
 			return;
-		}
 
-		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _doorDragingDistance, _doorLayer))
-			_isDoorMoving = true;
+		_isPlayerDragDoor = true;
+
+		_isDoorMoving = true;
 	}
 
 	private void StopRotateDoor()
@@ -167,26 +148,41 @@ public class Door : MonoBehaviour
 			//play fully closed door sound
 		}
 
+		_isPlayerDragDoor = false;
+
 		_isDoorMoving = false;
+
+		_playerClickedViewPoint = transform.position;
 	}
 
-    private float GetDoorRotation()
-    {
-        float firstDistance = (_doorModel.position - _playerClickedViewPoint).sqrMagnitude;
+	private float GetDoorRotation()
+	{
+		float firstDistance = (_doorModel.position - _playerClickedViewPoint).sqrMagnitude;
 
-        transform.Rotate(Vector3.up);
+		transform.Rotate(Vector3.up);
 
-        float secondDistance = (_doorModel.position - _playerClickedViewPoint).sqrMagnitude;
+		float secondDistance = (_doorModel.position - _playerClickedViewPoint).sqrMagnitude;
 
-        transform.Rotate(-Vector3.up);
+		transform.Rotate(-Vector3.up);
 
-        return secondDistance - firstDistance; 
+		return secondDistance - firstDistance;
 	}
 
 	#endregion
 
+	public void Interact()
+	{
+		if (_isClosed)
+			TryOpenDoorByKey();	
+		
+		if (!_isPlayerDragDoor)
+			StartRotateDoor();
+		else
+			StopRotateDoor();			
+	}
+
 	private bool IsPlayerInInteractionZone()
-		=> Vector3.Magnitude(_playerCamera.transform.position - _doorModel.position) <= _doorDragingDistance;
+		=> Vector3.Magnitude(_interactorCameraTransform.position - _doorModel.position) <= _playerInteractor.InteractionDistance;
 
 	private void OnValidate()
 	{
@@ -200,9 +196,9 @@ public class Door : MonoBehaviour
 		Gizmos.DrawSphere(_playerClickedViewPoint, 0.1f);
 
 		Gizmos.color = Color.blue;
-		Gizmos.DrawRay(_playerCamera.transform.position, _playerCamera.transform.forward * _doorDragingDistance);
+		Gizmos.DrawRay(_interactorCameraTransform.position, _interactorCameraTransform.forward * _doorDragingDistance);
 
 		Gizmos.color = IsPlayerInInteractionZone() ? Color.green : Color.red; //interaction zone; is player can rotate door
-		Gizmos.DrawLine(_playerCamera.transform.position, _doorModel.position);
+		Gizmos.DrawLine(_interactorCameraTransform.position, _doorModel.position);
 	}
 }
