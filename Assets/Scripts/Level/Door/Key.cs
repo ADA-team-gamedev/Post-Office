@@ -10,6 +10,9 @@ public enum DoorKeyTypes
 	Kitchen,
 }
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(BoxCollider))]
+
 public class Key : MonoBehaviour, IPickable
 {
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
