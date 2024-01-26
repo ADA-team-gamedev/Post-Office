@@ -172,13 +172,17 @@ public class Door : MonoBehaviour, IInteractable
 
 	public void Interact()
 	{
-		if (_isClosed)
-			TryOpenDoorByKey();	
-		
 		if (!_isPlayerDragDoor)
+		{
+			if (_isClosed)
+				TryOpenDoorByKey();
+
 			StartRotateDoor();
+		}
 		else
+		{
 			StopRotateDoor();			
+		}
 	}
 
 	private bool IsPlayerInInteractionZone()
