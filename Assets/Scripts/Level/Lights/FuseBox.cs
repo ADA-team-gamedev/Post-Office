@@ -1,19 +1,25 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class GeneratorBox : MonoBehaviour
+public class FuseBox : MonoBehaviour
 {
-	public bool IsEnabled { get; private set; } = true;
+	public bool IsEnabled { get; private set; } = true; 
 
-    public UnityEvent OnGeneratorDisabled;
-	public UnityEvent OnGeneratorEnabled;
-
-    [SerializeField] private GeneratorSwitch[] generatorSwitches;
+	[Header("Energy")]
 
 	[SerializeField][Range(1f, 100f)] private float _energyIncreasingSpeed = 1f;
 	[SerializeField][Range(1f, 5f)] private float _energyDecreasingSpeed = 1f;
 
 	[SerializeField] private float _maxEnergyAmount = 100f;
+
+	[Header("Switches")]
+	[SerializeField] private FuseSwitch[] generatorSwitches;
+
+	[Header("Events")]
+	[Space(5)]
+
+	public UnityEvent OnFuseDisabled;
+	public UnityEvent OnFuseEnabled;
 
 	public float EnergyAmount
 	{
@@ -28,6 +34,8 @@ public class GeneratorBox : MonoBehaviour
 				_energyAmount = _maxEnergyAmount;
 
 				IsEnabled = true;
+
+				OnFuseEnabled?.Invoke();
 			}
 			else if (value <= 0)
 			{
@@ -35,7 +43,7 @@ public class GeneratorBox : MonoBehaviour
 
 				IsEnabled = false;
 
-				DisableAllSwitches();
+				DisableFuse();
 			}
 			else
 				_energyAmount = value;			
@@ -54,9 +62,7 @@ public class GeneratorBox : MonoBehaviour
 
 		foreach (var switches in generatorSwitches)
 		{
-			switches.OnSwitchEnabled.AddListener(AddSwitchToAll);
-
-			switches.OnSwitchDisabled.AddListener(RemoveSwitchFromAll);
+			switches.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
 		}
 	}
 
@@ -92,25 +98,17 @@ public class GeneratorBox : MonoBehaviour
 		}
 	}
 
-	private void RemoveSwitchFromAll()
-	{
-		_activatedSwitchesCount--;
-	}
-
-	private void AddSwitchToAll()
-	{
-		_activatedSwitchesCount++;
-	}
-
-	public void DisableAllSwitches()
+	public void DisableFuse()
 	{
 		foreach (var switches in generatorSwitches)
-			switches.DisableSwitch();		
+			switches.DisableSwitch();
+
+		OnFuseDisabled?.Invoke();
 	}
 
 	private void OnValidate()
 	{
-		if (EnergyAmount <= 0)
-			EnergyAmount++;
+		if (_maxEnergyAmount <= 0)
+			_maxEnergyAmount++;
 	}
 }
