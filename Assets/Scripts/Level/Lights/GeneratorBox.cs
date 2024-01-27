@@ -3,41 +3,103 @@ using UnityEngine.Events;
 
 public class GeneratorBox : MonoBehaviour
 {
-	[SerializeField] private bool GenerateRandomSwitchState = true;
+	public bool IsEnabled { get; private set; } = true;
 
-    [SerializeField] private UnityEvent OnGeneratorDisabled;
-	[SerializeField] private UnityEvent OnGeneratorEnabled;
+    public UnityEvent OnGeneratorDisabled;
+	public UnityEvent OnGeneratorEnabled;
 
     [SerializeField] private GeneratorSwitch[] generatorSwitches;
 
+	[SerializeField][Range(1f, 100f)] private float _energyIncreasingSpeed = 1f;
+	[SerializeField][Range(1f, 5f)] private float _energyDecreasingSpeed = 1f;
+
+	[SerializeField] private float _maxEnergyAmount = 100f;
+
+	public float EnergyAmount
+	{
+		get 
+		{ 
+			return _energyAmount; 
+		}
+		private set
+		{		
+			if (value >= _maxEnergyAmount)
+			{
+				_energyAmount = _maxEnergyAmount;
+
+				IsEnabled = true;
+			}
+			else if (value <= 0)
+			{
+				_energyAmount = 0;
+
+				IsEnabled = false;
+
+				DisableAllSwitches();
+			}
+			else
+				_energyAmount = value;			
+		}
+	}
+
+	private float _energyAmount;
+
+	private uint _activatedSwitchesCount = 0;
+
 	private void Start()
 	{
-		if (GenerateRandomSwitchState)
-			CreateRandomSwitchEnabled();
-		else 
-			DisableAllSwitches();
+		_energyAmount = _maxEnergyAmount;
 
-		CheckIsSwitchesEnabled();
+		CountNumberOfActivatedSwitches();
+
+		foreach (var switches in generatorSwitches)
+		{
+			switches.OnSwitchEnabled.AddListener(AddSwitchToAll);
+
+			switches.OnSwitchDisabled.AddListener(RemoveSwitchFromAll);
+		}
 	}
 
 	private void Update()
 	{
-		
+		if (IsEnabled)
+			DecreaseEnergy();
+		else
+			IncreaseEnergy();
 	}
 
-	public void CheckIsSwitchesEnabled()
+	private void DecreaseEnergy()
 	{
+		if (_activatedSwitchesCount == 0)
+			return;
+
+		EnergyAmount -= _activatedSwitchesCount * _energyDecreasingSpeed * Time.deltaTime;
+	}
+
+	private void IncreaseEnergy()
+	{
+		EnergyAmount += _energyIncreasingSpeed * Time.deltaTime;
+	}
+
+	private void CountNumberOfActivatedSwitches()
+	{
+		_activatedSwitchesCount = 0;
+
 		foreach (var switches in generatorSwitches)
 		{
-			if (!switches.IsEnabled)
-			{
-				OnGeneratorDisabled.Invoke();
-
-				return;
-			}
+			if (switches.IsEnabled)
+				_activatedSwitchesCount++;
 		}
+	}
 
-		OnGeneratorEnabled.Invoke();
+	private void RemoveSwitchFromAll()
+	{
+		_activatedSwitchesCount--;
+	}
+
+	private void AddSwitchToAll()
+	{
+		_activatedSwitchesCount++;
 	}
 
 	public void DisableAllSwitches()
@@ -46,14 +108,9 @@ public class GeneratorBox : MonoBehaviour
 			switches.DisableSwitch();		
 	}
 
-	private void CreateRandomSwitchEnabled()
+	private void OnValidate()
 	{
-		foreach (var switches in generatorSwitches)
-		{
-			if (Random.Range(0, 2) == 0)
-				switches.DisableSwitch();
-			else
-				switches.EnableSwitch();
-		}
+		if (EnergyAmount <= 0)
+			EnergyAmount++;
 	}
 }

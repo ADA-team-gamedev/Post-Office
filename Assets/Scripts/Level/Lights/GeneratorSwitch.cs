@@ -1,12 +1,13 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class GeneratorSwitch : MonoBehaviour
 {
-	public bool IsEnabled { get; private set; }
+	[field: SerializeField] public bool IsEnabled { get; private set; }
 
-	[SerializeField] private UnityEvent OnSwitchEnabled;
-	[SerializeField] private UnityEvent OnSwitchDisabled;
+	public UnityEvent OnSwitchEnabled;
+	public UnityEvent OnSwitchDisabled;
 
 	private GeneratorBox _generator;
 
@@ -19,31 +20,56 @@ public class GeneratorSwitch : MonoBehaviour
 		_generator = GetComponentInParent<GeneratorBox>();	
 	}
 
+	private void Start()
+	{
+		if (IsEnabled)
+			_animator.SetTrigger("OnEnable");
+		else
+			_animator.SetTrigger("OnDisable");
+	}
+
 	private void OnMouseDown()
 	{
 		if (IsEnabled)
 			DisableSwitch();
 		else
-			EnableSwitch();
-
-		_generator.CheckIsSwitchesEnabled();		
+			EnableSwitch();		
 	}
 
 	public void DisableSwitch()
 	{
+		if (!IsEnabled)
+			return;
+
 		IsEnabled = false;
 
 		_animator.SetTrigger("OnDisable");
 
 		OnSwitchDisabled.Invoke();
+
+		_generator.OnGeneratorEnabled.RemoveListener(ActiveSwitchLater);
 	}
 
 	public void EnableSwitch()
 	{
+		if (IsEnabled)
+			return;
+
 		IsEnabled = true;
 
 		_animator.SetTrigger("OnEnable");
 
-		OnSwitchEnabled.Invoke();
+		if (_generator.IsEnabled)
+			OnSwitchEnabled.Invoke();
+		else
+		{
+			_generator.OnGeneratorEnabled.AddListener(ActiveSwitchLater);
+		}
+	}
+
+	private void ActiveSwitchLater()
+	{
+		if (IsEnabled)
+			OnSwitchEnabled.Invoke();
 	}
 }

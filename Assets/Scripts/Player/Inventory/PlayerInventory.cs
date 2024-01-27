@@ -228,11 +228,14 @@ public class PlayerInventory : MonoBehaviour
 
 	private void OnUseItem(InputAction.CallbackContext context)
 	{
+		if (_currentSlotIndex < 0)
+			return;
+
 		GameObject item = _inventory[_currentSlotIndex];
 
 		if (item == null)
 			return;
-
+		
 		if (item.TryGetComponent(out IUsable usableItem))
 			usableItem.Use();
 	}
