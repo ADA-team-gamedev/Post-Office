@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public enum TaskType
 {
@@ -18,14 +19,12 @@ public class TaskManager : MonoBehaviour
 
 	#region Actions
 
-	public event Action OnNewTaskSet;
+	public event Action OnAddedNewTask;
 
 	public event Action<Task> OnNewCurrentTaskSet;
 	public event Action CurrentTaskCompleted;
 
 	#endregion
-
-	[SerializeField] private bool _setCurrentTaskOnStart = false;
 
 	[SerializeField] private List<TaskData> _taskDatas = new();
 
@@ -51,8 +50,7 @@ public class TaskManager : MonoBehaviour
 
 	private void Start()
 	{
-		if (_setCurrentTaskOnStart)
-			SetNewCurrentTask(_tasks[0]);	
+		SetNewCurrentTask(_tasks[0]);	
 	}
 
 	public bool TryGetTaskByType(TaskType type, out Task task)
@@ -70,6 +68,22 @@ public class TaskManager : MonoBehaviour
 		task = null;
 
 		return false;
+	}
+
+	public void SetNewCurrentTask(int index)
+	{
+		if (index < 0 || index >= _tasks.Count)
+		{
+			Debug.LogWarning("You are trying to set new task as current with using wrong index!");
+
+			return;
+		}
+
+		Task task = _tasks[index];
+
+		CurrentTask = task;
+
+		OnNewCurrentTaskSet?.Invoke(task);
 	}
 
 	public void SetNewCurrentTask(Task task)
@@ -90,9 +104,7 @@ public class TaskManager : MonoBehaviour
 	{
 		if (!TryGetTaskByType(type, out Task task))
 		{
-			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
-
-			TryAddNewTask(task);
+			Debug.LogError("You are trying to set task by type which doesn't exists in task collection. We can't set it as current");
 		}
 
 		CurrentTask = task;
@@ -113,7 +125,7 @@ public class TaskManager : MonoBehaviour
 
 		task.OnCompleted += RemoveCurrentTask;
 
-		OnNewTaskSet?.Invoke();
+		OnAddedNewTask?.Invoke();
 
 		return true;
 	}
@@ -129,21 +141,20 @@ public class TaskManager : MonoBehaviour
 		return false;
 	}
 
-	private void RemoveCurrentTask()
+	private void RemoveCurrentTask(Task completedTask)
 	{
-		for (int i = 0; i < _tasks.Count; i++)
-		{
-			if (_tasks[i].IsCompleted)
-			{
-				if (CurrentTask == _tasks[i])
-					CurrentTask = null;
+		if (CurrentTask != completedTask)
+			return;
 
-				CurrentTaskCompleted?.Invoke();
+		CurrentTask = null;
 
-				_tasks.Remove(_tasks[i]);		
-			}
-		}
+		CurrentTaskCompleted?.Invoke();
 
-		Debug.Log("Task has been deleted");
+		_tasks.Remove(completedTask);
+
+		if (_tasks.Count >= 0)
+			SetNewCurrentTask(_tasks[0]);
+
+		Debug.Log($"Task: {completedTask.Name} has been deleted");
 	}
 }

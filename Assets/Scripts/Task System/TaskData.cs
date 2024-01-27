@@ -14,11 +14,11 @@ public class Task
 
 	[field: SerializeField] public TaskType Type { get; private set; }
 
-	[field: SerializeField, TextArea] public string Name { get; private set; }
+	[field: SerializeField, TextArea(2, 2)] public string Name { get; private set; }
 
-	[field: SerializeField, TextArea] public string Description { get; private set; }
+	[field: SerializeField, TextArea(5, 5)] public string Description { get; private set; }
 
-	public event Action OnCompleted;
+	public event Action<Task> OnCompleted;
 
 	public Task(TaskType type, string name, string description = "No description")
 	{
@@ -36,6 +36,6 @@ public class Task
 
 		IsCompleted = true;
 
-		OnCompleted?.Invoke();
+		OnCompleted?.Invoke(this);
 	}
 }

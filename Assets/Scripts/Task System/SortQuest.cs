@@ -9,8 +9,6 @@ public class SortQuest : MonoBehaviour
 	
 	private List<Box> _addedBoxes = new();
 
-	[SerializeField] private NoteBook _noteBook;
-
 	private bool _isTaskAdded = false;
 
 	private void OnTriggerEnter(Collider other)
@@ -20,8 +18,6 @@ public class SortQuest : MonoBehaviour
 			TaskManager.Instance.SetNewCurrentTask(_addedTask.Task);
 
 			_isTaskAdded = true;
-
-			_noteBook.AddExtraText("Необхідно перенести деякі коробки нижче на склад, на полицю, біля автівок. Ця партія коробок має відправитись дуже скоро: \n- Коробка зі склом\n- Коробка з книгами");		
 		}
 
 		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))
@@ -30,8 +26,7 @@ public class SortQuest : MonoBehaviour
 
 			box.OnPickUpItem += RemoveBox;
 
-			if (IsTaskConditionsCompleted() && TaskManager.Instance.CurrentTask == _addedTask.Task)
-				TaskManager.Instance.CurrentTask.Complete();		
+			TryCompleteTask();		
 		}
 	}
 
@@ -42,12 +37,17 @@ public class SortQuest : MonoBehaviour
 			if (_addedBoxes.Contains(box))
 				_addedBoxes.Remove(box);
 
-			if (IsTaskConditionsCompleted() && TaskManager.Instance.CurrentTask == _addedTask.Task)
-				TaskManager.Instance.CurrentTask.Complete();
+			TryCompleteTask();
 		}
 	}
 
-	private bool IsTaskConditionsCompleted()
+	private void TryCompleteTask()
+	{
+		if (IsAllBoxesCollected() && TaskManager.Instance.CurrentTask == _addedTask.Task)
+			TaskManager.Instance.CurrentTask.Complete();
+	}
+
+	private bool IsAllBoxesCollected()
 	{
 		if (_neededBoxes.Count != _addedBoxes.Count)
 			return false;
@@ -65,5 +65,7 @@ public class SortQuest : MonoBehaviour
 	{
 		if (PlayerInventory.Instance.TryGetCurrentItem(out Box box))	
 			_addedBoxes.Remove(box);
+
+		TryCompleteTask();
 	}
 }

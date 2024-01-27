@@ -244,7 +244,7 @@ public class PlayerInventory : MonoBehaviour
 
 	private void OnScrollWheelYChanged(InputAction.CallbackContext context)
 	{
-		if (_inventory.Count <= 0)
+		if (_inventory.Count <= 0 || _playerInput.UI.NoteBook.IsPressed())
 			return;
 
 		float scrollWheelValue = context.ReadValue<float>();
