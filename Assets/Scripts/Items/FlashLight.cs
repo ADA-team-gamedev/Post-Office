@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class FlashLight : MonoBehaviour, IPickable, IUsable
+public class FlashLight : Item, IUsable
 {
     [Header("Objects")]
     [SerializeField] private Light _flashlight;
@@ -18,10 +18,6 @@ public class FlashLight : MonoBehaviour, IPickable, IUsable
     private bool _isWorking = false;
 
     private bool _charged = true;
-
-    public Action OnPickUpItem { get; set; }
-
-    public Action OnDropItem { get; set; }
 
 	private void Awake()
 	{

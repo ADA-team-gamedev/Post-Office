@@ -4,12 +4,8 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(BoxCollider))]
 
-public class RemoteControl : MonoBehaviour, IPickable, IUsable
+public class RemoteControl : Item, IUsable
 {
-	public Action OnPickUpItem { get; set; }
-
-	public Action OnDropItem { get; set; }
-
 	[SerializeField] private Camera _playerCamera;
 
 	[SerializeField] private TaskData _findRemoteControlTask;
@@ -23,7 +19,7 @@ public class RemoteControl : MonoBehaviour, IPickable, IUsable
 
 	private void Completetask()
 	{
-		if (!TaskManager.Instance.TryGetTaskByType(_findRemoteControlTask.Task.Type, out Task task))
+		if (!TaskManager.Instance.TryGetTaskByType(_findRemoteControlTask.Task.ID, out Task task))
 			return;
 
 		task.Complete();

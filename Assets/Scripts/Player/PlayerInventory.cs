@@ -69,7 +69,7 @@ public class PlayerInventory : MonoBehaviour
 	{
 		if (_inventory.Count < _inventorySlotsAmount)
 		{
-			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out IPickable pickable))
+			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out Item item))
 			{
 				_currentObjectTransform = hit.transform;
 				_currentObjectRigidbody = hit.rigidbody;
@@ -79,7 +79,7 @@ public class PlayerInventory : MonoBehaviour
 
 				AddItem(_currentObjectTransform.gameObject);
 
-				pickable.OnPickUpItem?.Invoke();
+				item.OnPickUpItem?.Invoke();
 			}
 		}
 	}
@@ -91,8 +91,8 @@ public class PlayerInventory : MonoBehaviour
 
 		_currentObjectTransform.gameObject.SetActive(true);
 
-		if (_currentObjectTransform.TryGetComponent(out IPickable pickable))
-			pickable.OnDropItem?.Invoke();
+		if (_currentObjectTransform.TryGetComponent(out Item item))
+			item.OnDropItem?.Invoke();
 
 		_currentObjectRigidbody.isKinematic = false;
 		_currentObjectRigidbody.useGravity = true;
@@ -128,11 +128,11 @@ public class PlayerInventory : MonoBehaviour
 
 	#region Inventory system
 
-	public bool TryGetCurrentItem<T>(out T item) where T : IPickable
+	public bool TryGetCurrentItem<T>(out T item) where T : Item
 	{
 		if (_currentSlotIndex < 0 || _currentSlotIndex >= _inventory.Count)
 		{
-			item = default(T);
+			item = default;
 
 			return false;
 		}
@@ -145,7 +145,7 @@ public class PlayerInventory : MonoBehaviour
 				return true;
 		}
 
-		item = default(T);
+		item = default;
 
 		return false;
 	}
