@@ -110,7 +110,11 @@ public class FuseBox : MonoBehaviour
 		OnFuseDisabled?.Invoke();
 
 		if (!_isTaskAdded)
+		{
 			TaskManager.Instance.SetNewCurrentTask(_task);
+
+			_isTaskAdded = true;
+		}
 	}
 
 	private void EnableFuse()
