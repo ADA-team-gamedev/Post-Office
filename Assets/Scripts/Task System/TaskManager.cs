@@ -46,11 +46,11 @@ public class TaskManager : MonoBehaviour
 		SetNewCurrentTask(_tasks[0]);	
 	}
 
-	public bool TryGetTaskByType(TaskType type, out Task task)
+	public bool TryGetTaskByType(int id, out Task task)
 	{
 		foreach (var item in _tasks)
 		{
-			if (item.Type == type)
+			if (item.ID == id)
 			{
 				task = item;
 				
@@ -88,23 +88,11 @@ public class TaskManager : MonoBehaviour
 
 	public void SetNewCurrentTask(Task task)
 	{
-		if (!TryGetTaskByType(task.Type, out Task _))
+		if (!TryGetTaskByType(task.ID, out Task _))
 		{
 			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
 
 			AddNewTask(task);
-		}
-
-		CurrentTask = task;
-
-		OnNewCurrentTaskSet?.Invoke(task);
-	}
-
-	public void SetNewCurrentTask(TaskType type)
-	{
-		if (!TryGetTaskByType(type, out Task task))
-		{
-			Debug.LogError("You are trying to set task by type which doesn't exists in task collection. We can't set it as current");
 		}
 
 		CurrentTask = task;
@@ -121,9 +109,9 @@ public class TaskManager : MonoBehaviour
 
 	public void AddNewTask(Task task) 
 	{
-		if (IsContainTaskByType(task.Type))
+		if (IsContainTask(task.ID))
 		{
-			Debug.LogWarning("You are trying to add task which already exists in task collection");
+			Debug.LogWarning("You are trying to add task which already exists in task collection. We can't add him!");
 
 			return;
 		}
@@ -135,11 +123,11 @@ public class TaskManager : MonoBehaviour
 		OnAddedNewTask?.Invoke();
 	}
 
-	private bool IsContainTaskByType(TaskType type)
+	private bool IsContainTask(int taskId)
 	{
 		foreach (var task in _tasks)
 		{
-			if (task.Type == type)
+			if (task.ID == taskId)
 				return true;
 		}
 

@@ -360,41 +360,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2689413036350202349, guid: 70b956c454bceb04da0c82eb8b191138,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9999898
-      objectReference: {fileID: 0}
-    - target: {fileID: 2689413036350202349, guid: 70b956c454bceb04da0c82eb8b191138,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 2.1125277e-15
-      objectReference: {fileID: 0}
-    - target: {fileID: 2689413036350202349, guid: 70b956c454bceb04da0c82eb8b191138,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2689413036350202349, guid: 70b956c454bceb04da0c82eb8b191138,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0.0045281486
-      objectReference: {fileID: 0}
-    - target: {fileID: 2689413036350202349, guid: 70b956c454bceb04da0c82eb8b191138,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2689413036350202349, guid: 70b956c454bceb04da0c82eb8b191138,
-        type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 0.0432
-      objectReference: {fileID: 0}
-    - target: {fileID: 2689413036350202349, guid: 70b956c454bceb04da0c82eb8b191138,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0.519
-      objectReference: {fileID: 0}
     - target: {fileID: 7096037400869745857, guid: 70b956c454bceb04da0c82eb8b191138,
         type: 3}
       propertyPath: m_RootOrder
@@ -2058,8 +2023,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a839a6e18ba908d4e8549094d8c77f2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerTag: Player
+  _giveTaskOnStart: 1
   _addedTask: {fileID: 11400000, guid: beedb1b734566f0489936d928eb5471e, type: 2}
-  _neededBoxes:
+  _neededItems:
   - {fileID: 1242549942}
   - {fileID: 1646217477}
 --- !u!23 &1351795036

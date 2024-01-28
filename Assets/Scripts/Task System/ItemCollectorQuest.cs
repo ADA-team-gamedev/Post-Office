@@ -1,24 +1,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SortQuest : MonoBehaviour
+public class ItemCollectorQuest : MonoBehaviour
 {
+	[Header("Task")]
+	[SerializeField] private string _playerTag = "Player";
+
+	[SerializeField] private bool _giveTaskOnStart = false;
+
 	[SerializeField] private TaskData _addedTask;
 
-	[SerializeField] private List<Box> _neededBoxes;
+	[Header("Items")]
+	[SerializeField] private List<Box> _neededItems;
 	
 	private List<Box> _addedBoxes = new();
 
 	private bool _isTaskAdded = false;
 
+	private void Start()
+	{
+		if (_giveTaskOnStart)
+			GiveTaskToPlayer();	
+	}
+
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.CompareTag("Player") && !_isTaskAdded && TaskManager.Instance.CurrentTask != _addedTask.Task)
-		{		
-			TaskManager.Instance.SetNewCurrentTask(_addedTask);
-
-			_isTaskAdded = true;
-		}
+		if (other.CompareTag(_playerTag))
+			GiveTaskToPlayer();	
 
 		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))
 		{
@@ -41,6 +49,16 @@ public class SortQuest : MonoBehaviour
 		}
 	}
 
+	private void GiveTaskToPlayer()
+	{
+		if (_isTaskAdded)
+			return;
+
+		TaskManager.Instance.SetNewCurrentTask(_addedTask);
+
+		_isTaskAdded = true;
+	}
+
 	private void TryCompleteTask()
 	{
 		if (IsAllBoxesCollected())
@@ -49,12 +67,12 @@ public class SortQuest : MonoBehaviour
 
 	private bool IsAllBoxesCollected()
 	{
-		if (_neededBoxes.Count != _addedBoxes.Count)
+		if (_neededItems.Count != _addedBoxes.Count)
 			return false;
 
-		for (int i = 0; i < _neededBoxes.Count; i++)
+		for (int i = 0; i < _neededItems.Count; i++)
 		{
-			if (!_neededBoxes.Contains(_addedBoxes[i]))
+			if (!_neededItems.Contains(_addedBoxes[i]))
 				return false;
 		}
 
