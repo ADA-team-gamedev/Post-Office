@@ -15,7 +15,7 @@ public class SortQuest : MonoBehaviour
 	{
 		if (other.CompareTag("Player") && !_isTaskAdded && TaskManager.Instance.CurrentTask != _addedTask.Task)
 		{		
-			TaskManager.Instance.SetNewCurrentTask(_addedTask.Task);
+			TaskManager.Instance.SetNewCurrentTask(_addedTask);
 
 			_isTaskAdded = true;
 		}
@@ -43,7 +43,7 @@ public class SortQuest : MonoBehaviour
 
 	private void TryCompleteTask()
 	{
-		if (IsAllBoxesCollected() && TaskManager.Instance.CurrentTask == _addedTask.Task)
+		if (IsAllBoxesCollected())
 			TaskManager.Instance.CurrentTask.Complete();
 	}
 

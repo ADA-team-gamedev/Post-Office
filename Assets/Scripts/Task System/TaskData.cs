@@ -7,6 +7,13 @@ public class TaskData : ScriptableObject
 	[field: SerializeField] public Task Task { get; private set; }
 }
 
+public enum TaskType
+{
+	Sorting,
+	BoxMoving,
+	Finding,
+}
+
 [Serializable]
 public class Task
 {
@@ -20,13 +27,22 @@ public class Task
 
 	public event Action<Task> OnCompleted;
 
-	public Task(TaskType type, string name, string description = "No description")
+	public Task(TaskType type, string name, string description)
 	{
 		Type = type;
 
 		Name = name;
 
 		Description = description;
+	}
+
+	public Task(TaskData taskData)
+	{
+		Type = taskData.Task.Type;
+
+		Name = taskData.Task.Name;
+
+		Description = taskData.Task.Description;
 	}
 
 	public void Complete()

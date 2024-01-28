@@ -7,9 +7,27 @@ using UnityEngine;
 public class RemoteControl : MonoBehaviour, IPickable, IUsable
 {
 	public Action OnPickUpItem { get; set; }
+
 	public Action OnDropItem { get; set; }
 
 	[SerializeField] private Camera _playerCamera;
+
+	[SerializeField] private TaskData _findRemoteControlTask;
+
+	private void Start()
+	{
+		TaskManager.Instance.AddNewTask(_findRemoteControlTask);
+
+		OnPickUpItem += Completetask;
+	}
+
+	private void Completetask()
+	{
+		if (!TaskManager.Instance.TryGetTaskByType(_findRemoteControlTask.Task.Type, out Task task))
+			return;
+
+		task.Complete();
+	}
 
 	public void Use()
 	{

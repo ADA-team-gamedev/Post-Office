@@ -1,13 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-
-public enum TaskType
-{
-    Sorting,
-    BoxMoving,
-}
 
 public class TaskManager : MonoBehaviour
 {
@@ -74,7 +67,7 @@ public class TaskManager : MonoBehaviour
 	{
 		if (index < 0 || index >= _tasks.Count)
 		{
-			Debug.LogWarning("You are trying to set new task as current with using wrong index!");
+			Debug.LogWarning($"Can't set task, as current with index[{index}]");
 
 			return;
 		}
@@ -86,13 +79,20 @@ public class TaskManager : MonoBehaviour
 		OnNewCurrentTaskSet?.Invoke(task);
 	}
 
+	public void SetNewCurrentTask(TaskData taskData)
+	{
+		Task task = new(taskData);
+
+		SetNewCurrentTask(task);
+	}
+
 	public void SetNewCurrentTask(Task task)
 	{
 		if (!TryGetTaskByType(task.Type, out Task _))
 		{
 			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
 
-			TryAddNewTask(task);
+			AddNewTask(task);
 		}
 
 		CurrentTask = task;
@@ -112,13 +112,20 @@ public class TaskManager : MonoBehaviour
 		OnNewCurrentTaskSet?.Invoke(task);
 	}
 
-	public bool TryAddNewTask(Task task) 
+	public void AddNewTask(TaskData taskData)
+	{
+		Task task = new(taskData);
+
+		AddNewTask(task);
+	}
+
+	public void AddNewTask(Task task) 
 	{
 		if (IsContainTaskByType(task.Type))
 		{
 			Debug.LogWarning("You are trying to add task which already exists in task collection");
 
-			return false;
+			return;
 		}
 
 		_tasks.Add(task);
@@ -126,8 +133,6 @@ public class TaskManager : MonoBehaviour
 		task.OnCompleted += RemoveCurrentTask;
 
 		OnAddedNewTask?.Invoke();
-
-		return true;
 	}
 
 	private bool IsContainTaskByType(TaskType type)
@@ -150,10 +155,17 @@ public class TaskManager : MonoBehaviour
 
 		CurrentTaskCompleted?.Invoke();
 
-		_tasks.Remove(completedTask);
+		//_tasks.Remove(completedTask);
 
-		if (_tasks.Count >= 0)
-			SetNewCurrentTask(_tasks[0]);
+		foreach (var item in _tasks)
+		{
+			if (!item.IsCompleted)
+			{
+				SetNewCurrentTask(item);
+
+				return;
+			}
+		}
 
 		Debug.Log($"Task: {completedTask.Name} has been deleted");
 	}

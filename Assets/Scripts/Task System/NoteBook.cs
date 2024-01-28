@@ -19,6 +19,10 @@ public class NoteBook : MonoBehaviour
 
     private PlayerInput _playerInput;
 
+	private FontStyles _defaultFontStyle;
+
+	private int _taskIndex = -1;
+
 	private void Awake()
 	{
 		_playerInput = new();
@@ -30,6 +34,11 @@ public class NoteBook : MonoBehaviour
 
 		ClearNotebook();
 
+		_defaultFontStyle = _taskName.fontStyle;
+	}
+
+	private void Start()
+	{
 		TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
 
 		TaskManager.Instance.CurrentTaskCompleted += ClearNotebook;
@@ -58,23 +67,21 @@ public class NoteBook : MonoBehaviour
 		if (!_playerInput.UI.NoteBook.IsPressed())
 			return;
 
-		int taskIndex = -1;
-
 		float scrollWheelValue = context.ReadValue<float>();
 
 		if (scrollWheelValue != 0)
 		{
 			if (scrollWheelValue > 0)
-				taskIndex++;
+				_taskIndex++;
 			else
-				taskIndex--;
+				_taskIndex--;
 
-			if (taskIndex < 0)
-				taskIndex = TaskManager.Instance.TaskCount - 1;
-			else if (taskIndex > TaskManager.Instance.TaskCount - 1)
-				taskIndex = 0;
+			if (_taskIndex < 0)
+				_taskIndex = TaskManager.Instance.TaskCount - 1;
+			else if (_taskIndex > TaskManager.Instance.TaskCount - 1)
+				_taskIndex = 0;
 
-			TaskManager.Instance.SetNewCurrentTask(taskIndex);
+			TaskManager.Instance.SetNewCurrentTask(_taskIndex);
 		}
 	}
 
@@ -113,6 +120,15 @@ public class NoteBook : MonoBehaviour
 	private void WriteTextInNoteBook(Task task)
 	{
 		//Play writing text sound
+
+		FontStyles fontStyle = _defaultFontStyle;
+
+		if (task.IsCompleted)
+			fontStyle += (int)FontStyles.Strikethrough;	
+
+		_taskName.fontStyle = fontStyle;
+
+		_taskDescription.fontStyle = fontStyle;
 
 		_taskName.text = task.Name;
 
