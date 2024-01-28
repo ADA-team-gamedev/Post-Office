@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 public class FuseBox : MonoBehaviour
 {
-	public bool IsEnabled { get; private set; } = true; 
+	public bool IsEnabled { get; private set; } = true;
 
 	[Header("Energy")]
 
@@ -11,6 +11,12 @@ public class FuseBox : MonoBehaviour
 	[SerializeField][Range(1f, 5f)] private float _energyDecreasingSpeed = 1f;
 
 	[SerializeField] private float _maxEnergyAmount = 100f;
+
+	[Header("Task")]
+
+	[SerializeField] private TaskData _task;
+	private bool _isTaskAdded = false;
+	private bool _isTaskCompleted = false;
 
 	[Header("Switches")]
 	[SerializeField] private FuseSwitch[] generatorSwitches;
@@ -33,9 +39,7 @@ public class FuseBox : MonoBehaviour
 			{
 				_energyAmount = _maxEnergyAmount;
 
-				IsEnabled = true;
-
-				OnFuseEnabled?.Invoke();
+				EnableFuse();
 			}
 			else if (value <= 0)
 			{
@@ -98,12 +102,37 @@ public class FuseBox : MonoBehaviour
 		}
 	}
 
-	public void DisableFuse()
+	private void DisableFuse()
 	{
 		foreach (var switches in generatorSwitches)
 			switches.DisableSwitch();
 
 		OnFuseDisabled?.Invoke();
+
+		if (!_isTaskAdded)
+			TaskManager.Instance.SetNewCurrentTask(_task);
+	}
+
+	private void EnableFuse()
+	{
+		IsEnabled = true;
+
+		OnFuseEnabled?.Invoke();
+
+		CompleteTask();	
+	}
+
+	private void CompleteTask()
+	{
+		if (_isTaskCompleted)
+			return;
+
+		if (_activatedSwitchesCount > 0 && TaskManager.Instance.TryGetTaskByType(_task.Task.ID, out Task task))
+		{
+			task.Complete();
+
+			_isTaskCompleted = true;
+		}
 	}
 
 	private void OnValidate()
