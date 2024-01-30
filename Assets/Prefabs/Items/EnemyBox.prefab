@@ -200,8 +200,11 @@ MonoBehaviour:
   _patrolPhaseStart: 80
   _attackPhaseStart: 20
   _tranfromToEnemyDelay: 5
-  _attackingAnimator: {fileID: 0}
-  _attackingAnimationName: Jumpscare
+  _animator: {fileID: 0}
+  BecomeInsectTrigger: BecomeInsect
+  BecomeBoxTrigger: BecomeBox
+  IsMoving: IsMoving
+  KillAnimationTrigger: Jumpscare
   _patrolPoints: []
   _hiddenPoints: []
 --- !u!114 &2560219530404659450
