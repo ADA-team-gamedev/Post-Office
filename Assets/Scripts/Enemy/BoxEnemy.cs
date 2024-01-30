@@ -77,6 +77,15 @@ public class BoxEnemy : MonoBehaviour
 
 	private void Awake()
 	{
+		_agent = GetComponent<NavMeshAgent>();
+		_agent.speed = _patrolingSpeed;
+
+		_fieldOfView = GetComponent<FieldOfView>();
+
+		_box = GetComponent<Box>();
+
+		_rigidbody = GetComponent<Rigidbody>();
+
 		_currentPointToMove = transform.position;
 		
 		_agent.speed = _patrolingSpeed;
@@ -377,15 +386,6 @@ public class BoxEnemy : MonoBehaviour
 
 	private void OnValidate()
 	{
-		_agent ??= GetComponent<NavMeshAgent>();
-		_agent.speed = _patrolingSpeed;
-
-		_fieldOfView ??= GetComponent<FieldOfView>();
-
-		_box ??= GetComponent<Box>();
-
-		_rigidbody ??= GetComponent<Rigidbody>();
-
 		if (_patrolingSpeed >= _runningSpeed)
 			_runningSpeed = _patrolingSpeed + 1;
 	}

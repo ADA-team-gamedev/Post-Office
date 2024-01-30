@@ -44,6 +44,8 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	private void Start()
 	{
+		_playerCamera ??= GetComponent<Camera>();
+
 		Cursor.lockState = CursorLockMode.Locked;
 
 		_playerCamera.fieldOfView = _playerMovement.MovementState == MovementState.Sprinting ? _sprintFOV : _deffaultFOV;

@@ -68,6 +68,8 @@ public class Door : MonoBehaviour, IInteractable
 
 	private void Start()
 	{
+		_hingeJoint ??= GetComponent<HingeJoint>();
+
 		_defaultDoorYRotation = transform.rotation.eulerAngles.y;
 
 		_playerClickedViewPoint = _doorModel.position;
@@ -170,7 +172,7 @@ public class Door : MonoBehaviour, IInteractable
 
 	#endregion
 
-	public void Interact()
+	public void StartInteract()
 	{
 		if (!_isPlayerDragDoor)
 		{
@@ -179,10 +181,15 @@ public class Door : MonoBehaviour, IInteractable
 
 			StartRotateDoor();
 		}
-		else
-		{
-			StopRotateDoor();			
-		}
+		//else
+		//{
+		//	StopRotateDoor();			
+		//}
+	}
+
+	public void StopInteract()
+	{
+		StopRotateDoor();
 	}
 
 	private bool IsPlayerInInteractionZone()

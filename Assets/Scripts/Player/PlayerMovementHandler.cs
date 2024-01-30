@@ -90,6 +90,12 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void Awake()
 	{
+		_rb = GetComponent<Rigidbody>();
+
+		_playerCollider = GetComponent<CapsuleCollider>();
+
+		_playerInput = new();
+
 		_playerSpeed = _playerWalkSpeed;
 
 		_sprintRemaining = _sprintDuration;
@@ -98,10 +104,11 @@ public class PlayerMovementHandler : MonoBehaviour
 
 		_originalPlayerColliderHeight = _playerCollider.height;
 
-		_jointOriginalPosition = _joint.localPosition;
+		_jointOriginalPosition = _joint.localPosition;		
+	}
 
-		_playerInput = new();
-
+	private void Start()
+	{
 		_playerInput.Player.Move.performed += OnMove;
 		_playerInput.Player.Move.canceled += OnMove;
 
@@ -110,13 +117,10 @@ public class PlayerMovementHandler : MonoBehaviour
 
 		_playerInput.Player.Crouch.performed += OnCrouch;
 		_playerInput.Player.Crouch.canceled += OnCrouch;
-	}
 
-	private void Start()
-	{
 		_sprintBarCanvasGroup.gameObject.SetActive(true);
 
-		_sprintBarCanvasGroup.alpha = 0;
+		_sprintBarCanvasGroup.alpha = 0;	
 	}
 
 	private void Update()
@@ -368,11 +372,15 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void OnEnable()
 	{
+		_playerInput = new();
+
 		_playerInput.Enable();
 	}
 
 	private void OnDisable()
 	{
+		_playerInput = new();
+
 		_playerInput.Disable();
 	}
 

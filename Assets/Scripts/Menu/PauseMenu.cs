@@ -99,7 +99,7 @@ public class PauseMenu : MonoBehaviour
 
 	public void OnExitToMenu()
 	{
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene("Menu");
 	}
 
 	public void OnExitToDesktop()

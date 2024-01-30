@@ -15,32 +15,33 @@ public class Interactor : MonoBehaviour
 	{
 		_playerInput = new();
 
-		_playerInput.Player.Interact.performed += OnInteract;
-		_playerInput.Player.Interact.canceled += OnInteract;
+		_playerInput.Player.Interact.performed += OnStartInteract;
+		_playerInput.Player.Interact.canceled += OnStopInteract;
 	}
 
-	private void OnInteract(InputAction.CallbackContext context)
+	private void OnStartInteract(InputAction.CallbackContext context)
 	{
-		if (_interactableObject != null)
-		{
-			_interactableObject.Interact();
-
-			_interactableObject = null;
-
-			return;
-		}
-
 		if (Physics.Raycast(PlayerCamera.transform.position, PlayerCamera.transform.forward, out RaycastHit hit, InteractionDistance))
 		{
 			if (hit.collider.TryGetComponent(out _interactableObject))
 			{
-				_interactableObject.Interact();
+				_interactableObject.StartInteract();
 			}
 			else if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
 			{
 				if (hit.transform.TryGetComponent(out _interactableObject))
-					_interactableObject.Interact();
+					_interactableObject.StartInteract();
 			}
+		}
+	}
+
+	private void OnStopInteract(InputAction.CallbackContext context)
+	{
+		if (_interactableObject != null)
+		{
+			_interactableObject.StopInteract();
+
+			_interactableObject = null;
 		}
 	}
 

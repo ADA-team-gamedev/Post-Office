@@ -857,6 +857,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 397709464}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!20 &466975828 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 1374109268986436779, guid: f4ad5f9f89eb50b45944620d43499b19,
+    type: 3}
+  m_PrefabInstance: {fileID: 1709792406}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &475904506
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1159,7 +1165,7 @@ PrefabInstance:
     - target: {fileID: 950548740571910356, guid: 8fd81ab9c40fd81468b55ce54d9ec4e0,
         type: 3}
       propertyPath: <IsEnabled>k__BackingField
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 950548740571910356, guid: 8fd81ab9c40fd81468b55ce54d9ec4e0,
         type: 3}
@@ -2140,33 +2146,6 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1245588397}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &952531308 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1153428828607392750, guid: a0169cd393e121043b410c66a679ea20,
-    type: 3}
-  m_PrefabInstance: {fileID: 1494938811}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &952531310
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 952531308}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1179578007
 GameObject:
   m_ObjectHideFlags: 0
@@ -2922,11 +2901,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GarageDoorPivot
       objectReference: {fileID: 0}
-    - target: {fileID: 2815351748572590678, guid: a0169cd393e121043b410c66a679ea20,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 4912875887621817723, guid: a0169cd393e121043b410c66a679ea20,
         type: 3}
       propertyPath: m_RootOrder
@@ -2984,29 +2958,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8646543339736587921, guid: a0169cd393e121043b410c66a679ea20,
         type: 3}
-      propertyPath: _playerCamera
-      value: 
-      objectReference: {fileID: 1709792407}
-    - target: {fileID: 8646543339736587921, guid: a0169cd393e121043b410c66a679ea20,
-        type: 3}
-      propertyPath: _doorRaisingSpeed
-      value: 2
+      propertyPath: _doorMaxHeight
+      value: 4.5
       objectReference: {fileID: 0}
-    - target: {fileID: 8646543339736587921, guid: a0169cd393e121043b410c66a679ea20,
-        type: 3}
-      propertyPath: <IsKeyNeeded>k__BackingField
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2632084005703707496, guid: a0169cd393e121043b410c66a679ea20, type: 3}
-    m_RemovedGameObjects:
-    - {fileID: 863949853520243759, guid: a0169cd393e121043b410c66a679ea20, type: 3}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1153428828607392750, guid: a0169cd393e121043b410c66a679ea20,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 952531310}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a0169cd393e121043b410c66a679ea20, type: 3}
 --- !u!4 &1494938812 stripped
 Transform:
@@ -3189,6 +3147,11 @@ PrefabInstance:
     - target: {fileID: 950548740571910356, guid: 8fd81ab9c40fd81468b55ce54d9ec4e0,
         type: 3}
       propertyPath: OnSwitchDisabled.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1726395893620477355, guid: 8fd81ab9c40fd81468b55ce54d9ec4e0,
+        type: 3}
+      propertyPath: m_ProvidesContacts
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1828918935884056920, guid: 8fd81ab9c40fd81468b55ce54d9ec4e0,
@@ -3695,11 +3658,6 @@ PrefabInstance:
       objectReference: {fileID: 1245588398}
     - target: {fileID: 4746984821608943143, guid: f4ad5f9f89eb50b45944620d43499b19,
         type: 3}
-      propertyPath: m_Cameras.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4746984821608943143, guid: f4ad5f9f89eb50b45944620d43499b19,
-        type: 3}
       propertyPath: m_Cameras.Array.data[0]
       value: 
       objectReference: {fileID: 1488511891}
@@ -3763,12 +3721,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f4ad5f9f89eb50b45944620d43499b19, type: 3}
---- !u!20 &1709792407 stripped
-Camera:
-  m_CorrespondingSourceObject: {fileID: 5675849002822207662, guid: f4ad5f9f89eb50b45944620d43499b19,
-    type: 3}
-  m_PrefabInstance: {fileID: 1709792406}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1790568267 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4889825103829743039, guid: d0f28d5f29a72f44fb5f6007af664fb9,
@@ -3868,19 +3820,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4102776809703746376, guid: 20c805c567f19cc4daa151207519ae51,
         type: 3}
-      propertyPath: _playerCamera
-      value: 
-      objectReference: {fileID: 1709792407}
-    - target: {fileID: 4102776809703746376, guid: 20c805c567f19cc4daa151207519ae51,
-        type: 3}
       propertyPath: _playerInteractor
       value: 
       objectReference: {fileID: 1277329597}
-    - target: {fileID: 4102776809703746376, guid: 20c805c567f19cc4daa151207519ae51,
-        type: 3}
-      propertyPath: <IsKeyNeeded>k__BackingField
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6274185138263988963, guid: 20c805c567f19cc4daa151207519ae51,
         type: 3}
       propertyPath: m_RootOrder
@@ -3936,25 +3878,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6578082919961136734, guid: 20c805c567f19cc4daa151207519ae51,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8649128064164013656, guid: 20c805c567f19cc4daa151207519ae51,
         type: 3}
       propertyPath: m_Name
       value: DoorPivot
       objectReference: {fileID: 0}
-    - target: {fileID: 8649128064164013656, guid: 20c805c567f19cc4daa151207519ae51,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 8295168878361971410, guid: 20c805c567f19cc4daa151207519ae51, type: 3}
-    - {fileID: 6518628585569706768, guid: 20c805c567f19cc4daa151207519ae51, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 20c805c567f19cc4daa151207519ae51, type: 3}
@@ -4437,7 +4367,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _playerCamera
       value: 
-      objectReference: {fileID: 1709792407}
+      objectReference: {fileID: 466975828}
     - target: {fileID: 7767767302125735787, guid: eaca9b5173a710740adaf29520f93f08,
         type: 3}
       propertyPath: _findRemoteControlTask

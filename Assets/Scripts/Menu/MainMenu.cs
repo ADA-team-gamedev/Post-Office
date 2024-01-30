@@ -13,7 +13,7 @@ public class MainMenu : MonoBehaviour
 
 	public void OnResumeButton()
 	{
-		//SceneManager.LoadScene("Game"); //write here game scene
+		SceneManager.LoadScene("BuildMap"); //write here game scene
 	}
 
 	public void OnNewGameButton()

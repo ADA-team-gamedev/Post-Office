@@ -36,6 +36,9 @@ public class PlayerInventory : MonoBehaviour
 
 	#endregion
 
+	[Header("TESTED")]
+	[SerializeField] private GameObject[] _itemsToInventory;
+
 	private PlayerInput _playerInput;
 
 	private void Awake()
@@ -61,6 +64,20 @@ public class PlayerInventory : MonoBehaviour
 		_playerInput.Player.Hotbar1.performed += Hotbar1;
 		_playerInput.Player.Hotbar2.performed += Hotbar2;
 		_playerInput.Player.Hotbar3.performed += Hotbar3;
+
+		foreach (GameObject child in _itemsToInventory)
+		{
+			if (_inventory.Count >= _inventorySlotsAmount || !child.TryGetComponent(out Item item))
+				return;
+
+			_currentObjectTransform = item.transform;
+			_currentObjectRigidbody = item.GetComponent<Rigidbody>();
+			_currentObjectCollider = item.GetComponent<Collider>();
+
+			SetPickedItem();
+
+			AddItem(_currentObjectTransform.gameObject);
+		}
 	}
 
 	#region Pickup system
