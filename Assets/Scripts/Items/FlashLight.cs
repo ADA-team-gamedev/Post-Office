@@ -6,24 +6,22 @@ public class FlashLight : Item, IUsable
 {
     [Header("Objects")]
     [SerializeField] private Light _flashlight;
-    [SerializeField] private Slider _batteryEnergyBar;
-    [SerializeField] private GameObject _energyBar;
+    //[SerializeField] private Slider _batteryEnergyBar;
+    //[SerializeField] private GameObject _energyBar;
 
-    [Header("Values")]
-    [SerializeField] private int _numberOfActivations = 0;
-    [SerializeField][Range(1, 100)] private float _dischargeRate;
+    //[Header("Values")]
+    //[SerializeField] private int _numberOfActivations = 0;
+    //[SerializeField][Range(1, 100)] private float _dischargeRate;
 
     private bool _isCanTurnOn = false;
 
     private bool _isWorking = false;
 
-    private bool _charged = true;
+    //private bool _charged = true;
 
 	private void Awake()
 	{
-		OnPickUpItem += PickUpItem;
-
-        OnDropItem += DropItem;
+        //OnPickUpItem += PickUpItem;
 	}
 
 	#region Pickable
@@ -31,63 +29,60 @@ public class FlashLight : Item, IUsable
 	public void PickUpItem()
     {
         _isCanTurnOn = true;
-        Debug.Log("canturn");
-    }
-
-    public void DropItem()
-    {
-        
     }
 
     #endregion
 
     public void Use()
     {
-        Debug.Log(0);
-        if (_isCanTurnOn && _charged && _numberOfActivations == 0)
-            TurnOn();
+        //if (_isCanTurnOn && _charged && _numberOfActivations == 0)
+        //    TurnOn();
+        //else if (_numberOfActivations != 0)
+        //    TurnOff();
 
-        else if (_numberOfActivations != 0)
+        if (!_isWorking)
+            TurnOn();
+        else
             TurnOff();
     }  
 
     void Update()
     {
-        FlashLightWorking();
+        //FlashLightWorking();
     }
 
     private void FlashLightWorking()
     {
-        if (_batteryEnergyBar.value <= 0)
-        {
-            _flashlight.enabled = false;
+        //if (_batteryEnergyBar.value <= 0)
+        //{
+        //    _flashlight.enabled = false;
 
-            _charged = false;
-        }
+        //    _charged = false;
+        //}
 
-        if (_isWorking && _charged)        
-            _batteryEnergyBar.value -= Time.deltaTime / _dischargeRate;        
+        //if (_isWorking && _charged)        
+        //    _batteryEnergyBar.value -= Time.deltaTime / _dischargeRate;        
     }
 
     private void TurnOff()
     {                    
-        _numberOfActivations--;
+        //_numberOfActivations--;
 
         _flashlight.enabled = false;
 
         _isWorking = false;       
 
-        _energyBar.SetActive(false);
+        //_energyBar.SetActive(false);
         
     }
     private void TurnOn()
     {
-        _numberOfActivations++;
+        //_numberOfActivations++;
 
         _flashlight.enabled = true;
 
         _isWorking = true;          
 
-        _energyBar.SetActive(true);
+        //_energyBar.SetActive(true);
     }
 }
