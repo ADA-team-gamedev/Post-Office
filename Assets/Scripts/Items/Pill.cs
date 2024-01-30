@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class Pill : MonoBehaviour, IPickable, IUsable
+public class Pill : Item, IUsable
 {
     [SerializeField][Range(1, 5)] private int _countOfUses = 1;
 
@@ -13,8 +13,6 @@ public class Pill : MonoBehaviour, IPickable, IUsable
 
     private bool _isUsing = false;
 
-	public Action OnPickUpItem { get; set; }
-	public Action OnDropItem { get; set; }
 
     public void Use()
     {

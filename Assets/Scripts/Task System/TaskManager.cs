@@ -2,12 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum TaskType
-{
-    Sorting,
-    BoxMoving,
-}
-
 public class TaskManager : MonoBehaviour
 {
 	public static TaskManager Instance { get; private set; }
@@ -18,14 +12,12 @@ public class TaskManager : MonoBehaviour
 
 	#region Actions
 
-	public event Action OnNewTaskSet;
+	public event Action OnAddedNewTask;
 
 	public event Action<Task> OnNewCurrentTaskSet;
 	public event Action CurrentTaskCompleted;
 
 	#endregion
-
-	[SerializeField] private bool _setCurrentTaskOnStart = false;
 
 	[SerializeField] private List<TaskData> _taskDatas = new();
 
@@ -51,15 +43,14 @@ public class TaskManager : MonoBehaviour
 
 	private void Start()
 	{
-		if (_setCurrentTaskOnStart)
-			SetNewCurrentTask(_tasks[0]);	
+		SetNewCurrentTask(_tasks[0]);	
 	}
 
-	public bool TryGetTaskByType(TaskType type, out Task task)
+	public bool TryGetTaskByType(int id, out Task task)
 	{
 		foreach (var item in _tasks)
 		{
-			if (item.Type == type)
+			if (item.ID == id)
 			{
 				task = item;
 				
@@ -72,13 +63,36 @@ public class TaskManager : MonoBehaviour
 		return false;
 	}
 
+	public void SetNewCurrentTask(int index)
+	{
+		if (index < 0 || index >= _tasks.Count)
+		{
+			Debug.LogWarning($"Can't set task, as current with index[{index}]");
+
+			return;
+		}
+
+		Task task = _tasks[index];
+
+		CurrentTask = task;
+
+		OnNewCurrentTaskSet?.Invoke(task);
+	}
+
+	public void SetNewCurrentTask(TaskData taskData)
+	{
+		Task task = new(taskData);
+
+		SetNewCurrentTask(task);
+	}
+
 	public void SetNewCurrentTask(Task task)
 	{
-		if (!TryGetTaskByType(task.Type, out Task _))
+		if (!TryGetTaskByType(task.ID, out Task _))
 		{
 			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
 
-			TryAddNewTask(task);
+			AddNewTask(task);
 		}
 
 		CurrentTask = task;
@@ -86,64 +100,61 @@ public class TaskManager : MonoBehaviour
 		OnNewCurrentTaskSet?.Invoke(task);
 	}
 
-	public void SetNewCurrentTask(TaskType type)
+	public void AddNewTask(TaskData taskData)
 	{
-		if (!TryGetTaskByType(type, out Task task))
-		{
-			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
+		Task task = new(taskData);
 
-			TryAddNewTask(task);
-		}
-
-		CurrentTask = task;
-
-		OnNewCurrentTaskSet?.Invoke(task);
+		AddNewTask(task);
 	}
 
-	public bool TryAddNewTask(Task task) 
+	public void AddNewTask(Task task) 
 	{
-		if (IsContainTaskByType(task.Type))
+		if (IsContainTask(task.ID))
 		{
-			Debug.LogWarning("You are trying to add task which already exists in task collection");
+			Debug.LogWarning("You are trying to add task which already exists in task collection. We can't add him!");
 
-			return false;
+			return;
 		}
 
 		_tasks.Add(task);
 
 		task.OnCompleted += RemoveCurrentTask;
 
-		OnNewTaskSet?.Invoke();
-
-		return true;
+		OnAddedNewTask?.Invoke();
 	}
 
-	private bool IsContainTaskByType(TaskType type)
+	private bool IsContainTask(int taskId)
 	{
 		foreach (var task in _tasks)
 		{
-			if (task.Type == type)
+			if (task.ID == taskId)
 				return true;
 		}
 
 		return false;
 	}
 
-	private void RemoveCurrentTask()
+	private void RemoveCurrentTask(Task completedTask)
 	{
-		for (int i = 0; i < _tasks.Count; i++)
+		if (CurrentTask != completedTask)
+			return;
+
+		CurrentTask = null;
+
+		CurrentTaskCompleted?.Invoke();
+
+		//_tasks.Remove(completedTask);
+
+		foreach (var item in _tasks)
 		{
-			if (_tasks[i].IsCompleted)
+			if (!item.IsCompleted)
 			{
-				if (CurrentTask == _tasks[i])
-					CurrentTask = null;
+				SetNewCurrentTask(item);
 
-				CurrentTaskCompleted?.Invoke();
-
-				_tasks.Remove(_tasks[i]);		
+				return;
 			}
 		}
 
-		Debug.Log("Task has been deleted");
+		Debug.Log($"Task: {completedTask.Name} has been deleted");
 	}
 }

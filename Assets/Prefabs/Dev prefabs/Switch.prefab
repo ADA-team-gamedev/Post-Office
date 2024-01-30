@@ -178,7 +178,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Lamp, Assembly-CSharp
-        m_MethodName: set_IsLampEnabled
+        m_MethodName: 
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -203,9 +203,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  _switchEnabledColor: {r: 0, g: 255, b: 0, a: 1}
-  _switchDisabledColor: {r: 255, g: 0, b: 0, a: 1}
-  _indicator: {fileID: 0}
 --- !u!1 &8267348032404429115
 GameObject:
   m_ObjectHideFlags: 0

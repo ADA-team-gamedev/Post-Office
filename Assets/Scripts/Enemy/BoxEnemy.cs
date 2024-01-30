@@ -30,10 +30,18 @@ public class BoxEnemy : MonoBehaviour
 
 	#endregion
 
-	#region Attacking
+	#region Animation
+	[Header("Animation Settings")]	
+	[SerializeField] private Animator _animator;
 
-	[SerializeField] private Animator _attackingAnimator;
-	[SerializeField] private string _attackingAnimationName = "Jumpscare";
+	[SerializeField] private string BecomeInsectTrigger = "BecomeInsect";
+	[SerializeField] private string BecomeBoxTrigger = "BecomeBox";
+
+	[SerializeField] private string IsMoving = "IsMoving";
+
+	[SerializeField] private string KillAnimationTrigger = "Jumpscare";
+
+	private float _defaultAnimationSpeed;
 
 	#endregion
 
@@ -78,6 +86,8 @@ public class BoxEnemy : MonoBehaviour
 		_box.OnPickUpItem += PickUpItem;
 
 		_box.OnDropItem += DropItem;
+
+		_defaultAnimationSpeed = _animator.speed;
 	}
 
 	private void Update()
@@ -146,6 +156,8 @@ public class BoxEnemy : MonoBehaviour
 				{
 					_isWaiting = true;
 
+					_animator.SetBool(IsMoving, false);
+
 					StartCoroutine(TakeRestOnTime(_patrolPointsRestDelay));
 				}
 				break;
@@ -171,7 +183,9 @@ public class BoxEnemy : MonoBehaviour
 
 		_currentPointToMove = _patrolPoints[_currentPatrolPointIndex].position;
 
-		_agent.SetDestination(_currentPointToMove);
+		_animator.SetBool(IsMoving, true);
+
+		_agent.SetDestination(_currentPointToMove);	
 	}
 
 	private void Patroling()
@@ -211,7 +225,14 @@ public class BoxEnemy : MonoBehaviour
 	private void Fleeing()
 	{
 		if (_isFleeing)
+		{
+			if (_agent.remainingDistance <= _agent.stoppingDistance)
+			{
+				_animator.SetBool(IsMoving, false);
+			}
+
 			return;
+		}
 
 		StopAllCoroutines();
 
@@ -220,10 +241,20 @@ public class BoxEnemy : MonoBehaviour
 
 		_agent.speed = _runningSpeed;
 
+		_animator.speed *= 1.5f;
+
+		_animator.SetBool(IsMoving, true);
+
 		if (_hiddenPoints.Count > 0)
-			_agent.SetDestination(_hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position);
+		{
+			_currentPointToMove = _hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position;
+
+			_agent.SetDestination(_currentPointToMove);
+		}
 		else
+		{
 			Debug.Log($"Can't start fleeing because the {gameObject} doesn't have points to hide");
+		}
 	}
 
 	#endregion
@@ -256,7 +287,7 @@ public class BoxEnemy : MonoBehaviour
 
 	private void KillPlayer()
 	{
-		_attackingAnimator.SetTrigger(_attackingAnimationName);	
+		_animator.SetTrigger(KillAnimationTrigger);	
 
 		DisableAI();
 
@@ -284,6 +315,9 @@ public class BoxEnemy : MonoBehaviour
 	{
 		StopAllCoroutines();
 
+		if (_isTranformedIntoInsect)
+			_animator.SetTrigger(BecomeBoxTrigger);
+
 		_isTranformedIntoInsect = false;
 
 		_agent.enabled = true;
@@ -297,6 +331,8 @@ public class BoxEnemy : MonoBehaviour
 		_isWaiting = false;
 
 		_enemyState = EnemyState.None;
+
+		
 	}
 
 	#endregion
@@ -329,6 +365,10 @@ public class BoxEnemy : MonoBehaviour
 		_enemyState = EnemyState.Patroling;
 
 		_rigidbody.isKinematic = true;
+
+		_animator.speed = _defaultAnimationSpeed;
+
+		_animator.SetTrigger(BecomeInsectTrigger);
 	}
 
 	#endregion

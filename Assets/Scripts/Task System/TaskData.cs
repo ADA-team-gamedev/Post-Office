@@ -12,21 +12,30 @@ public class Task
 {
 	public bool IsCompleted { get; private set; } = false;
 
-	[field: SerializeField] public TaskType Type { get; private set; }
+	[field: SerializeField] public int ID { get; private set; }
 
-	[field: SerializeField, TextArea] public string Name { get; private set; }
+	[field: SerializeField, TextArea(2, 2)] public string Name { get; private set; }
 
-	[field: SerializeField, TextArea] public string Description { get; private set; }
+	[field: SerializeField, TextArea(5, 5)] public string Description { get; private set; }
 
-	public event Action OnCompleted;
+	public event Action<Task> OnCompleted;
 
-	public Task(TaskType type, string name, string description = "No description")
+	public Task(int id, string name, string description)
 	{
-		Type = type;
+		ID = id;
 
 		Name = name;
 
 		Description = description;
+	}
+
+	public Task(TaskData taskData)
+	{
+		ID = taskData.Task.ID;
+
+		Name = taskData.Task.Name;
+
+		Description = taskData.Task.Description;
 	}
 
 	public void Complete()
@@ -36,6 +45,6 @@ public class Task
 
 		IsCompleted = true;
 
-		OnCompleted?.Invoke();
+		OnCompleted?.Invoke(this);
 	}
 }
