@@ -24,6 +24,10 @@ public class PlayerInventory : MonoBehaviour
 	private Rigidbody _currentObjectRigidbody;
 	private Collider _currentObjectCollider;
 
+	public event Action<Item> OnItemPicked;
+	public event Action<Item> OnItemDroped;
+	public event Action OnItemChanged;
+
 	#endregion
 
 	#region Inventory fields
@@ -35,9 +39,6 @@ public class PlayerInventory : MonoBehaviour
 	private List<GameObject> _inventory;
 
 	#endregion
-
-	[Header("TESTED")]
-	[SerializeField] private GameObject[] _itemsToInventory;
 
 	private PlayerInput _playerInput;
 
@@ -52,7 +53,7 @@ public class PlayerInventory : MonoBehaviour
 	private void Start()
 	{
 		_inventory = new(_inventorySlotsAmount);
-
+		
 		_playerInput.Player.PickUpItem.performed += OnPickUpItem;
 
 		_playerInput.Player.DropItem.performed += OnDropItem;
@@ -64,20 +65,6 @@ public class PlayerInventory : MonoBehaviour
 		_playerInput.Player.Hotbar1.performed += Hotbar1;
 		_playerInput.Player.Hotbar2.performed += Hotbar2;
 		_playerInput.Player.Hotbar3.performed += Hotbar3;
-
-		foreach (GameObject child in _itemsToInventory)
-		{
-			if (_inventory.Count >= _inventorySlotsAmount || !child.TryGetComponent(out Item item))
-				return;
-
-			_currentObjectTransform = item.transform;
-			_currentObjectRigidbody = item.GetComponent<Rigidbody>();
-			_currentObjectCollider = item.GetComponent<Collider>();
-
-			SetPickedItem();
-
-			AddItem(_currentObjectTransform.gameObject);
-		}
 	}
 
 	#region Pickup system
@@ -97,6 +84,8 @@ public class PlayerInventory : MonoBehaviour
 				AddItem(_currentObjectTransform.gameObject);
 
 				item.OnPickUpItem?.Invoke();
+
+				OnItemPicked?.Invoke(item);
 			}
 		}
 	}
@@ -109,7 +98,11 @@ public class PlayerInventory : MonoBehaviour
 		_currentObjectTransform.gameObject.SetActive(true);
 
 		if (_currentObjectTransform.TryGetComponent(out Item item))
+		{
 			item.OnDropItem?.Invoke();
+
+			OnItemDroped?.Invoke(item);
+		}
 
 		_currentObjectRigidbody.isKinematic = false;
 		_currentObjectRigidbody.useGravity = true;
@@ -144,6 +137,19 @@ public class PlayerInventory : MonoBehaviour
 	#endregion
 
 	#region Inventory system
+
+	public bool TryGetItem<T>(out T item) where T : Item
+	{
+		foreach (var inventoryItem in _inventory)
+		{
+			if (inventoryItem.TryGetComponent(out item))
+				return true;
+		}
+
+		item = default;
+
+		return false;
+	}
 
 	public bool TryGetCurrentItem<T>(out T item) where T : Item
 	{
@@ -216,14 +222,18 @@ public class PlayerInventory : MonoBehaviour
 				item.SetActive(false);
 		}
 
-		if (_inventory[_currentSlotIndex])
-			_inventory[_currentSlotIndex].SetActive(true);
+		GameObject currentItem = _inventory[_currentSlotIndex];
 
-		_currentObjectTransform = _inventory[_currentSlotIndex].transform;
+		if (currentItem)
+			currentItem.SetActive(true);
 
-		_inventory[_currentSlotIndex].TryGetComponent(out _currentObjectRigidbody);
+		_currentObjectTransform = currentItem.transform;
 
-		_inventory[_currentSlotIndex].TryGetComponent(out _currentObjectCollider);
+		currentItem.TryGetComponent(out _currentObjectRigidbody);
+
+		currentItem.TryGetComponent(out _currentObjectCollider);
+
+		OnItemChanged?.Invoke();
 	}
 
 	#endregion
