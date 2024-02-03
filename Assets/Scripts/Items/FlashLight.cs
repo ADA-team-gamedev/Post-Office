@@ -15,13 +15,15 @@ public class FlashLight : Item, IUsable
 
     private bool _isCanTurnOn = false;
 
-    private bool _isWorking = false;
+    public bool IsWorking { get; private set; } = false;
 
     //private bool _charged = true;
 
 	private void Awake()
 	{
         //OnPickUpItem += PickUpItem;
+
+        _flashlight.enabled = IsWorking;
 	}
 
 	#region Pickable
@@ -40,7 +42,7 @@ public class FlashLight : Item, IUsable
         //else if (_numberOfActivations != 0)
         //    TurnOff();
 
-        if (!_isWorking)
+        if (!IsWorking)
             TurnOn();
         else
             TurnOff();
@@ -70,7 +72,7 @@ public class FlashLight : Item, IUsable
 
         _flashlight.enabled = false;
 
-        _isWorking = false;       
+        IsWorking = false;       
 
         //_energyBar.SetActive(false);
         
@@ -81,7 +83,7 @@ public class FlashLight : Item, IUsable
 
         _flashlight.enabled = true;
 
-        _isWorking = true;          
+        IsWorking = true;          
 
         //_energyBar.SetActive(true);
     }
