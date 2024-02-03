@@ -339,9 +339,7 @@ public class BoxEnemy : MonoBehaviour
 		_isFleeing = false;
 		_isWaiting = false;
 
-		_enemyState = EnemyState.None;
-
-		
+		_enemyState = EnemyState.None;	
 	}
 
 	#endregion

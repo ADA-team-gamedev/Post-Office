@@ -15,7 +15,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	[Header("Movement")]
 
-	[SerializeField] private float _playerWalkSpeed = 7f;
+	[SerializeField] private float _playerWalkSpeed = 15f;
 
 	[SerializeField] private float _groundDrag = 1f;
 
@@ -36,7 +36,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	[Header("Sprint")]
 
-	[SerializeField] private float _playerSprintSpeed = 12f;
+	[SerializeField] private float _playerSprintSpeed = 20f;
 	[SerializeField] private float _sprintDuration = 5f;
 	[SerializeField] private float _sprintCooldownDelay = 1f;
 
@@ -57,7 +57,7 @@ public class PlayerMovementHandler : MonoBehaviour
 	[Header("Crouch")]
 
 	[SerializeField][Range(0.5f, 1f)] private float _crouchPlayerHeightPercent = 0.8f;
-	[SerializeField] private float _playerCrouchSpeed = 5;
+	[SerializeField] private float _playerCrouchSpeed = 10;
 
 	private float _originalPlayerColliderHeight;
 
@@ -138,6 +138,14 @@ public class PlayerMovementHandler : MonoBehaviour
 			HeadBob();
 	}
 
+	private void FixedUpdate()
+	{
+		if (MovementState == MovementState.Idle)
+			return;
+
+		_rb.AddForce(_velocityChange);
+	}
+
 	private void Move()
 	{
 		if (MovementState == MovementState.Idle)
@@ -150,8 +158,6 @@ public class PlayerMovementHandler : MonoBehaviour
 		Vector3 velocityChange = targetVelocity - _rb.velocity;
 
 		_velocityChange = velocityChange;
-
-		_rb.AddForce(_velocityChange);
 	}
 
 	private void Sprint()
