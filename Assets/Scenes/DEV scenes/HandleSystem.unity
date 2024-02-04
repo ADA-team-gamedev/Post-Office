@@ -2128,6 +2128,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 1245588397}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &916741577 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1296096886668672027, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+    type: 3}
+  m_PrefabInstance: {fileID: 1245588397}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 916741575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1179578007
 GameObject:
   m_ObjectHideFlags: 0
@@ -2374,6 +2386,27 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1296096886668672027, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 28b087a90c799a8439d5b0ffef0de174,
+        type: 3}
+    - target: {fileID: 1296096886668672027, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_Color.b
+      value: 0.4245283
+      objectReference: {fileID: 0}
+    - target: {fileID: 1296096886668672027, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_Color.g
+      value: 0.4245283
+      objectReference: {fileID: 0}
+    - target: {fileID: 1296096886668672027, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_Color.r
+      value: 0.4245283
+      objectReference: {fileID: 0}
     - target: {fileID: 1328710069476559380, guid: d0f28d5f29a72f44fb5f6007af664fb9,
         type: 3}
       propertyPath: m_Pivot.x
@@ -2478,6 +2511,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1950987597519750267, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1950987597519750267, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1950987597519750267, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1950987597519750267, guid: d0f28d5f29a72f44fb5f6007af664fb9,
+        type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4760979830980057754, guid: d0f28d5f29a72f44fb5f6007af664fb9,
         type: 3}
@@ -3682,7 +3735,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _playerInteractor
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 3302968809518776913}
     - target: {fileID: 6274185138263988963, guid: 20c805c567f19cc4daa151207519ae51,
         type: 3}
       propertyPath: m_RootOrder
@@ -4082,6 +4135,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!20 &2141005832 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 363979862261386888, guid: 9d139865bd6a51a43be0c7fa9048045b,
+    type: 3}
+  m_PrefabInstance: {fileID: 6122138762847758808}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1470677583753427212
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4227,7 +4286,7 @@ PrefabInstance:
         type: 3}
       propertyPath: _playerCamera
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2141005832}
     - target: {fileID: 7767767302125735787, guid: eaca9b5173a710740adaf29520f93f08,
         type: 3}
       propertyPath: _findRemoteControlTask
@@ -4249,6 +4308,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ab4c6cedc9b1cf4d942a09cb1cbe355, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3302968809518776913 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+    type: 3}
+  m_PrefabInstance: {fileID: 6122138762847758808}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0596517fd25801547a82c3a09ef1abaa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &3664535722325171017
@@ -4609,6 +4680,63 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: PlayerParent
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _crosshairImage
+      value: 
+      objectReference: {fileID: 916741577}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _defaultCrosshair
+      value: 
+      objectReference: {fileID: 21300000, guid: 9ee27a507eb89ba40a4929d1c6129b2d,
+        type: 3}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _interactableCrosshair
+      value: 
+      objectReference: {fileID: 21300000, guid: 28b087a90c799a8439d5b0ffef0de174,
+        type: 3}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _defaultCrosshairColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _defaultCrosshairColor.b
+      value: 0.42352942
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _defaultCrosshairColor.g
+      value: 0.42352942
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _defaultCrosshairColor.r
+      value: 0.42352942
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _interactableCrosshairColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _interactableCrosshairColor.b
+      value: 0.59607846
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _interactableCrosshairColor.g
+      value: 0.59607846
+      objectReference: {fileID: 0}
+    - target: {fileID: 4974854547316477124, guid: 9d139865bd6a51a43be0c7fa9048045b,
+        type: 3}
+      propertyPath: _interactableCrosshairColor.r
+      value: 0.59607846
       objectReference: {fileID: 0}
     - target: {fileID: 5243342986443899683, guid: 9d139865bd6a51a43be0c7fa9048045b,
         type: 3}
