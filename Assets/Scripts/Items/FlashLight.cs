@@ -1,11 +1,11 @@
-using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class FlashLight : Item, IUsable
 {
     [Header("Objects")]
     [SerializeField] private Light _flashlight;
+
+    [SerializeField] private bool _disableOnStart = true;
     //[SerializeField] private Slider _batteryEnergyBar;
     //[SerializeField] private GameObject _energyBar;
 
@@ -22,6 +22,8 @@ public class FlashLight : Item, IUsable
 	private void Awake()
 	{
         //OnPickUpItem += PickUpItem;
+
+        IsWorking = !_disableOnStart;
 
         _flashlight.enabled = IsWorking;
 	}

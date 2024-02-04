@@ -1,4 +1,6 @@
+using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerFlashLight : MonoBehaviour
 {
@@ -10,6 +12,15 @@ public class PlayerFlashLight : MonoBehaviour
     private Light _light;
 
 	private bool _isFlashLightPickedUp = false;
+
+	private PlayerInput _playerInput;
+
+	private void Awake()
+	{
+		_playerInput = new();
+
+		_playerInput.Player.FlahsLight.performed += UseFlashLight;
+	}
 
 	private void Start()
 	{
@@ -83,5 +94,24 @@ public class PlayerFlashLight : MonoBehaviour
 		}
 	}
 
+	private void UseFlashLight(InputAction.CallbackContext context)
+	{
+		if (!_isFlashLightPickedUp)
+			return;
+
+		if (!_playerInventory.TryGetCurrentItem(out FlashLight flashlight))
+			_light.enabled = !_light.enabled;
+	}
+
 	#endregion
+
+	private void OnEnable()
+	{
+		_playerInput.Enable();
+	}
+
+	private void OnDisable()
+	{
+		_playerInput.Disable();
+	}
 }

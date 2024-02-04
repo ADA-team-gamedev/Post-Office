@@ -223,7 +223,7 @@ Transform:
   - {fileID: 1385851668644853797}
   - {fileID: 538981293412364176}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3405433200713329251
 GameObject:
@@ -556,3 +556,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <PlayerCamera>k__BackingField: {fileID: 363979862261386888}
+  _crosshairImage: {fileID: 0}
+  _defaultCrosshairColor: {r: 0.42352942, g: 0.42352942, b: 0.42352942, a: 1}
+  _interactableCrosshairColor: {r: 0.59607846, g: 0.59607846, b: 0.59607846, a: 1}
