@@ -143,6 +143,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""FlahsLight"",
+                    ""type"": ""Button"",
+                    ""id"": ""54d6d703-1eb2-4085-bb7b-c6e66da1bf97"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -365,6 +374,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Crouch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""76c047c7-cf7c-4602-b46f-c068ca316b5b"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""FlahsLight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -462,6 +482,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Hotbar1 = m_Player.FindAction("Hotbar 1", throwIfNotFound: true);
         m_Player_Hotbar2 = m_Player.FindAction("Hotbar 2", throwIfNotFound: true);
         m_Player_Hotbar3 = m_Player.FindAction("Hotbar 3", throwIfNotFound: true);
+        m_Player_FlahsLight = m_Player.FindAction("FlahsLight", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -540,6 +561,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Hotbar1;
     private readonly InputAction m_Player_Hotbar2;
     private readonly InputAction m_Player_Hotbar3;
+    private readonly InputAction m_Player_FlahsLight;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -557,6 +579,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Hotbar1 => m_Wrapper.m_Player_Hotbar1;
         public InputAction @Hotbar2 => m_Wrapper.m_Player_Hotbar2;
         public InputAction @Hotbar3 => m_Wrapper.m_Player_Hotbar3;
+        public InputAction @FlahsLight => m_Wrapper.m_Player_FlahsLight;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -605,6 +628,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Hotbar3.started += instance.OnHotbar3;
             @Hotbar3.performed += instance.OnHotbar3;
             @Hotbar3.canceled += instance.OnHotbar3;
+            @FlahsLight.started += instance.OnFlahsLight;
+            @FlahsLight.performed += instance.OnFlahsLight;
+            @FlahsLight.canceled += instance.OnFlahsLight;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -648,6 +674,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Hotbar3.started -= instance.OnHotbar3;
             @Hotbar3.performed -= instance.OnHotbar3;
             @Hotbar3.canceled -= instance.OnHotbar3;
+            @FlahsLight.started -= instance.OnFlahsLight;
+            @FlahsLight.performed -= instance.OnFlahsLight;
+            @FlahsLight.canceled -= instance.OnFlahsLight;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -752,6 +781,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnHotbar1(InputAction.CallbackContext context);
         void OnHotbar2(InputAction.CallbackContext context);
         void OnHotbar3(InputAction.CallbackContext context);
+        void OnFlahsLight(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

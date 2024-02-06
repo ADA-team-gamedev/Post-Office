@@ -50,6 +50,8 @@ public class PauseMenu : MonoBehaviour
 			Time.timeScale = 1;
 
 			Cursor.lockState = CursorLockMode.Locked;
+			
+			OnResumeButton();
 		}
 
 		_pauseMenu.SetActive(_isPaused);
@@ -67,11 +69,15 @@ public class PauseMenu : MonoBehaviour
 
 		_isPaused = false;
 
+		_exitWindow.SetActive(false);
+
+		_settingsWindow.SetActive(false);
+
 		_pauseMenu.SetActive(false);
 
 		_playerCrosshair.SetActive(true);
 
-		_playerStaminaBar.SetActive(true);
+		_playerStaminaBar.SetActive(true);	
 	}
 
 	public void OnNewGameButton()
@@ -99,7 +105,7 @@ public class PauseMenu : MonoBehaviour
 
 	public void OnExitToMenu()
 	{
-		SceneManager.LoadScene(0);
+		SceneManager.LoadScene("Menu");
 	}
 
 	public void OnExitToDesktop()

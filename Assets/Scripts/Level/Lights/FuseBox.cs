@@ -8,7 +8,7 @@ public class FuseBox : MonoBehaviour
 	[Header("Energy")]
 
 	[SerializeField][Range(1f, 100f)] private float _energyIncreasingSpeed = 1f;
-	[SerializeField][Range(1f, 5f)] private float _energyDecreasingSpeed = 1f;
+	[SerializeField][Range(0.1f, 5f)] private float _energyDecreasingSpeed = 1f;
 
 	[SerializeField] private float _maxEnergyAmount = 100f;
 

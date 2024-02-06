@@ -25,6 +25,8 @@ public class NoteBook : MonoBehaviour
 
 	private void Awake()
 	{
+		_defaultPosition = transform.position;
+
 		_playerInput = new();
 
 		_playerInput.UI.NoteBook.performed += OnNoteBook;
@@ -42,6 +44,8 @@ public class NoteBook : MonoBehaviour
 		TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
 
 		TaskManager.Instance.CurrentTaskCompleted += ClearNotebook;
+
+		_taskIndex = TaskManager.Instance.TaskCount - 1;
 	}
 
 	private void Update()
@@ -140,6 +144,11 @@ public class NoteBook : MonoBehaviour
 		_taskName.text = "";
 
 		_taskDescription.text = "";
+
+		if (_taskIndex == 0)
+			_taskIndex = TaskManager.Instance.TaskCount - 1;
+		else if (_taskIndex > 0)
+			_taskIndex--;
 	}
 
 	private void OnEnable()

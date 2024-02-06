@@ -121,6 +121,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "FlahsLight",
+                    "type": "Button",
+                    "id": "54d6d703-1eb2-4085-bb7b-c6e66da1bf97",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -341,6 +350,17 @@
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "Crouch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "76c047c7-cf7c-4602-b46f-c068ca316b5b",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "FlahsLight",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

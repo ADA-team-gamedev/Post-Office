@@ -9,7 +9,9 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	[SerializeField] private float _cameraSensitivity = 5f;
 	[SerializeField] private float _deffaultFOV = 60f;
-	[SerializeField] private float _maxCameraLookAngle = 60f;
+
+	[SerializeField][Range(0, 90)] private float _minCameraLookAngle = 90f;
+	[SerializeField][Range(0, 90)] private float _maxCameraLookAngle = 60f;
 
 	[Space(10)]
 	[SerializeField] private bool _isCameraInverted = false;
@@ -44,6 +46,8 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	private void Start()
 	{
+		_playerCamera ??= GetComponent<Camera>();
+
 		Cursor.lockState = CursorLockMode.Locked;
 
 		_playerCamera.fieldOfView = _playerMovement.MovementState == MovementState.Sprinting ? _sprintFOV : _deffaultFOV;
@@ -68,7 +72,7 @@ public class PlayerCameraHandler : MonoBehaviour
 		else
 			_pitch += _cameraSensitivity * _lookDirection.y * Time.deltaTime;
 
-		_pitch = Mathf.Clamp(_pitch, -_maxCameraLookAngle, _maxCameraLookAngle);
+		_pitch = Mathf.Clamp(_pitch, -_maxCameraLookAngle, _minCameraLookAngle); //max = to floar; min = to sky
 
 		_playerBody.localEulerAngles = new(0, _yaw, 0);
 		_playerCamera.transform.localEulerAngles = new(_pitch, 0, 0);

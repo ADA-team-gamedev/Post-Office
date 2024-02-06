@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class FuseSwitch : MonoBehaviour
+public class FuseSwitch : MonoBehaviour, IInteractable
 {
 	[field: SerializeField] public bool IsEnabled { get; private set; }
 
@@ -32,12 +32,17 @@ public class FuseSwitch : MonoBehaviour
 			DisableSwitch();
 	}
 
-	private void OnMouseDown()
+	public void StartInteract()
 	{
 		if (IsEnabled)
 			DisableSwitch();
 		else
 			EnableSwitch();		
+	}
+
+	public void StopInteract()
+	{
+
 	}
 
 	public void DisableSwitch()

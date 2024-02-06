@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4247460048600729327}
   - component: {fileID: 562147011805884638}
   - component: {fileID: 394277572401083332}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 2689413036350202349}
   - component: {fileID: 1253714734933320420}
   - component: {fileID: 6153324035707151297}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Description
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -296,7 +296,7 @@ GameObject:
   - component: {fileID: 8894452028525697022}
   - component: {fileID: 6668572894007010100}
   - component: {fileID: 8667748830307221483}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: NoteBook
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -397,7 +397,7 @@ GameObject:
   - component: {fileID: 1823105109442480720}
   - component: {fileID: 4200641810824777695}
   - component: {fileID: 5287030476177724578}
-  m_Layer: 5
+  m_Layer: 10
   m_Name: Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -561,7 +561,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 33
+    m_Bits: 1024
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -647,5 +647,5 @@ Transform:
   - {fileID: 1470568844920093191}
   - {fileID: 5530608820709611611}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

@@ -13,20 +13,20 @@ public class PlayerSanity : MonoBehaviour
 	{
 		get
 		{
-			return _sanitySlider.value;
+			return _sanityValue;
 		}
 		set
 		{
 			if (value >= 0 && value <= _maxSanityValue)
-                _sanitySlider.value = value;
+				_sanityValue = value;
 			else if (value > _maxSanityValue)
-                _sanitySlider.value = _maxSanityValue;
+				_sanityValue = _maxSanityValue;
 			else
-                _sanitySlider.value = 0;		
+				_sanityValue = 0;		
 		}
 	}
+	private float _sanityValue;
 
-	[SerializeField] private Slider _sanitySlider;
 	[SerializeField] private float _sanityDecreaseSpeed = 1f;
 
 	[SerializeField] private Volume _sanityVolume;
@@ -37,9 +37,7 @@ public class PlayerSanity : MonoBehaviour
 
 	private void Start()
 	{
-		_sanitySlider.maxValue = _maxSanityValue;
-
-		_sanitySlider.value = _maxSanityValue;
+		_sanityValue = _maxSanityValue;
 
 		_sanityVolume.weight = 0;
 		
@@ -60,7 +58,7 @@ public class PlayerSanity : MonoBehaviour
 		{
 			Sanity -= Time.deltaTime * _sanityDecreaseSpeed;
 		
-			float newValue = -(_sanitySlider.value - _sanitySlider.maxValue);
+			float newValue = -(_sanityValue - _maxSanityValue);
 
 			percent = newValue / _maxSanityValue;
 
