@@ -51,16 +51,6 @@ public class Door : MonoBehaviour, IInteractable
 
 	private bool _isPlayerDragDoor = false;
 
-	private void OnEnable()
-	{
-		_playerInput.Enable();
-	}
-
-	private void OnDisable()
-	{
-		_playerInput.Disable();
-	}
-
 	private void Awake()
 	{
 		_playerInput = new();
@@ -75,6 +65,10 @@ public class Door : MonoBehaviour, IInteractable
 		_playerClickedViewPoint = _doorModel.position;
 
 		_isClosed = IsKeyNeeded;
+
+		_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
+
+		transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
 	}
 
 	private void Update()
@@ -174,17 +168,13 @@ public class Door : MonoBehaviour, IInteractable
 
 	public void StartInteract()
 	{
-		if (!_isPlayerDragDoor)
-		{
-			if (_isClosed)
-				TryOpenDoorByKey();
+		if (_isPlayerDragDoor)
+			return;
 
-			StartRotateDoor();
-		}
-		//else
-		//{
-		//	StopRotateDoor();			
-		//}
+		if (_isClosed)
+			TryOpenDoorByKey();
+
+		StartRotateDoor();
 	}
 
 	public void StopInteract()
@@ -198,6 +188,16 @@ public class Door : MonoBehaviour, IInteractable
 	private void OnValidate()
 	{
 		_hingeJoint ??= GetComponent<HingeJoint>();
+	}
+
+	private void OnEnable()
+	{
+		_playerInput.Enable();
+	}
+
+	private void OnDisable()
+	{
+		_playerInput.Disable();
 	}
 
 	private void OnDrawGizmosSelected()

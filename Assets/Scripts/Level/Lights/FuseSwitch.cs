@@ -4,9 +4,17 @@ using UnityEngine.Events;
 
 public class FuseSwitch : MonoBehaviour, IInteractable
 {
-	[field: SerializeField] public bool IsEnabled { get; private set; }
+	[field: SerializeField] public bool IsEnabled { get; private set; } = false;
 
-	[Space(10)]
+	[Header("Switch Aniamtion")]
+
+	[SerializeField] private float _newSwitchYPosition = -1f;
+
+	[SerializeField][Range(1f, 100f)] private float _animationSpeed = 15f;
+
+	private float _defaultSwitchYPosition;
+
+	[Header("Actions")]
 
 	public UnityEvent OnSwitchEnabled;
 	public UnityEvent OnSwitchDisabled;
@@ -15,22 +23,40 @@ public class FuseSwitch : MonoBehaviour, IInteractable
 
 	private FuseBox _generator;
 
-	private Animator _animator;
-
 	private void Awake()
 	{
-		_animator = GetComponent<Animator>();
-
 		_generator = GetComponentInParent<FuseBox>();	
 	}
 
 	private void Start()
 	{
+		_defaultSwitchYPosition = transform.position.y;
+
 		if (IsEnabled)
 			EnableSwitch();
 		else
 			DisableSwitch();
 	}
+
+	private void Update()
+	{
+		if (IsEnabled)
+			MoveSwitchTo(_defaultSwitchYPosition + _newSwitchYPosition);
+		else
+			MoveSwitchTo(_defaultSwitchYPosition);
+	}
+
+	private void MoveSwitchTo(float newYPosition)
+	{	
+		if (Mathf.Approximately(transform.position.y, newYPosition))
+			return;
+
+		Vector3 newPosition = new(transform.position.x, newYPosition, transform.position.z);
+
+		transform.position = Vector3.Lerp(transform.position, newPosition, _animationSpeed * Time.deltaTime);
+	}
+
+	#region Player Interaction
 
 	public void StartInteract()
 	{
@@ -45,13 +71,15 @@ public class FuseSwitch : MonoBehaviour, IInteractable
 
 	}
 
+	#endregion
+
+	#region Switch Logic
+
 	public void DisableSwitch()
 	{
 		IsEnabled = false;
 
 		OnSwitchStateChanged?.Invoke();
-
-		_animator.SetTrigger("OnDisable");
 
 		OnSwitchDisabled.Invoke();
 		
@@ -64,8 +92,6 @@ public class FuseSwitch : MonoBehaviour, IInteractable
 
 		OnSwitchStateChanged?.Invoke();
 
-		_animator.SetTrigger("OnEnable");
-
 		if (_generator.IsEnabled)
 			OnSwitchEnabled.Invoke();
 		else
@@ -76,4 +102,6 @@ public class FuseSwitch : MonoBehaviour, IInteractable
 	{
 		OnSwitchEnabled.Invoke();
 	}
+
+	#endregion
 }

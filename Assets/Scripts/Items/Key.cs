@@ -6,6 +6,7 @@ public enum DoorKeyTypes
 	Storage,
 	Office,
 	Workshop,
+	Fuse,
 	Kitchen,
 }
 
