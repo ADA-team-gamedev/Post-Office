@@ -42,6 +42,8 @@ public class PlayerInventory : MonoBehaviour
 
 	private PlayerInput _playerInput;
 
+	[SerializeField] private GameObject _box;
+
 	private void Awake()
 	{
 		_playerInput = new();
@@ -191,8 +193,6 @@ public class PlayerInventory : MonoBehaviour
 
 		_currentSlotIndex++;
 
-		_inventory[_currentSlotIndex].SetActive(false);
-
 		if (_inventory.Count != 1 && !_changeItemWhenPickup)
 			_currentSlotIndex--;
 
@@ -216,10 +216,10 @@ public class PlayerInventory : MonoBehaviour
 		if (_inventory.Count <= 0)
 			return;
 
-		foreach (GameObject item in _inventory)
+		for (int i = 0; i < _inventory.Count; i++)
 		{
-			if (item)
-				item.SetActive(false);
+			if (i != _currentSlotIndex)
+				_inventory[i].SetActive(false);
 		}
 
 		GameObject currentItem = _inventory[_currentSlotIndex];

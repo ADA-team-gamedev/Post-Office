@@ -41,6 +41,8 @@ public class BoxEnemy : MonoBehaviour
 
 	[SerializeField] private string KillAnimationTrigger = "Jumpscare";
 
+	[Space(10), SerializeField] private Animation _killerBoxAnimation;
+
 	private float _defaultAnimationSpeed;
 
 	#endregion
@@ -81,7 +83,7 @@ public class BoxEnemy : MonoBehaviour
 		_agent.speed = _patrolingSpeed;
 
 		_fieldOfView = GetComponent<FieldOfView>();
-
+		
 		_box = GetComponent<Box>();
 
 		_rigidbody = GetComponent<Rigidbody>();
@@ -107,8 +109,8 @@ public class BoxEnemy : MonoBehaviour
 		if (!_isEnemyPhasesStarts && IsCanStartEnemyLogic()) //AI first start check
 		{
 			_isEnemyPhasesStarts = true;
-
-			EnableAI();
+			
+			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));
 		}
 
 		if (_isTranformedIntoInsect)
@@ -116,7 +118,7 @@ public class BoxEnemy : MonoBehaviour
 			CheckVision();
 
 			HandleStateLauncher();
-		}				
+		}
 	}
 
 	private bool IsCanStartEnemyLogic()
@@ -127,7 +129,9 @@ public class BoxEnemy : MonoBehaviour
 		_fieldOfView.VisionCheck();
 
 		if (_fieldOfView.InstantDetectTarget && _enemyState == EnemyState.Attacking)
+		{
 			KillPlayer();
+		}
 		else if (_fieldOfView.CanSeePLayer || _fieldOfView.InstantDetectTarget)
 		{
 			if (!_isFleeing)
@@ -292,12 +296,14 @@ public class BoxEnemy : MonoBehaviour
 		_isPatroling = false; 
 
 		_agent.SetDestination(_attackingTarget.position);
+
+		_animator.SetBool(IsMoving, true);
 	}
 
 	private void KillPlayer()
 	{
-		_animator.SetTrigger(KillAnimationTrigger);	
-
+		_killerBoxAnimation.Play();
+		
 		DisableAI();
 
 		gameObject.SetActive(false);
@@ -325,7 +331,11 @@ public class BoxEnemy : MonoBehaviour
 		StopAllCoroutines();
 
 		if (_isTranformedIntoInsect)
+		{
+			//_animator.speed = _runningSpeed;
+
 			_animator.SetTrigger(BecomeBoxTrigger);
+		}
 
 		_isTranformedIntoInsect = false;
 
@@ -356,15 +366,21 @@ public class BoxEnemy : MonoBehaviour
 
 	private IEnumerator TransformFromBoxToInsect(float delay)
 	{
-		yield return new WaitForSeconds(delay);	
+		yield return new WaitForSeconds(delay);
 
 		EnableAI();
+
+		_animator.speed = _defaultAnimationSpeed;
+
+		_animator.SetTrigger(BecomeInsectTrigger);
+
+		yield return new WaitForSeconds(delay);
+
+		_isTranformedIntoInsect = true;
 	}
 
 	private void EnableAI()
 	{
-		_isTranformedIntoInsect = true;
-
 		_agent.enabled = true;
 
 		_agent.isStopped = false;
@@ -372,10 +388,6 @@ public class BoxEnemy : MonoBehaviour
 		_enemyState = EnemyState.Patroling;
 
 		_rigidbody.isKinematic = true;
-
-		_animator.speed = _defaultAnimationSpeed;
-
-		_animator.SetTrigger(BecomeInsectTrigger);
 	}
 
 	#endregion
