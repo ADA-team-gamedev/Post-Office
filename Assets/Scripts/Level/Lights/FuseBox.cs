@@ -8,7 +8,7 @@ public class FuseBox : MonoBehaviour
 	[Header("Energy")]
 
 	[SerializeField][Range(1f, 100f)] private float _energyIncreasingSpeed = 1f;
-	[SerializeField][Range(0.1f, 5f)] private float _energyDecreasingSpeed = 1f;
+	[SerializeField][Range(0.01f, 2f)] private float _energyDecreasingSpeed = 0.5f;
 
 	[SerializeField] private float _maxEnergyAmount = 100f;
 
@@ -39,6 +39,8 @@ public class FuseBox : MonoBehaviour
 			{
 				_energyAmount = _maxEnergyAmount;
 
+				Debug.Log("Generator has charged");
+
 				EnableFuse();
 			}
 			else if (value <= 0)
@@ -46,6 +48,8 @@ public class FuseBox : MonoBehaviour
 				_energyAmount = 0;
 
 				IsEnabled = false;
+
+				Debug.Log("Generator had disabled");
 
 				DisableFuse();
 			}

@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class PlayerSanity : MonoBehaviour
 {
-	#region SanitySettings
-
 	[SerializeField][Range(1, 100f)] private float _maxSanityValue = 100f;
 
 	public float Sanity
@@ -17,7 +15,7 @@ public class PlayerSanity : MonoBehaviour
 		}
 		set
 		{
-			if (value >= 0 && value <= _maxSanityValue)
+			if (value > 0 && value <= _maxSanityValue)
 				_sanityValue = value;
 			else if (value > _maxSanityValue)
 				_sanityValue = _maxSanityValue;
@@ -33,14 +31,19 @@ public class PlayerSanity : MonoBehaviour
 
 	private float percent;
 
-	#endregion
+	[SerializeField] private Slider _slider;
 
 	private void Start()
 	{
 		_sanityValue = _maxSanityValue;
 
 		_sanityVolume.weight = 0;
-		
+
+		_slider.maxValue = _maxSanityValue;
+
+		_slider.value = _sanityValue;
+
+
 		StartCoroutine(LoseSanity());
 	}
 
@@ -63,6 +66,8 @@ public class PlayerSanity : MonoBehaviour
 			percent = newValue / _maxSanityValue;
 
 			_sanityVolume.weight = percent;
+
+			_slider.value = Sanity;
 
 			yield return null;
 		}

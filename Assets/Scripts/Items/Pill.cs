@@ -13,26 +13,33 @@ public class Pill : Item, IUsable
 
     private bool _isUsing = false;
 
-
     public void Use()
     {
-        if (IsHaveCharge() && !_isUsing)
+        if (IsHaveCharge())
         {
-            _countOfUses--;
+            if (!_isUsing)
+            {
+				_countOfUses--;
 
-            StartCoroutine(EffectCooldown());          
-        }        
+                Debug.Log($"{gameObject.name}s are used");
+
+				StartCoroutine(ResoteSanity());
+			}             
+        }
+        else
+        {
+            Debug.Log("These pills are empty");
+
+            //Play empty sound
+        }
     }  
 
     private bool IsHaveCharge()
         => _countOfUses > 0;
 
-    private IEnumerator EffectCooldown()
+    private IEnumerator ResoteSanity()
     {
-        _isUsing = true;
-
-        if (!IsHaveCharge())
-            Destroy(gameObject, _sanityAddingDelay);            
+        _isUsing = true;            
         
         float timer = _sanityAddingDelay;
 
