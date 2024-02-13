@@ -16,6 +16,8 @@ public class Interactor : MonoBehaviour
 
 	private PlayerInput _playerInput;
 
+	private PlayerDeathController _playerDeathController;
+
 	private IInteractable _interactableObject;
 
 	private Ray _interactionRay => new(PlayerCamera.transform.position, PlayerCamera.transform.forward);
@@ -30,6 +32,10 @@ public class Interactor : MonoBehaviour
 		_playerInput.Player.Interact.canceled += OnStopInteract;
 
 		_crosshairImage.color = _defaultCrosshairColor;
+
+		_playerDeathController = GetComponent<PlayerDeathController>();
+
+		_playerDeathController.OnDeath += DisableInteractor;
 	}
 
 	private void Update()
@@ -90,6 +96,11 @@ public class Interactor : MonoBehaviour
 	}
 
 	#endregion
+
+	private void DisableInteractor()
+	{
+		Destroy(this);
+	}
 
 	private void OnEnable()
 	{

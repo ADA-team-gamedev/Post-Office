@@ -306,7 +306,9 @@ public class BoxEnemy : MonoBehaviour
 		
 		DisableAI();
 
-		gameObject.SetActive(false);
+		_fieldOfView.TargetTransform.GetComponent<PlayerDeathController>().Die();
+
+		gameObject.SetActive(false);	
 	}
 
 	#endregion

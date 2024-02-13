@@ -34,6 +34,8 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	private PlayerInput _playerInput;
 
+	private PlayerDeathController _playerDeathController;
+
 	private Vector2 _lookDirection;
 
 	private void Awake()
@@ -46,11 +48,15 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	private void Start()
 	{
-		_playerCamera ??= GetComponent<Camera>();
+		_playerCamera ??= GetComponent<Camera>();	
 
 		Cursor.lockState = CursorLockMode.Locked;
 
 		_playerCamera.fieldOfView = _playerMovement.MovementState == MovementState.Sprinting ? _sprintFOV : _deffaultFOV;
+		
+		_playerDeathController = transform.parent.parent.GetComponent<PlayerDeathController>(); //Player with DeathController -> HeadJoint -> Camera
+
+		_playerDeathController.OnDeath += DisableCamera;
 	}
 
 	private void Update()
@@ -93,6 +99,11 @@ public class PlayerCameraHandler : MonoBehaviour
 		}
 
 		_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _sprintFOV, _sprintFOVStepTime * Time.deltaTime);
+	}
+
+	private void DisableCamera()
+	{
+		Destroy(this);
 	}
 
 	private void OnEnable()

@@ -3,7 +3,7 @@ using UnityEngine;
 public class FieldOfView : MonoBehaviour
 {
 	[Header("Layer")]
-	[SerializeField] private LayerMask _playerLayer;
+	[SerializeField] private LayerMask _targetLayer;
 
 	[SerializeField] private LayerMask _obstacleLayer;
 
@@ -22,7 +22,7 @@ public class FieldOfView : MonoBehaviour
 
 	public void VisionCheck()
 	{
-		Collider[] rangeChecks = Physics.OverlapSphere(transform.position, ViewedRadius, _playerLayer);
+		Collider[] rangeChecks = Physics.OverlapSphere(transform.position, ViewedRadius, _targetLayer);
 
 		if (rangeChecks.Length != 0)
 		{

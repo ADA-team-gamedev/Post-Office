@@ -42,6 +42,8 @@ public class PlayerInventory : MonoBehaviour
 
 	private PlayerInput _playerInput;
 
+	private PlayerDeathController _playerDeathController;
+
 	[SerializeField] private GameObject _box;
 
 	private void Awake()
@@ -54,6 +56,10 @@ public class PlayerInventory : MonoBehaviour
 
 	private void Start()
 	{
+		_playerDeathController = GetComponent<PlayerDeathController>();
+
+		_playerDeathController.OnDeath += ClearInventory;
+
 		_inventory = new(_inventorySlotsAmount);
 		
 		_playerInput.Player.PickUpItem.performed += OnPickUpItem;
@@ -310,6 +316,16 @@ public class PlayerInventory : MonoBehaviour
 	#endregion
 
 	#endregion
+
+	private void ClearInventory()
+	{
+		while (_inventory.Count > 0)
+		{
+			DropItem();
+		}
+
+		Destroy(this);
+	}
 
 	private void OnEnable()
 	{

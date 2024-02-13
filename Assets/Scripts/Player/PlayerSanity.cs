@@ -33,6 +33,8 @@ public class PlayerSanity : MonoBehaviour
 
 	[SerializeField] private Slider _slider;
 
+	private PlayerDeathController _playerDeathController;
+
 	private void Start()
 	{
 		_sanityValue = _maxSanityValue;
@@ -43,6 +45,9 @@ public class PlayerSanity : MonoBehaviour
 
 		_slider.value = _sanityValue;
 
+		_playerDeathController = GetComponent<PlayerDeathController>();
+
+		_playerDeathController.OnDeath += DisableSanity;
 
 		StartCoroutine(LoseSanity());
 	}
@@ -71,5 +76,10 @@ public class PlayerSanity : MonoBehaviour
 
 			yield return null;
 		}
+	}
+
+	private void DisableSanity()
+	{
+		Destroy(this);
 	}
 }

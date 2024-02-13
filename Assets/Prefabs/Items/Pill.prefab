@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4483144643181054528}
   - component: {fileID: 8069087444069630367}
   - component: {fileID: 4768578096340449730}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 4256113726590545484}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &4483144643181054528
 BoxCollider:
@@ -108,7 +108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4256113726590545484}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pillbottle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -144,7 +144,7 @@ GameObject:
   - component: {fileID: 6648644618669459482}
   - component: {fileID: 7471633641788572631}
   - component: {fileID: 2684456727132011772}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: cap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 6909641247953177115}
   - component: {fileID: 72854600033259632}
   - component: {fileID: 7981156858343865967}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: bottle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ GameObject:
   - component: {fileID: 2025727821996210210}
   - component: {fileID: 8065512495078658879}
   - component: {fileID: 6248621021379176964}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: label
   m_TagString: Untagged
   m_Icon: {fileID: 0}

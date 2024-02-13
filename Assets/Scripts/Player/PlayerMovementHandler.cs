@@ -86,6 +86,8 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private PlayerInput _playerInput;
 
+	private PlayerDeathController _playerDeathController;
+
 	private Rigidbody _rb;
 
 	private void Awake()
@@ -93,6 +95,10 @@ public class PlayerMovementHandler : MonoBehaviour
 		_rb = GetComponent<Rigidbody>();
 
 		_playerCollider = GetComponent<CapsuleCollider>();
+
+		_playerDeathController = GetComponent<PlayerDeathController>();
+
+		_playerDeathController.OnDeath += DisableMovement;
 
 		_playerInput = new();
 
@@ -375,6 +381,11 @@ public class PlayerMovementHandler : MonoBehaviour
 	}
 
 	#endregion
+
+	private void DisableMovement()
+	{
+		Destroy(this);
+	}
 
 	private void OnEnable()
 	{

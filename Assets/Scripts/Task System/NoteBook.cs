@@ -13,6 +13,9 @@ public class NoteBook : MonoBehaviour
 
     [SerializeField] private Vector3 _openedPositionCoefficient = new(0.18f, 0.22f, 0);
 
+	[Header("Player Death")]
+	[SerializeField] private PlayerDeathController _playerDeathController;
+
 	private bool _isViewing = false;
 
     private Vector3 _defaultPosition;
@@ -26,6 +29,8 @@ public class NoteBook : MonoBehaviour
 	private void Awake()
 	{
 		_defaultPosition = transform.position;
+
+		_playerDeathController.OnDeath += DisableNoteBook;
 
 		_playerInput = new();
 
@@ -109,6 +114,8 @@ public class NoteBook : MonoBehaviour
 		transform.position = Vector3.Lerp(transform.position, _defaultPosition, Time.deltaTime * _animationSpeed);
 	}
 
+	#region Text Methods
+
 	public void RewriteText(string text)
 	{
 		_taskDescription.text = text;
@@ -149,6 +156,13 @@ public class NoteBook : MonoBehaviour
 			_taskIndex = TaskManager.Instance.TaskCount - 1;
 		else if (_taskIndex > 0)
 			_taskIndex--;
+	}
+
+	#endregion
+
+	private void DisableNoteBook()
+	{
+		Destroy(this);
 	}
 
 	private void OnEnable()

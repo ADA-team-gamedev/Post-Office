@@ -9,6 +9,8 @@ public class MainMenu : MonoBehaviour
 	private void Awake()
 	{
 		_settingsWindow.SetActive(false);
+
+		Cursor.lockState = CursorLockMode.None;
 	}
 
 	public void OnResumeButton()
