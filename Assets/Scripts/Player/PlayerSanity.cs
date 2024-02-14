@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -5,7 +6,17 @@ using UnityEngine.UI;
 
 public class PlayerSanity : MonoBehaviour
 {
+	#region Sanity
+
+	[Header("Sanity")]
 	[SerializeField][Range(1, 100f)] private float _maxSanityValue = 100f;
+
+	[SerializeField] private float _sanityDecreaseSpeed = 1f;
+
+	/// <summary>
+	/// Return percent from 0.01 to 1
+	/// </summary>
+	public float SanityPercent => (float) Math.Round(_sanityValue / _maxSanityValue, 2);
 
 	public float Sanity
 	{
@@ -25,13 +36,19 @@ public class PlayerSanity : MonoBehaviour
 	}
 	private float _sanityValue;
 
-	[SerializeField] private float _sanityDecreaseSpeed = 1f;
+	#endregion
+
+	#region 
+
+	[Header("Visualization")]
 
 	[SerializeField] private Volume _sanityVolume;
 
 	private float percent;
 
 	[SerializeField] private Slider _slider;
+
+	#endregion
 
 	private PlayerDeathController _playerDeathController;
 

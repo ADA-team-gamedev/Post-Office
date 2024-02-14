@@ -22,8 +22,8 @@ public class BoxEnemy : MonoBehaviour
 
 	[Header("Phases starts")]
 
-	[SerializeField] private float _patrolPhaseStart = 40f;
-	[SerializeField] private float _attackPhaseStart = 10f;
+	[SerializeField][Range(0.01f, 1f)] private float _patrolPhaseStartSanityPercent = 0.4f;
+	[SerializeField][Range(0.01f, 1f)] private float _attackPhaseStartSanityPercent = 0.1f;
 
 	[Space(10)]
 	[SerializeField] private float _tranfromToEnemyDelay = 5f;
@@ -39,9 +39,7 @@ public class BoxEnemy : MonoBehaviour
 
 	[SerializeField] private string IsMoving = "IsMoving";
 
-	[SerializeField] private string KillAnimationTrigger = "Jumpscare";
-
-	[Space(10), SerializeField] private Animation _killerBoxAnimation;
+	[Space(10), SerializeField] private GameObject _killerBoxJumpScare;
 
 	private float _defaultAnimationSpeed;
 
@@ -122,8 +120,7 @@ public class BoxEnemy : MonoBehaviour
 	}
 
 	private bool IsCanStartEnemyLogic()
-		=> !_isTranformedIntoInsect && _playerSanity.Sanity <= _patrolPhaseStart;
-
+		=> !_isTranformedIntoInsect && _playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent;	 
 	private void CheckVision()
 	{
 		_fieldOfView.VisionCheck();
@@ -132,14 +129,14 @@ public class BoxEnemy : MonoBehaviour
 		{
 			KillPlayer();
 		}
-		else if (_fieldOfView.CanSeePLayer || _fieldOfView.InstantDetectTarget)
+		else if (_fieldOfView.CanSeePlayer || _fieldOfView.InstantDetectTarget)
 		{
 			if (!_isFleeing)
 			{
-				_enemyState = _playerSanity.Sanity <= _attackPhaseStart ? EnemyState.Attacking : EnemyState.Fleeing;
+				_enemyState = _playerSanity.SanityPercent <= _attackPhaseStartSanityPercent ? EnemyState.Attacking : EnemyState.Fleeing;
 
 				if (_enemyState == EnemyState.Attacking && !_attackingTarget)
-					_attackingTarget = _fieldOfView.TargetTransform;
+					_attackingTarget = _fieldOfView.Target;
 			}				
 		}
 		else //don't see player
@@ -302,11 +299,11 @@ public class BoxEnemy : MonoBehaviour
 
 	private void KillPlayer()
 	{
-		_killerBoxAnimation.Play();
-		
 		DisableAI();
 
-		_fieldOfView.TargetTransform.GetComponent<PlayerDeathController>().Die();
+		_fieldOfView.Target.GetComponent<PlayerDeathController>().Die();
+
+		_killerBoxJumpScare.SetActive(true);
 
 		gameObject.SetActive(false);	
 	}
