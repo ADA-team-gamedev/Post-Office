@@ -13,7 +13,7 @@ public class FlashLight : Item, IUsable
     //[SerializeField] private int _numberOfActivations = 0;
     //[SerializeField][Range(1, 100)] private float _dischargeRate;
 
-    private bool _isCanTurnOn = false;
+    //private bool _isCanTurnOn = false;
 
     public bool IsWorking { get; private set; } = false;
 
@@ -32,7 +32,7 @@ public class FlashLight : Item, IUsable
 
 	public void PickUpItem()
     {
-        _isCanTurnOn = true;
+        //_isCanTurnOn = true;
     }
 
     #endregion

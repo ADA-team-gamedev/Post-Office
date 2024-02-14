@@ -35,11 +35,11 @@ public class FieldOfViewEditor : Editor
 
 		Handles.DrawLine(fieldOfView.transform.position, fieldOfView.transform.position + viewRightAngleSide * fieldOfView.ViewedRadius);
 
-		if (fieldOfView.CanSeePLayer)
+		if (fieldOfView.CanSeePlayer)
 		{
 			Handles.color = Color.green;
 			
-			Handles.DrawLine(fieldOfView.transform.position, fieldOfView.TargetTransform.position);
+			Handles.DrawLine(fieldOfView.transform.position, fieldOfView.Target.position);
 		}
 	}
 

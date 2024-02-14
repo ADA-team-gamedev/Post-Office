@@ -103,7 +103,7 @@ public class PlayerCameraHandler : MonoBehaviour
 
 	private void DisableCamera()
 	{
-		Destroy(this);
+		//Destroy(this);
 	}
 
 	private void OnEnable()

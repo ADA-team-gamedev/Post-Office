@@ -384,7 +384,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private void DisableMovement()
 	{
-		Destroy(this);
+		//Destroy(this);
 	}
 
 	private void OnEnable()

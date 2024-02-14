@@ -90,7 +90,7 @@ public class TaskManager : MonoBehaviour
 	{
 		if (!TryGetTaskByType(task.ID, out Task _))
 		{
-			Debug.LogWarning("You are trying to set task which doesn't exists in task collection therefore we adding task automatically");
+			Debug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we adding task automatically");
 
 			AddNewTask(task);
 		}
@@ -111,7 +111,7 @@ public class TaskManager : MonoBehaviour
 	{
 		if (IsContainTask(task.ID))
 		{
-			Debug.LogWarning("You are trying to add task which already exists in task collection. We can't add him!");
+			Debug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
 
 			return;
 		}
