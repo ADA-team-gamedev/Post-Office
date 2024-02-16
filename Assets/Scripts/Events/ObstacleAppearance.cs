@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class ObstacleAppearance : MonoBehaviour
@@ -21,7 +22,9 @@ public class ObstacleAppearance : MonoBehaviour
 
 	[Header("Player")]
 	[SerializeField] private Camera _playerCamera;
-	[SerializeField] private Transform _player;
+
+	public event Action OnObstacleDisappeared;
+	public event Action OnObstacleAppeared;
 
 	private void Start()
 	{
@@ -35,7 +38,7 @@ public class ObstacleAppearance : MonoBehaviour
 
 		if (_obstacle.activeSelf)
 		{
-			if (IsCanDeleteObject())
+			if (IsCanDiactivateObject())
 				DiactivateObject();
 		}
 		else
@@ -52,17 +55,63 @@ public class ObstacleAppearance : MonoBehaviour
 		_obstacleTimeRemaining = Mathf.Clamp(_obstacleTimeRemaining, 0, _obstacleTimeExistenceInSeconds);
 	}
 
+	public void SpawnObstacle(bool checkIsPlayerLookedOnIt)
+	{
+		if (_obstacle.activeSelf)
+			return;
+
+		if (checkIsPlayerLookedOnIt)
+		{
+			if (!IsCanSpawnObstacle())
+			{
+				Debug.Log($"Player looking on obstacle which we want to spawn. We can't do that!");
+
+				return;
+			}
+		}
+
+		SpawnObstacle();
+	}
+
+	public void DiactivateObstacle(bool checkIsPlayerLookedOnIt)
+	{
+		if (!_obstacle.activeSelf)
+			return;
+
+		if (checkIsPlayerLookedOnIt)
+		{
+			if (!IsCanDiactivateObject())
+			{
+				Debug.Log($"Player looking on obstacle which we want to diactivate. We can't do that!");
+
+				return;
+			}
+		}
+
+		DiactivateObject();
+	}
+
 	private void SpawnObstacle()
 	{
 		_obstacle.SetActive(true);
+
+		OnObstacleAppeared?.Invoke();
+
+		_obstacleTimeRemaining = _obstacleTimeExistenceInSeconds;
 	}
 
 	private void DiactivateObject()
 	{
 		_obstacle.SetActive(false);
+
+		OnObstacleDisappeared?.Invoke();
+
+		_obstacleTimeRemaining = 0;
 	}
 
-	private bool IsCanDeleteObject()
+	#region Checkers
+
+	private bool IsCanDiactivateObject()
 		=> !IsPlayerLookingOnObstacle() && _obstacleTimeRemaining <= 0;
 
 	private bool IsCanSpawnObstacle()
@@ -87,4 +136,6 @@ public class ObstacleAppearance : MonoBehaviour
 
 		return dotProduct < -0.5f;
 	}
+
+	#endregion
 }
