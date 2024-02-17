@@ -44,8 +44,6 @@ public class PlayerInventory : MonoBehaviour
 
 	private PlayerDeathController _playerDeathController;
 
-	[SerializeField] private GameObject _box;
-
 	private void Awake()
 	{
 		_playerInput = new();

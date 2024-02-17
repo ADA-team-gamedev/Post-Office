@@ -43,7 +43,8 @@ public class TaskManager : MonoBehaviour
 
 	private void Start()
 	{
-		SetNewCurrentTask(_tasks[0]);	
+		if (_tasks.Count > 0)
+			SetNewCurrentTask(_tasks[0]);	
 	}
 
 	public bool TryGetTaskByType(int id, out Task task)
@@ -121,6 +122,9 @@ public class TaskManager : MonoBehaviour
 		task.OnCompleted += RemoveCurrentTask;
 
 		OnAddedNewTask?.Invoke();
+
+		if (CurrentTask == null)
+			SetNewCurrentTask(task);
 	}
 
 	private bool IsContainTask(int taskId)
@@ -155,6 +159,6 @@ public class TaskManager : MonoBehaviour
 			}
 		}
 
-		Debug.Log($"Task: {completedTask.Name} has been deleted");
+		Debug.Log($"Task: {completedTask.Name} has been completed");
 	}
 }
