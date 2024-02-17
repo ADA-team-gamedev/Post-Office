@@ -3,7 +3,32 @@ guid: 203eee16309959a4892fae56a66400b7
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pillbottle
+    second: {fileID: 2100000, guid: 22cf464d92179684085e029c983453a8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pillbottlecap
+    second: {fileID: 2100000, guid: d00004436ebb34b4cb418540f50a5096, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pillbottlelabel
+    second: {fileID: 2100000, guid: 810693041b7114e47b0262fe6b0cba89, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pillbottom
+    second: {fileID: 2100000, guid: 16d17eb44fb8fe7419c39c70519b83ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pilltop
+    second: {fileID: 2100000, guid: 8b40d8f38f18f614c8c3bd37c4249403, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
