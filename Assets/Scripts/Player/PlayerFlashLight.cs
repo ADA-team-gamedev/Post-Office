@@ -9,6 +9,8 @@ public class PlayerFlashLight : MonoBehaviour
 	[SerializeField] private PlayerInventory _playerInventory;
 	[SerializeField] private Camera _playerCamera;
 
+	[SerializeField] private Vector3 _positionOffset;
+
     private Light _light;
 
 	private bool _isFlashLightPickedUp = false;
@@ -38,7 +40,7 @@ public class PlayerFlashLight : MonoBehaviour
 
 	private void Update()
 	{
-		transform.position = _playerCamera.transform.position;
+		transform.position = _playerCamera.transform.position + _positionOffset;
 
 		RotateLight();
 	}
