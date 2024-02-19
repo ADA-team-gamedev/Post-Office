@@ -11,7 +11,7 @@ public class NoteBook : MonoBehaviour
     [Header("Values")]
 	[SerializeField] private float _animationSpeed = 2f;
 
-    [SerializeField] private Vector3 _openedPositionCoefficient = new(0.18f, 0.22f, 0);
+    [SerializeField] private Vector3 _openedPositionOffset = new(0.18f, 0.22f, 0);
 
 	[Header("Player Death")]
 	[SerializeField] private PlayerDeathController _playerDeathController;
@@ -98,7 +98,7 @@ public class NoteBook : MonoBehaviour
 
 	private void OpenNoteBook()
     {
-		Vector3 newPosition = _defaultPosition + _openedPositionCoefficient;
+		Vector3 newPosition = _defaultPosition + _openedPositionOffset;
 
 		if (!_isViewing || transform.position == newPosition)
 			return;
@@ -175,15 +175,10 @@ public class NoteBook : MonoBehaviour
 		_playerInput.Disable();
 	}
 
-	private void OnValidate()
-	{
-		_defaultPosition = transform.position;
-	}
-
 	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.green;
 
-		Gizmos.DrawWireSphere(_defaultPosition + _openedPositionCoefficient, 0.01f);
+		Gizmos.DrawWireSphere(_defaultPosition + _openedPositionOffset, 0.01f);
 	}
 }
