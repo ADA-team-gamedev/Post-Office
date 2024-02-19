@@ -51,8 +51,11 @@ public class NoteBook : MonoBehaviour
 		TaskManager.Instance.CurrentTaskCompleted += ClearNotebook;
 
 		_taskIndex = TaskManager.Instance.TaskCount - 1;
-	}
 
+		if (TaskManager.Instance.CurrentTask != null) //For cases when we add a task at start but we still haven't subscribed to the TaskManager
+			WriteTextInNoteBook(TaskManager.Instance.CurrentTask);	
+	}
+	
 	private void Update()
 	{
 		if (_playerInput.UI.NoteBook.IsPressed())

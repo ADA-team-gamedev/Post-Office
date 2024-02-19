@@ -95,7 +95,7 @@ public class TaskManager : MonoBehaviour
 
 			AddNewTask(task);
 		}
-
+		
 		CurrentTask = task;
 
 		OnNewCurrentTaskSet?.Invoke(task);
