@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -12,9 +11,21 @@ public class RemoteControl : Item, IUsable
 
 	private void Start()
 	{
+		Init();
+	}
+
+	protected override void Init()
+	{
+		base.Init();
+
 		TaskManager.Instance.AddNewTask(_findRemoteControlTask);
 
 		OnPickUpItem += Completetask;
+	}
+
+	private void Update()
+	{
+		base.RotateIconToObject(_playerCamera.transform);
 	}
 
 	private void Completetask()
