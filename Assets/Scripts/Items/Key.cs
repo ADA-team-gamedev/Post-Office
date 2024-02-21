@@ -14,5 +14,6 @@ public enum DoorKeyTypes
 
 public class Key : Item
 {
+	[field: Header("Key")]
 	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
 }

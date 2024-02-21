@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class Pill : Item, IUsable
 {
+    [Header("Pill settings")]
     [SerializeField][Range(1, 5)] private int _countOfUses = 1;
 
+    [Header("Values")]
     [SerializeField] private float _sanityAddingNumber;
     [SerializeField] private float _sanityAddingDelay;
 
@@ -13,7 +15,7 @@ public class Pill : Item, IUsable
 
     private bool _isUsing = false;
 
-    public void Use()
+	public void Use()
     {
         if (IsHaveCharge())
         {

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class RemoteControl : Item, IUsable
 {
+	[Header("Remote control")]
 	[SerializeField] private Camera _playerCamera;
 
 	[SerializeField] private TaskData _findRemoteControlTask;
@@ -18,20 +19,38 @@ public class RemoteControl : Item, IUsable
 	{
 		base.Init();
 
-		TaskManager.Instance.AddNewTask(_findRemoteControlTask);
-
 		OnPickUpItem += Completetask;
+
+		TaskManager.Instance.TryAddNewTask(_findRemoteControlTask);
+
+		TaskManager.Instance.OnNewCurrentTaskSet += ChangeItemIconState;
 	}
 
 	private void Update()
 	{
-		base.RotateIconToObject(_playerCamera.transform);
+		base.RotateIconToObject(_playerCamera.transform.position);
+	}
+
+	private void ChangeItemIconState(Task currentTask)
+	{
+		if (currentTask.ID != _findRemoteControlTask.Task.ID)
+		{
+			base.HideIcon();
+
+			return;
+		}	
+
+		base.ShowIcon();
 	}
 
 	private void Completetask()
 	{
-		if (!TaskManager.Instance.TryGetTaskByType(_findRemoteControlTask.Task.ID, out Task task))
+		if (!TaskManager.Instance.TryGetTask(_findRemoteControlTask.Task.ID, out Task task))
 			return;
+
+		base.HideIcon();
+
+		TaskManager.Instance.OnNewCurrentTaskSet -= ChangeItemIconState;
 
 		task.Complete();
 	}

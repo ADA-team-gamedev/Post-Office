@@ -9,47 +9,57 @@ public class Item : MonoBehaviour
 
 	public Action OnDropItem { get; set; }
 
+	[Header("Icon")]
 	[SerializeField] private GameObject _itemIcon;
 
+	[SerializeField] private Transform _player;
+
 	public bool IsIconEnabled => _itemIcon.activeSelf;
-
-	[SerializeField] private bool _subscribeIconOnItemMethods = true;
-
-	[SerializeField] private float _iconRotationSpeed = 1f;
 
 	private void Start()
 	{		
 		Init();
 	}
 
-	protected virtual void Init()
+	private void Update()
 	{
-		//HideIcon();
-
-		if (_itemIcon && _subscribeIconOnItemMethods)
-		{
-			OnPickUpItem += HideIcon;
-
-			OnDropItem += ShowIcon;
-		}
+		RotateIconToObject(_player.position);
 	}
 
-	protected void RotateIconToObject(Transform target)
+	protected virtual void Init()
+	{
+		HideIcon();
+
+		OnPickUpItem += HideIcon;
+
+		//OnDropItem += ShowIcon;
+
+		_itemIcon.transform.position = new(transform.position.x, _itemIcon.transform.position.y, transform.position.z);
+	}
+
+	protected void RotateIconToObject(Vector3 targetPosition)
 	{
 		if (!IsIconEnabled)
 			return;
 
-		Vector3 directionToTarget = target.position - _itemIcon.transform.position;
+		targetPosition.y = _itemIcon.transform.position.y; //constrain y axis
 
+		_itemIcon.transform.LookAt(targetPosition);
 	}
 
 	public void HideIcon()
 	{
+		if (!IsIconEnabled)
+			return;
+
 		_itemIcon.SetActive(false);
 	}
 
 	public void ShowIcon()
 	{
+		if (IsIconEnabled)
+			return;
+
 		_itemIcon.SetActive(true);
 
 		_itemIcon.transform.position = new(transform.position.x, _itemIcon.transform.position.y, transform.position.z);
