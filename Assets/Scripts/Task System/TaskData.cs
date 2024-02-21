@@ -29,13 +29,13 @@ public class Task
 		Description = description;
 	}
 
-	public Task(TaskData taskData)
+	public Task(Task task)
 	{
-		ID = taskData.Task.ID;
+		ID = task.ID;
 
-		Name = taskData.Task.Name;
+		Name = task.Name;
 
-		Description = taskData.Task.Description;
+		Description = task.Description;
 	}
 
 	public void Complete()

@@ -6,7 +6,7 @@ public class TaskManager : MonoBehaviour
 {
 	public static TaskManager Instance { get; private set; }
 
-	public Task CurrentTask { get; private set; }
+	public Task CurrentTask { get; private set; } = null;
 
 	public int TaskCount => _tasks.Count;
 
@@ -30,9 +30,9 @@ public class TaskManager : MonoBehaviour
 		else
 			Debug.LogWarning("TaskManager Instance already exists!");
 
-		foreach (var item in _taskDatas)
+		foreach (var taskData in _taskDatas)
 		{
-			_tasks.Add(item.Task);
+			TryAddNewTask(taskData);
 		}
 
 		foreach (var task in _tasks)
@@ -47,7 +47,7 @@ public class TaskManager : MonoBehaviour
 			SetNewCurrentTask(_tasks[0]);	
 	}
 
-	public bool TryGetTaskByType(int id, out Task task)
+	public bool TryGetTask(int id, out Task task)
 	{
 		foreach (var item in _tasks)
 		{
@@ -82,18 +82,19 @@ public class TaskManager : MonoBehaviour
 
 	public void SetNewCurrentTask(TaskData taskData)
 	{
-		Task task = new(taskData);
+		Task task = new Task(taskData.Task);
 
 		SetNewCurrentTask(task);
 	}
 
 	public void SetNewCurrentTask(Task task)
 	{
-		if (!TryGetTaskByType(task.ID, out Task _))
+		if (!TryGetTask(task.ID, out Task _))
 		{
-			Debug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we adding task automatically");
+			Debug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we try to add task automatically");
 
-			AddNewTask(task);
+			if (!TryAddNewTask(task))
+				return;
 		}
 		
 		CurrentTask = task;
@@ -101,21 +102,21 @@ public class TaskManager : MonoBehaviour
 		OnNewCurrentTaskSet?.Invoke(task);
 	}
 
-	public void AddNewTask(TaskData taskData)
+	public bool TryAddNewTask(TaskData taskData)
 	{
-		Task task = new(taskData);
+		Task task = new Task(taskData.Task.ID, taskData.Task.Name, taskData.Task.Description);
 
-		AddNewTask(task);
+		return TryAddNewTask(task);
 	}
 
-	public void AddNewTask(Task task) 
+	public bool TryAddNewTask(Task task) 
 	{
 		if (IsContainTask(task.ID))
 		{
 			Debug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
 
-			return;
-		}
+			return false;
+		}	
 
 		_tasks.Add(task);
 
@@ -125,6 +126,8 @@ public class TaskManager : MonoBehaviour
 
 		if (CurrentTask == null)
 			SetNewCurrentTask(task);
+
+		return true;
 	}
 
 	private bool IsContainTask(int taskId)
@@ -147,17 +150,22 @@ public class TaskManager : MonoBehaviour
 
 		CurrentTaskCompleted?.Invoke();
 
-		//_tasks.Remove(completedTask);
+		//Delete task form task collection when the player complete him
+		_tasks.Remove(completedTask);
 
-		foreach (var item in _tasks)
-		{
-			if (!item.IsCompleted)
-			{
-				SetNewCurrentTask(item);
+		if (TaskCount > 0)
+			SetNewCurrentTask(0);
 
-				return;
-			}
-		}
+		//Just making task completed and making the text style as completed for task text in notebook
+		//foreach (var item in _tasks)
+		//{
+		//	if (!item.IsCompleted)
+		//	{
+		//		SetNewCurrentTask(item);
+
+		//		return;
+		//	}
+		//}
 
 		Debug.Log($"Task: {completedTask.Name} has been completed");
 	}

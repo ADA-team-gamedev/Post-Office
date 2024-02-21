@@ -14,7 +14,7 @@ public class FuseBox : MonoBehaviour
 
 	[Header("Task")]
 
-	[SerializeField] private TaskData _task;
+	[SerializeField] private TaskData _taskData;
 	private bool _isTaskAdded = false;
 	private bool _isTaskCompleted = false;
 
@@ -68,9 +68,11 @@ public class FuseBox : MonoBehaviour
 
 		CountNumberOfActivatedSwitches();
 
-		foreach (var switches in generatorSwitches)
+		foreach (var fuseSwitch in generatorSwitches)
 		{
-			switches.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
+			fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
+
+			fuseSwitch.OnSwitchEnabled.AddListener(CompleteTask);
 		}
 	}
 
@@ -115,7 +117,7 @@ public class FuseBox : MonoBehaviour
 
 		if (!_isTaskAdded)
 		{
-			TaskManager.Instance.SetNewCurrentTask(_task);
+			TaskManager.Instance.SetNewCurrentTask(_taskData);
 
 			_isTaskAdded = true;
 		}
@@ -126,8 +128,6 @@ public class FuseBox : MonoBehaviour
 		IsEnabled = true;
 
 		OnFuseEnabled?.Invoke();
-
-		CompleteTask();	
 	}
 
 	private void CompleteTask()
@@ -135,11 +135,16 @@ public class FuseBox : MonoBehaviour
 		if (_isTaskCompleted)
 			return;
 
-		if (_activatedSwitchesCount > 0 && TaskManager.Instance.TryGetTaskByType(_task.Task.ID, out Task task))
+		if (_activatedSwitchesCount > 0 && TaskManager.Instance.TryGetTask(_taskData.Task.ID, out Task task))
 		{
 			task.Complete();
 
 			_isTaskCompleted = true;
+
+			foreach (var fuseSwitch in generatorSwitches)
+			{
+				fuseSwitch.OnSwitchEnabled.RemoveListener(CompleteTask);
+			}
 		}
 	}
 
