@@ -25,7 +25,7 @@ public class ItemCollectorQuest : MonoBehaviour
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.CompareTag(_playerTag))
+		if (!_isTaskAdded && other.CompareTag(_playerTag))
 			GiveTaskToPlayer();	
 
 		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))

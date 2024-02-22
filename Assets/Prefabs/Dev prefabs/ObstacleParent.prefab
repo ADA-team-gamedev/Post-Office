@@ -115,6 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7247369913045915370}
   - component: {fileID: 3536016893974138637}
+  - component: {fileID: 1148833198499345370}
   m_Layer: 0
   m_Name: ObstacleParent
   m_TagString: Untagged
@@ -130,13 +131,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5762707019501479944}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 9.42, y: 0.07, z: -6.35}
+  m_LocalPosition: {x: -132.6633, y: 0.022344112, z: 110.39086}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5029773343888988299}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3536016893974138637
 MonoBehaviour:
@@ -154,9 +155,30 @@ MonoBehaviour:
   _obstacleTimeExistenceInSeconds: 5
   _obstacle: {fileID: 6567529479653888090}
   _interferingObstacles: []
-  _playerSanity: {fileID: 0}
+  _playerTag: Player
   _playerCamera: {fileID: 0}
-  _player: {fileID: 0}
+  _playerSanity: {fileID: 0}
+--- !u!65 &1148833198499345370
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5762707019501479944}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 4.9, y: 4.34, z: 3.87}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6119732750447202919
 GameObject:
   m_ObjectHideFlags: 0
