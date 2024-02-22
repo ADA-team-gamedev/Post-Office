@@ -121,6 +121,7 @@ public class BoxEnemy : MonoBehaviour
 
 	private bool IsCanStartEnemyLogic()
 		=> !_isTranformedIntoInsect && _playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent;	 
+
 	private void CheckVision()
 	{
 		_fieldOfView.VisionCheck();
@@ -141,13 +142,13 @@ public class BoxEnemy : MonoBehaviour
 		}
 		else //don't see player
 		{
-			if (_enemyState == EnemyState.Attacking && _attackingTarget)
+			if (_enemyState == EnemyState.Attacking)
 			{
 				_attackingTarget = null;
 
 				if (_agent.remainingDistance <= _agent.stoppingDistance)
 					_enemyState = EnemyState.Idle;
-			}
+			}	
 		}				
 	}
 
@@ -271,6 +272,26 @@ public class BoxEnemy : MonoBehaviour
 
 	#region Attacking
 
+	public void OrderToAttack(Vector3 point)
+	{
+		if (!_isTranformedIntoInsect)
+			return;
+
+		StopAllCoroutines();
+
+		_enemyState = EnemyState.Attacking;
+
+		_isWaiting = false;
+		_isPatroling = false;
+		_isFleeing = false;
+
+		_agent.speed = _attackingSpeed;
+
+		_agent.SetDestination(point);
+
+		_animator.SetBool(IsMoving, true);
+	}
+
 	private void Attacking()
 	{
 		if (!_attackingTarget)
@@ -316,7 +337,7 @@ public class BoxEnemy : MonoBehaviour
 
 	#region PickUp
 
-	public void PickUpItem()
+	private void PickUpItem()
 	{
 		_isPicked = true;
 
@@ -355,7 +376,7 @@ public class BoxEnemy : MonoBehaviour
 
 	#region Drop
 
-	public void DropItem()
+	private void DropItem()
 	{
 		_isPicked = false;
 
