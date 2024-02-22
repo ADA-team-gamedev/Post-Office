@@ -1,9 +1,10 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider))]
 public class ObstacleAppearance : MonoBehaviour
 {
-	#region Onstacle
+	#region Obstacle
 
 	[Header("Obstacle")]
     [SerializeField][Range(0.01f, 1)] private float _sanityPercentToStart = 0.5f;
@@ -15,20 +16,26 @@ public class ObstacleAppearance : MonoBehaviour
 
 	[SerializeField] private GameObject[] _interferingObstacles;
 
-	#endregion
-
-	[Header("Sanity")]
-	[SerializeField] private PlayerSanity _playerSanity;
-
-	[Header("Player")]
-	[SerializeField] private Camera _playerCamera;
-
 	public event Action OnObstacleDisappeared;
 	public event Action OnObstacleAppeared;
+
+	#endregion
+
+	[Header("Player Settings")]
+	[SerializeField] private string _playerTag = "Player";
+
+	[SerializeField] private Camera _playerCamera;
+	[SerializeField] private PlayerSanity _playerSanity;
+
+	private BoxCollider _boxCollider;
+	private bool _isPlayerInterfering = false;
 
 	private void Start()
 	{
 		_obstacle.SetActive(false);
+
+		_boxCollider ??= GetComponent<BoxCollider>();
+		_boxCollider.isTrigger = true;
 	}
 
 	private void Update()
@@ -54,6 +61,24 @@ public class ObstacleAppearance : MonoBehaviour
 
 		_obstacleTimeRemaining = Mathf.Clamp(_obstacleTimeRemaining, 0, _obstacleTimeExistenceInSeconds);
 	}
+
+	#region Triggers
+
+	private void OnTriggerEnter(Collider other)
+	{
+		if (other.CompareTag(_playerTag))
+			_isPlayerInterfering = true;	
+	}
+
+	private void OnTriggerExit(Collider other)
+	{
+		if (other.CompareTag(_playerTag))
+			_isPlayerInterfering = false;
+	}
+
+	#endregion
+
+	#region Obstacle methods
 
 	public void SpawnObstacle(bool checkIsPlayerLookedOnIt)
 	{
@@ -109,13 +134,15 @@ public class ObstacleAppearance : MonoBehaviour
 		_obstacleTimeRemaining = 0;
 	}
 
+	#endregion 
+
 	#region Checkers
 
 	private bool IsCanDiactivateObject()
 		=> !IsPlayerLookingOnObstacle() && _obstacleTimeRemaining <= 0;
 
 	private bool IsCanSpawnObstacle()
-		=> !IsObstacleInterfering() && !IsPlayerLookingOnObstacle();
+		=> !IsObstacleInterfering() && !IsPlayerLookingOnObstacle() && !_isPlayerInterfering;
 
 	private bool IsObstacleInterfering()
 	{
