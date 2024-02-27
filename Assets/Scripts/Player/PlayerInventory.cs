@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(PlayerDeathController))]
 public class PlayerInventory : MonoBehaviour
 {
 	public static PlayerInventory Instance { get; private set; }
@@ -77,9 +78,12 @@ public class PlayerInventory : MonoBehaviour
 
 	public void TryPickupObject()
 	{
-		if (_inventory.Count < _inventorySlotsAmount)
+		if (_inventory.Count >= _inventorySlotsAmount)
+			return;	
+
+		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange))
 		{
-			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange) && hit.collider.TryGetComponent(out Item item))
+			if (hit.collider.TryGetComponent(out Item item) && item.CanBePicked)
 			{
 				_currentObjectTransform = hit.transform;
 				_currentObjectRigidbody = hit.rigidbody;
@@ -92,7 +96,7 @@ public class PlayerInventory : MonoBehaviour
 				item.OnPickUpItem?.Invoke();
 
 				OnItemPicked?.Invoke(item);
-			}
+			}		
 		}
 	}
 

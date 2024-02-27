@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(PlayerDeathController))]
 public class Interactor : MonoBehaviour
 {
 	[field: SerializeField] public Camera PlayerCamera { get; private set; }

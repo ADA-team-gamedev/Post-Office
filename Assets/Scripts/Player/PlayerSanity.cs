@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(PlayerDeathController))]
 public class PlayerSanity : MonoBehaviour
 {
 	#region Sanity

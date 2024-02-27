@@ -5,16 +5,20 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class Item : MonoBehaviour
 {
-	public Action OnPickUpItem { get; set; }
+	[field: Header("Item")]
 
-	public Action OnDropItem { get; set; }
+	[field: SerializeField] public bool CanBePicked { get; set; } = true;
 
-	[Header("Icon")]
+	//Icon
 	[SerializeField] private GameObject _itemIcon;
 
 	[SerializeField] private Transform _player;
 
 	public bool IsIconEnabled => _itemIcon.activeSelf;
+	
+	public Action OnPickUpItem { get; set; }
+
+	public Action OnDropItem { get; set; }
 
 	private void Start()
 	{		
