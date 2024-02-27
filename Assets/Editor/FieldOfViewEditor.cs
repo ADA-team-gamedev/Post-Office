@@ -35,7 +35,7 @@ public class FieldOfViewEditor : Editor
 
 		Handles.DrawLine(fieldOfView.transform.position, fieldOfView.transform.position + viewRightAngleSide * fieldOfView.ViewedRadius);
 
-		if (fieldOfView.CanSeePlayer)
+		if (fieldOfView.SeesInFOV)
 		{
 			Handles.color = Color.green;
 			

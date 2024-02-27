@@ -17,8 +17,9 @@ public class FieldOfView : MonoBehaviour
 
 	public Transform Target { get; private set; }
 
-	public bool CanSeePlayer { get; private set; } = false;
+	public bool SeesInFOV { get; private set; } = false;
 	public bool InstantDetectTarget { get; private set; } = false;
+	public bool CanSeeTarget => SeesInFOV || InstantDetectTarget;
 
 	public void VisionCheck()
 	{
@@ -44,18 +45,18 @@ public class FieldOfView : MonoBehaviour
 			if (Vector3.Angle(transform.forward, directionToTarget) < ViewedAngle / 2) //FOV checker
 			{
 				if (!isHitObstacle)
-					CanSeePlayer = true;
+					SeesInFOV = true;
 				else
-					CanSeePlayer = false;
+					SeesInFOV = false;
 			}
 			else
 			{
-				CanSeePlayer = false;
+				SeesInFOV = false;
 			}
 		}
 		else
 		{
-			CanSeePlayer = false;
+			SeesInFOV = false;
 
 			InstantDetectTarget = false;
 		}		
@@ -65,5 +66,11 @@ public class FieldOfView : MonoBehaviour
 	{
 		if (InstantDetectionRadius > ViewedRadius)
 			ViewedRadius = InstantDetectionRadius + 1;
+
+		if (InstantDetectionRadius < 0)
+			InstantDetectionRadius = 0;
+
+		if (ViewedRadius < 0)
+			ViewedRadius = 0;
 	}
 }

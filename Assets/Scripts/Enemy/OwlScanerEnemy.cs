@@ -10,7 +10,7 @@ public class OwlScanerEnemy : MonoBehaviour
 	[SerializeField] private PlayerSanity _playerSanity;
 
 	[Header("Values")]
-	[SerializeField] private float _sanityPercentToStartScanning = 0.6f;
+	[SerializeField][Range(0.01f, 1f)] private float _sanityPercentToStartScanning = 0.6f;
 	[SerializeField][Range(10, 300)] private float _breakDelayInSeconds = 60f;
 
 	[SerializeField] private BoxEnemy[] _boxEnemies;
@@ -24,25 +24,36 @@ public class OwlScanerEnemy : MonoBehaviour
 
 	private void Update()
 	{
-		if (_playerSanity.SanityPercent > _sanityPercentToStartScanning || !_isEnemyCalledOut)
+		if (_playerSanity.SanityPercent > _sanityPercentToStartScanning || _isEnemyCalledOut)
 			return;
-
+		
 		_fieldOfView.VisionCheck();
 
-		if (_fieldOfView.InstantDetectTarget || _fieldOfView.CanSeePlayer)
-			CallEnemy();
+		if (_fieldOfView.SeesInFOV)
+			TryCallEnemy();
 	}
 
-	private void CallEnemy()
+	private void TryCallEnemy()
 	{
 		if (_boxEnemies.Length < 0 || _isEnemyCalledOut)
 			return;
 
-		BoxEnemy boxEnemy = _boxEnemies[Random.Range(0, _boxEnemies.Length)];
+		if (TryTakeBoxForOrder(out BoxEnemy boxEnemy))
+		{
+			_isEnemyCalledOut = true;
+
+			if (!boxEnemy.IsAIActivated)
+				boxEnemy.ActivateEnemyBox();
+
+			StartCoroutine(OrderEnemy(boxEnemy));
+		}	
+	}
+
+	private IEnumerator OrderEnemy(BoxEnemy boxEnemy)
+	{
+		yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay);
 
 		boxEnemy.OrderToAttack(_fieldOfView.Target.position);
-
-		_isEnemyCalledOut = true;
 
 		StartCoroutine(TakeBreak());
 	}
@@ -52,5 +63,29 @@ public class OwlScanerEnemy : MonoBehaviour
 		yield return new WaitForSeconds(_breakDelayInSeconds);
 
 		_isEnemyCalledOut = false;
+	}
+
+	private bool TryTakeBoxForOrder(out BoxEnemy boxToOrder)
+	{
+		foreach (var boxEnemy in _boxEnemies)
+		{
+			if (boxEnemy.IsAIActivated)
+			{
+				boxToOrder = boxEnemy;		
+
+				return true;
+			}
+
+			if (boxEnemy.IsCanActivateEnemy())
+			{
+				boxToOrder = boxEnemy;
+
+				return true;
+			}
+		}
+
+		boxToOrder = null;
+
+		return false;
 	}
 }

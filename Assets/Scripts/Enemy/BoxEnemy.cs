@@ -13,6 +13,12 @@ public class BoxEnemy : MonoBehaviour
 
 	#region Values
 
+	[Header("AI check")]
+	[SerializeField] private LayerMask _groundLayer;
+	[SerializeField] private float _groundCheckDistance = 0.1f;
+
+	public bool IsAIActivated { get; private set; } = false;
+
 	[Header("Values")]
 	[SerializeField] private float _patrolPointsRestDelay = 10f;
 
@@ -25,8 +31,7 @@ public class BoxEnemy : MonoBehaviour
 	[SerializeField][Range(0.01f, 1f)] private float _patrolPhaseStartSanityPercent = 0.4f;
 	[SerializeField][Range(0.01f, 1f)] private float _attackPhaseStartSanityPercent = 0.1f;
 
-	[Space(10)]
-	[SerializeField] private float _tranfromToEnemyDelay = 5f;
+	[field: SerializeField, Space(10)] public float TranfromToEnemyDelay { get; private set; } = 5f;
 
 	#endregion
 
@@ -71,8 +76,6 @@ public class BoxEnemy : MonoBehaviour
 
 	private bool _isPicked = false;
 
-	private bool _isTranformedIntoInsect = false;
-
 	private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
 
 	private void Awake()
@@ -107,11 +110,11 @@ public class BoxEnemy : MonoBehaviour
 		if (!_isEnemyPhasesStarts && IsCanStartEnemyLogic()) //AI first start check
 		{
 			_isEnemyPhasesStarts = true;
-			
-			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));
+
+			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
 		}
 
-		if (_isTranformedIntoInsect)
+		if (IsAIActivated)
 		{
 			CheckVision();
 
@@ -119,8 +122,18 @@ public class BoxEnemy : MonoBehaviour
 		}
 	}
 
-	private bool IsCanStartEnemyLogic()
-		=> !_isTranformedIntoInsect && _playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent;	 
+	#region Checker
+
+	public bool IsCanActivateEnemy()
+		=> !_isPicked && IsOnGround();
+
+	private bool IsCanStartEnemyLogic() 
+		=> !_isPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround();		
+
+	private bool IsOnGround()
+	{
+		return Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);
+	}
 
 	private void CheckVision()
 	{
@@ -130,7 +143,7 @@ public class BoxEnemy : MonoBehaviour
 		{
 			KillPlayer();
 		}
-		else if (_fieldOfView.CanSeePlayer || _fieldOfView.InstantDetectTarget)
+		else if (_fieldOfView.CanSeeTarget)
 		{
 			if (!_isFleeing)
 			{
@@ -151,6 +164,8 @@ public class BoxEnemy : MonoBehaviour
 			}	
 		}				
 	}
+
+	#endregion
 
 	private void HandleStateLauncher()
 	{
@@ -197,6 +212,15 @@ public class BoxEnemy : MonoBehaviour
 		_animator.SetBool(IsMoving, true);
 
 		_agent.SetDestination(_currentPointToMove);	
+	}
+
+	private void MoveTo(Vector3 point)
+	{
+		_currentPointToMove = point;
+
+		_animator.SetBool(IsMoving, true);
+
+		_agent.SetDestination(_currentPointToMove);
 	}
 
 	private void Patroling()
@@ -274,7 +298,7 @@ public class BoxEnemy : MonoBehaviour
 
 	public void OrderToAttack(Vector3 point)
 	{
-		if (!_isTranformedIntoInsect)
+		if (!IsAIActivated)
 			return;
 
 		StopAllCoroutines();
@@ -287,9 +311,7 @@ public class BoxEnemy : MonoBehaviour
 
 		_agent.speed = _attackingSpeed;
 
-		_agent.SetDestination(point);
-
-		_animator.SetBool(IsMoving, true);
+		MoveTo(point);
 	}
 
 	private void Attacking()
@@ -350,14 +372,14 @@ public class BoxEnemy : MonoBehaviour
 	{
 		StopAllCoroutines();
 
-		if (_isTranformedIntoInsect)
+		if (IsAIActivated)
 		{
 			//_animator.speed = _runningSpeed;
 
 			_animator.SetTrigger(BecomeBoxTrigger);
 		}
 
-		_isTranformedIntoInsect = false;
+		IsAIActivated = false;
 
 		_agent.enabled = true;
 
@@ -369,7 +391,7 @@ public class BoxEnemy : MonoBehaviour
 		_isFleeing = false;
 		_isWaiting = false;
 
-		_enemyState = EnemyState.None;	
+		_enemyState = EnemyState.None;
 	}
 
 	#endregion
@@ -381,22 +403,18 @@ public class BoxEnemy : MonoBehaviour
 		_isPicked = false;
 
 		if (IsCanStartEnemyLogic())
-			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));			
+			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));			
 	}
 
 	private IEnumerator TransformFromBoxToInsect(float delay)
 	{
-		yield return new WaitForSeconds(delay);
-
-		EnableAI();
-
 		_animator.speed = _defaultAnimationSpeed;
 
 		_animator.SetTrigger(BecomeInsectTrigger);
 
 		yield return new WaitForSeconds(delay);
 
-		_isTranformedIntoInsect = true;
+		EnableAI();
 	}
 
 	private void EnableAI()
@@ -408,11 +426,23 @@ public class BoxEnemy : MonoBehaviour
 		_enemyState = EnemyState.Patroling;
 
 		_rigidbody.isKinematic = true;
+
+		IsAIActivated = true;
 	}
 
 	#endregion
 
 	#endregion
+
+	public void ActivateEnemyBox()
+	{
+		if (!IsCanActivateEnemy())
+			return;
+
+		_isPicked = false;
+
+		StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
+	}
 
 	private void OnValidate()
 	{
@@ -423,6 +453,8 @@ public class BoxEnemy : MonoBehaviour
 	private void OnDrawGizmosSelected()
 	{
 		Gizmos.color = Color.red;
+
+		Gizmos.DrawRay(transform.position, Vector3.down * _groundCheckDistance);
 
 		foreach (var point in _patrolPoints)
 			Gizmos.DrawSphere(point.position, 0.3f);
