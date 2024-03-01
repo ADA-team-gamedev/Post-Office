@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider))]
 public class ItemCollectorQuest : MonoBehaviour
 {
 	[Header("Task")]
@@ -11,14 +12,16 @@ public class ItemCollectorQuest : MonoBehaviour
 	[SerializeField] private TaskData _addedTask;
 
 	[Header("Items")]
-	[SerializeField] private List<Box> _neededItems;
+	[SerializeField] private List<Item> _neededItems;
 	
-	private List<Box> _addedBoxes = new();
+	private List<Item> _addedItem = new();
 
 	private bool _isTaskAdded = false;
 
 	private void Start()
 	{
+		GetComponent<BoxCollider>().isTrigger = true;
+
 		if (_giveTaskOnStart)
 			GiveTaskToPlayer();	
 	}
@@ -28,11 +31,11 @@ public class ItemCollectorQuest : MonoBehaviour
 		if (!_isTaskAdded && other.CompareTag(_playerTag))
 			GiveTaskToPlayer();	
 
-		if (other.TryGetComponent(out Box box) && !_addedBoxes.Contains(box))
+		if (other.TryGetComponent(out Item item) && !_addedItem.Contains(item))
 		{
-			_addedBoxes.Add(box);
+			_addedItem.Add(item);
 
-			box.OnPickUpItem += RemoveBox;
+			item.OnPickUpItem += RemoveBox;
 
 			TryCompleteTask();		
 		}
@@ -40,10 +43,10 @@ public class ItemCollectorQuest : MonoBehaviour
 
 	private void OnTriggerExit(Collider other)
 	{
-		if (other.TryGetComponent(out Box box))
+		if (other.TryGetComponent(out Item item))
 		{
-			if (_addedBoxes.Contains(box))
-				_addedBoxes.Remove(box);
+			if (_addedItem.Contains(item))
+				_addedItem.Remove(item);
 
 			TryCompleteTask();
 		}
@@ -67,12 +70,12 @@ public class ItemCollectorQuest : MonoBehaviour
 
 	private bool IsAllBoxesCollected()
 	{
-		if (_neededItems.Count != _addedBoxes.Count)
+		if (_neededItems.Count != _addedItem.Count)
 			return false;
 
 		for (int i = 0; i < _neededItems.Count; i++)
 		{
-			if (!_neededItems.Contains(_addedBoxes[i]))
+			if (!_neededItems.Contains(_addedItem[i]))
 				return false;
 		}
 
@@ -81,8 +84,8 @@ public class ItemCollectorQuest : MonoBehaviour
 
 	private void RemoveBox()
 	{
-		if (PlayerInventory.Instance.TryGetCurrentItem(out Box box))	
-			_addedBoxes.Remove(box);
+		if (PlayerInventory.Instance.TryGetCurrentItem(out Item item))	
+			_addedItem.Remove(item);
 
 		TryCompleteTask();
 	}
