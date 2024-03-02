@@ -93,7 +93,7 @@ public class PlayerInventory : MonoBehaviour
 
 				AddItem(_currentObjectTransform.gameObject);
 
-				item.OnPickUpItem?.Invoke();
+				item.OnPickUpItem?.Invoke(item);
 
 				OnItemPicked?.Invoke(item);
 			}		
@@ -109,7 +109,7 @@ public class PlayerInventory : MonoBehaviour
 
 		if (_currentObjectTransform.TryGetComponent(out Item item))
 		{
-			item.OnDropItem?.Invoke();
+			item.OnDropItem?.Invoke(item);
 
 			OnItemDroped?.Invoke(item);
 		}

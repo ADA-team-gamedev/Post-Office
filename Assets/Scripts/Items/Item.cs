@@ -9,37 +9,49 @@ public class Item : MonoBehaviour
 
 	[field: SerializeField] public bool CanBePicked { get; set; } = true;
 
-	//Icon
+	#region Icon Properties
+
 	[SerializeField] private GameObject _itemIcon;
 
-	[SerializeField] private Transform _player;
+	[SerializeField] private Transform _iconTargetToLook;
+
+	[SerializeField] private bool _changeIconStateAutomatically = false;
 
 	public bool IsIconEnabled => _itemIcon.activeSelf;
-	
-	public Action OnPickUpItem { get; set; }
 
-	public Action OnDropItem { get; set; }
+	#endregion
+
+	public Action<Item> OnPickUpItem { get; set; }
+
+	public Action<Item> OnDropItem { get; set; }
 
 	private void Start()
 	{		
-		Init();
+		Initialize();
 	}
 
 	private void Update()
 	{
-		RotateIconToObject(_player.position);
+		RotateIconToObject(_iconTargetToLook.position);
 	}
 
-	protected virtual void Init()
+	protected virtual void Initialize()
 	{
-		HideIcon();
+		if (_changeIconStateAutomatically)
+		{
+			ActivateAutoIconStateChanging();
 
-		OnPickUpItem += HideIcon;
-
-		//OnDropItem += ShowIcon;
+			ShowIcon();
+		}
+		else
+		{
+			HideIcon();
+		}
 
 		_itemIcon.transform.position = new(transform.position.x, _itemIcon.transform.position.y, transform.position.z);
 	}
+
+	#region Icon Logic
 
 	protected void RotateIconToObject(Vector3 targetPosition)
 	{
@@ -49,6 +61,20 @@ public class Item : MonoBehaviour
 		targetPosition.y = _itemIcon.transform.position.y; //constrain y axis
 
 		_itemIcon.transform.LookAt(targetPosition);
+	}
+
+	public void ActivateAutoIconStateChanging()
+	{
+		OnPickUpItem += HideIcon;
+
+		OnDropItem += ShowIcon;
+	}
+
+	public void DeactivateAutoIconStateChanging()
+	{
+		OnPickUpItem -= HideIcon;
+
+		OnDropItem -= ShowIcon;
 	}
 
 	public void HideIcon()
@@ -65,7 +91,19 @@ public class Item : MonoBehaviour
 			return;
 
 		_itemIcon.SetActive(true);
-
+		
 		_itemIcon.transform.position = new(transform.position.x, _itemIcon.transform.position.y, transform.position.z);
 	}
+
+	private void HideIcon(Item item)
+	{
+		HideIcon();
+	}
+
+	private void ShowIcon(Item item)
+	{
+		ShowIcon();
+	}
+
+	#endregion
 }

@@ -12,12 +12,12 @@ public class RemoteControl : Item, IUsable
 
 	private void Start()
 	{
-		Init();
+		Initialize();
 	}
 
-	protected override void Init()
+	protected override void Initialize()
 	{
-		base.Init();
+		base.Initialize();
 
 		OnPickUpItem += Completetask;
 
@@ -43,7 +43,7 @@ public class RemoteControl : Item, IUsable
 		base.ShowIcon();
 	}
 
-	private void Completetask()
+	private void Completetask(Item item)
 	{
 		if (!TaskManager.Instance.TryGetTask(_findRemoteControlTask.Task.ID, out Task task))
 			return;
@@ -53,6 +53,10 @@ public class RemoteControl : Item, IUsable
 		TaskManager.Instance.OnNewCurrentTaskSet -= ChangeItemIconState;
 
 		task.Complete();
+
+		OnPickUpItem -= Completetask;
+
+		base.ActivateAutoIconStateChanging();
 	}
 
 	public void Use()

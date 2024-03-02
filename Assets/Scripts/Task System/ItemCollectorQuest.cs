@@ -35,7 +35,7 @@ public class ItemCollectorQuest : MonoBehaviour
 		{
 			_addedItem.Add(item);
 
-			item.OnPickUpItem += RemoveBox;
+			item.OnPickUpItem += RemoveBoxFromCollection;
 
 			TryCompleteTask();		
 		}
@@ -64,8 +64,21 @@ public class ItemCollectorQuest : MonoBehaviour
 
 	private void TryCompleteTask()
 	{
-		if (IsAllBoxesCollected())
-			TaskManager.Instance.CurrentTask.Complete();
+		bool taskPerformanceCondition = IsAllBoxesCollected();
+
+		if (!taskPerformanceCondition)
+			return;
+
+		TaskManager.Instance.CurrentTask.Complete();
+
+		foreach (Item item in _addedItem)
+		{
+			item.CanBePicked = false;
+
+			item.DeactivateAutoIconStateChanging();
+
+			item.HideIcon();
+		}
 	}
 
 	private bool IsAllBoxesCollected()
@@ -82,10 +95,11 @@ public class ItemCollectorQuest : MonoBehaviour
 		return true;
 	}
 
-	private void RemoveBox()
+	private void RemoveBoxFromCollection(Item item)
 	{
-		if (PlayerInventory.Instance.TryGetCurrentItem(out Item item))	
-			_addedItem.Remove(item);
+		_addedItem.Remove(item);
+
+		item.OnPickUpItem -= RemoveBoxFromCollection;
 
 		TryCompleteTask();
 	}

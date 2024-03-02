@@ -359,7 +359,7 @@ public class BoxEnemy : MonoBehaviour
 
 	#region PickUp
 
-	private void PickUpItem()
+	private void PickUpItem(Item item)
 	{
 		_isPicked = true;
 
@@ -398,7 +398,7 @@ public class BoxEnemy : MonoBehaviour
 
 	#region Drop
 
-	private void DropItem()
+	private void DropItem(Item item)
 	{
 		_isPicked = false;
 
@@ -436,7 +436,7 @@ public class BoxEnemy : MonoBehaviour
 
 	public void ActivateEnemyBox()
 	{
-		if (!IsCanActivateEnemy())
+		if (!gameObject.activeSelf || !IsCanActivateEnemy())
 			return;
 
 		_isPicked = false;
