@@ -25,7 +25,7 @@ public class Icon
 	{
 		if (!IsIconEnabled)
 			return;
-
+		
 		ItemIcon.SetActive(false);
 	}
 

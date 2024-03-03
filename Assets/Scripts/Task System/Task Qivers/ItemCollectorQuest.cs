@@ -8,6 +8,7 @@ public class ItemCollectorQuest : MonoBehaviour
 	[SerializeField] private string _playerTag = "Player";
 
 	[SerializeField] private bool _giveTaskOnStart = false;
+	[SerializeField] private bool _canPlayerPickUpItemAfterQuestFinishing = false;
 
 	[SerializeField] private TaskData _addedTask;
 
@@ -73,7 +74,7 @@ public class ItemCollectorQuest : MonoBehaviour
 
 		foreach (Item item in _addedItem)
 		{
-			item.CanBePicked = false;
+			item.CanBePicked = _canPlayerPickUpItemAfterQuestFinishing;
 
 			item.DeactivateAutoIconStateChanging();
 

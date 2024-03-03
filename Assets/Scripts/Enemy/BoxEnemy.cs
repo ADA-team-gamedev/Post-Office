@@ -132,7 +132,7 @@ public class BoxEnemy : MonoBehaviour
 
 	private bool IsOnGround()
 	{
-		return Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);
+		return Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);		
 	}
 
 	private void CheckVision()
