@@ -9,17 +9,7 @@ public class Item : MonoBehaviour
 
 	[field: SerializeField] public bool CanBePicked { get; set; } = true;
 
-	#region Icon Properties
-
-	[SerializeField] private GameObject _itemIcon;
-
-	[SerializeField] private Transform _iconTargetToLook;
-
-	[SerializeField] private bool _changeIconStateAutomatically = false;
-
-	public bool IsIconEnabled => _itemIcon.activeSelf;
-
-	#endregion
+	[field: SerializeField] public ItemIcon ItemIcon { get; private set; }
 
 	public Action<Item> OnPickUpItem { get; set; }
 
@@ -27,82 +17,47 @@ public class Item : MonoBehaviour
 
 	private void Start()
 	{		
-		Initialize();
+		InitializeItem();
 	}
 
 	private void Update()
 	{
-		RotateIconToObject(_iconTargetToLook.position);
+		ItemIcon.RotateIconToObject();
 	}
 
-	protected virtual void Initialize()
+	protected virtual void InitializeItem()
 	{
-		if (_changeIconStateAutomatically)
-		{
-			ActivateAutoIconStateChanging();
-
-			ShowIcon();
-		}
-		else
-		{
-			HideIcon();
-		}
-
-		_itemIcon.transform.position = new(transform.position.x, _itemIcon.transform.position.y, transform.position.z);
+		InitializeItemIcon();
 	}
 
 	#region Icon Logic
 
-	protected void RotateIconToObject(Vector3 targetPosition)
+	private void InitializeItemIcon()
 	{
-		if (!IsIconEnabled)
-			return;
+		if (ItemIcon.ChangeIconStateAutomatically)
+		{
+			ActivateAutoIconStateChanging();
 
-		targetPosition.y = _itemIcon.transform.position.y; //constrain y axis
-
-		_itemIcon.transform.LookAt(targetPosition);
+			ItemIcon.ShowIcon();
+		}
+		else
+		{
+			ItemIcon.HideIcon();
+		}
 	}
 
 	public void ActivateAutoIconStateChanging()
 	{
-		OnPickUpItem += HideIcon;
+		OnPickUpItem += ItemIcon.HideIcon;
 
-		OnDropItem += ShowIcon;
+		OnDropItem += ItemIcon.ShowIcon;
 	}
 
 	public void DeactivateAutoIconStateChanging()
 	{
-		OnPickUpItem -= HideIcon;
+		OnPickUpItem -= ItemIcon.HideIcon;
 
-		OnDropItem -= ShowIcon;
-	}
-
-	public void HideIcon()
-	{
-		if (!IsIconEnabled)
-			return;
-
-		_itemIcon.SetActive(false);
-	}
-
-	public void ShowIcon()
-	{
-		if (IsIconEnabled)
-			return;
-
-		_itemIcon.SetActive(true);
-		
-		_itemIcon.transform.position = new(transform.position.x, _itemIcon.transform.position.y, transform.position.z);
-	}
-
-	private void HideIcon(Item item)
-	{
-		HideIcon();
-	}
-
-	private void ShowIcon(Item item)
-	{
-		ShowIcon();
+		OnDropItem -= ItemIcon.ShowIcon;
 	}
 
 	#endregion

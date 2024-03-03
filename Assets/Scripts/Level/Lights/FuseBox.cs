@@ -18,6 +18,10 @@ public class FuseBox : MonoBehaviour
 	private bool _isTaskAdded = false;
 	private bool _isTaskCompleted = false;
 
+	[Header("Icon")]
+
+	[SerializeField] private Icon _fuseIconForTask;
+
 	[Header("Switches")]
 	[SerializeField] private FuseSwitch[] generatorSwitches;
 
@@ -49,7 +53,7 @@ public class FuseBox : MonoBehaviour
 
 				IsEnabled = false;
 
-				Debug.Log("Generator had disabled");
+				Debug.Log("Generator has disabled");
 
 				DisableFuse();
 			}
@@ -65,6 +69,8 @@ public class FuseBox : MonoBehaviour
 	private void Start()
 	{
 		_energyAmount = _maxEnergyAmount;
+
+		TaskManager.Instance.OnNewCurrentTaskSet += ChangeIconState;
 
 		CountNumberOfActivatedSwitches();
 
@@ -82,6 +88,8 @@ public class FuseBox : MonoBehaviour
 			DecreaseEnergy();
 		else
 			IncreaseEnergy();
+
+		_fuseIconForTask.RotateIconToObject();
 	}
 
 	private void DecreaseEnergy()
@@ -130,6 +138,20 @@ public class FuseBox : MonoBehaviour
 		OnFuseEnabled?.Invoke();
 	}
 
+	#region Logic for task
+
+	private void ChangeIconState(Task currentTask)
+	{
+		if (currentTask.ID != _taskData.Task.ID)
+		{
+			_fuseIconForTask.HideIcon();
+
+			return;
+		}
+
+		_fuseIconForTask.ShowIcon();
+	}
+
 	private void CompleteTask()
 	{
 		if (_isTaskCompleted)
@@ -147,6 +169,8 @@ public class FuseBox : MonoBehaviour
 			}
 		}
 	}
+
+	#endregion
 
 	private void OnValidate()
 	{

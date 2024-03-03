@@ -12,12 +12,12 @@ public class RemoteControl : Item, IUsable
 
 	private void Start()
 	{
-		Initialize();
+		InitializeItem();
 	}
 
-	protected override void Initialize()
+	protected override void InitializeItem()
 	{
-		base.Initialize();
+		base.InitializeItem();
 
 		OnPickUpItem += Completetask;
 
@@ -28,19 +28,19 @@ public class RemoteControl : Item, IUsable
 
 	private void Update()
 	{
-		base.RotateIconToObject(_playerCamera.transform.position);
+		base.ItemIcon.RotateIconToObject();
 	}
 
 	private void ChangeItemIconState(Task currentTask)
 	{
 		if (currentTask.ID != _findRemoteControlTask.Task.ID)
 		{
-			base.HideIcon();
+			base.ItemIcon.HideIcon();
 
 			return;
 		}	
 
-		base.ShowIcon();
+		base.ItemIcon.ShowIcon();
 	}
 
 	private void Completetask(Item item)
@@ -48,7 +48,7 @@ public class RemoteControl : Item, IUsable
 		if (!TaskManager.Instance.TryGetTask(_findRemoteControlTask.Task.ID, out Task task))
 			return;
 
-		base.HideIcon();
+		base.ItemIcon.HideIcon();
 
 		TaskManager.Instance.OnNewCurrentTaskSet -= ChangeItemIconState;
 

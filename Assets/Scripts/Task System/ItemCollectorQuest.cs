@@ -77,7 +77,7 @@ public class ItemCollectorQuest : MonoBehaviour
 
 			item.DeactivateAutoIconStateChanging();
 
-			item.HideIcon();
+			item.ItemIcon.HideIcon();
 		}
 	}
 

@@ -25,12 +25,14 @@ public class Pill : Item, IUsable
 
                 Debug.Log($"{gameObject.name}s are used");
 
+                //Play using pill sound
+
 				StartCoroutine(ResoteSanity());
 			}             
         }
         else
         {
-            Debug.Log("These pills are empty");
+            Debug.Log($"These {gameObject.name} pills are empty");
 
             //Play empty sound
         }
