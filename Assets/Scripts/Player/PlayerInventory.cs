@@ -10,6 +10,8 @@ public class PlayerInventory : MonoBehaviour
 
 	#region Pickup fields 
 
+	[SerializeField] private LayerMask _itemLayer;
+
 	[Header("Values")]
 	[SerializeField] private float _pickupRange = 3f;
 	[SerializeField] private float _dropUpForce = 2f;
@@ -81,7 +83,7 @@ public class PlayerInventory : MonoBehaviour
 		if (_inventory.Count >= _inventorySlotsAmount)
 			return;	
 
-		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange))
+		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange, _itemLayer))
 		{
 			if (hit.collider.TryGetComponent(out Item item) && item.CanBePicked)
 			{
