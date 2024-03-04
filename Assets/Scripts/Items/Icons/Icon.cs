@@ -17,7 +17,7 @@ public class Icon
 		Vector3 targetPosition = IconTargetToLook.position;
 
 		targetPosition.y = ItemIcon.transform.position.y; //constrain y axis
-
+		
 		ItemIcon.transform.LookAt(targetPosition);
 	}
 

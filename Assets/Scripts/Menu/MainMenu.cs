@@ -13,9 +13,9 @@ public class MainMenu : MonoBehaviour
 		Cursor.lockState = CursorLockMode.None;
 	}
 
-	public void OnResumeButton()
+	public void OnResumeButton(string sceneName)
 	{
-		SceneManager.LoadScene("BuildMap"); //write here game scene
+		SceneManager.LoadScene(sceneName); 
 	}
 
 	public void OnNewGameButton()
@@ -27,10 +27,6 @@ public class MainMenu : MonoBehaviour
 	{
 		//Load game data with level
 	}
-
-	#region Settings
-
-	#endregion
 
 	public void OnExit()
 	{
