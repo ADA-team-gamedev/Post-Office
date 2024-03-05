@@ -1,7 +1,6 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using IEnumerator = System.Collections.IEnumerator;
+using System.Collections;
 
 [RequireComponent(typeof(BoxCollider))]
 public class Lamp : MonoBehaviour
@@ -29,10 +28,11 @@ public class Lamp : MonoBehaviour
 	private float _flashingCooldownRemaining = 0;
 
 	[Space(10)]
-	[SerializeField] private float _minFlashingDelay = 3;
-	[SerializeField] private float _maxFlashingDelay = 10;
+	[SerializeField] private float _minFlashingDelay = 1;
+	[SerializeField] private float _maxFlashingDelay = 7;
 
-	[Space(10), SerializeField] private LightFlashingAnimationCurves _flashingCurves;
+	[Space(10)]
+	[SerializeField] private FlashingLightCurvesData _flashingCurves;
 
 	private bool _isFlashing = false;
 
@@ -41,6 +41,8 @@ public class Lamp : MonoBehaviour
 	private float _maxLightRange;
 	private float _maxLightIntensity;
 
+	private int _possibleCountOfCurves;
+
 	#endregion
 
 	private void Start()
@@ -48,6 +50,8 @@ public class Lamp : MonoBehaviour
 		_maxLightIntensity = _light.intensity;
 
 		_maxLightRange = _light.range;
+
+		_possibleCountOfCurves = _flashingCurves.Curves.Count;
 	}
 
 	private void Update()
@@ -104,9 +108,14 @@ public class Lamp : MonoBehaviour
 
 		float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
 
-		int randomCurveIndex = Random.Range(0, _flashingCurves.FlashingCurves.Count);
+		int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
 
-		AnimationCurve randomCurve = new AnimationCurve(_flashingCurves.FlashingCurves[randomCurveIndex].keys);
+		_possibleCountOfCurves--;
+
+		if (_possibleCountOfCurves <= 0)
+			_possibleCountOfCurves = _flashingCurves.Curves.Count;
+
+		AnimationCurve randomCurve = new(_flashingCurves.Curves[randomCurveIndex].keys);	
 
 		AnimationCurve scaledCurve = ScaleCurveToMatchDuration(randomCurve, flashingDelay);
 
@@ -167,11 +176,17 @@ public class Lamp : MonoBehaviour
 	{
 		_light.gameObject?.SetActive(IsLampEnabled);
 
+		if (_minFlashingDelay < 0)
+			_minFlashingDelay = 0;
+
 		if (_minFlashingDelay > _maxFlashingDelay)
 			_minFlashingDelay = _maxFlashingDelay;
 
 		if (_maxFlashingDelay < _minFlashingDelay)
 			_maxFlashingDelay = _minFlashingDelay;
+
+		if (_minFlashingCooldownDelay < 0)
+			_minFlashingCooldownDelay = 0;
 
 		if (_maxFlashingCooldownDelay < _minFlashingCooldownDelay)
 			_maxFlashingCooldownDelay = _minFlashingCooldownDelay;
@@ -179,10 +194,4 @@ public class Lamp : MonoBehaviour
 		if (_minFlashingCooldownDelay > _maxFlashingCooldownDelay)
 			_minFlashingCooldownDelay = _maxFlashingCooldownDelay;
 	}
-}
-
-[CreateAssetMenu]
-public class LightFlashingAnimationCurves : ScriptableObject
-{
-	[field: SerializeField] public List<AnimationCurve> FlashingCurves { get; private set; }
 }
