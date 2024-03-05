@@ -61,7 +61,7 @@ public class PlayerMovementHandler : MonoBehaviour
 
 	private float _originalPlayerColliderHeight;
 
-	private CapsuleCollider _playerCollider;
+	[SerializeField] private CapsuleCollider _playerCollider;
 
 	private bool _isPlayerStandUp = true;
 	private bool _isTryingToStandUp = false;
@@ -93,8 +93,6 @@ public class PlayerMovementHandler : MonoBehaviour
 	private void Awake()
 	{
 		_rb = GetComponent<Rigidbody>();
-
-		_playerCollider = GetComponent<CapsuleCollider>();
 
 		_playerDeathController = GetComponent<PlayerDeathController>();
 
@@ -404,7 +402,5 @@ public class PlayerMovementHandler : MonoBehaviour
 	private void OnValidate()
 	{
 		_rb ??= GetComponent<Rigidbody>();
-
-		_playerCollider ??= GetComponent<CapsuleCollider>();
 	}
 }

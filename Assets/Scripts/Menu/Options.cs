@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class Options : MonoBehaviour
 {
-	[SerializeField] private Button _applyChangesButton;
-
 	[Header("Resolution")]
 
 	[SerializeField] private List<Vector2Int> _screenResolutions = new()
@@ -55,32 +53,57 @@ public class Options : MonoBehaviour
 
 	private int _selectedFrameRateIndex = 0;
 
-	[SerializeField] private Toggle _vSync;
+	[SerializeField] private Toggle _vSyncToggle;
 
 	private void Start()
 	{
 		LoadSettings();
-
-		if (QualitySettings.vSyncCount == 0)
-		{
-			_vSync.isOn = false;
-		}
-		else
-			_vSync.isOn = true;
 	}
-
+	
 	public void SaveChanges()
     {
 		Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
-		
+
+		UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
+
 		Screen.SetResolution(resolution.x, resolution.y, _screenMode);
 
-		QualitySettings.vSyncCount = _vSync.isOn ? 1 : 0;
-    }
+		QualitySettings.vSyncCount = _vSyncToggle.isOn ? 1 : 0;
+
+		if (QualitySettings.vSyncCount == 0)
+			_vSyncToggle.isOn = false;
+		else
+			_vSyncToggle.isOn = true;
+
+		UpdateOptionText(_screenModeText, $"{_screenMode}");
+
+		UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
+	}
 
 	private void LoadSettings()
 	{
+		bool hasSaves = false;
 
+		//downloading values from user's pc save files
+
+		if (hasSaves)
+		{
+
+		}
+		else
+		{
+			Vector2Int resolution = _screenResolutions[0];
+
+			_screenMode = FullScreenMode.FullScreenWindow;
+
+			Screen.SetResolution(resolution.x, resolution.y, _screenMode);
+
+			QualitySettings.vSyncCount = 1;
+
+			Application.targetFrameRate = _frameRates[0];
+		}
+
+		SaveChanges();
 	}
 
 	#region Resolution
@@ -174,11 +197,6 @@ public class Options : MonoBehaviour
 	}
 
 	#endregion
-
-	public void InvertVSyncMode()
-	{
-		_vSync.isOn = !_vSync.isOn;
-	}
 
 	private void UpdateOptionText(TMP_Text textObject, string text)
 	{

@@ -5,18 +5,18 @@ namespace MapRandomizer
 {
 	public class MapRandomizer : MonoBehaviour
 	{
-		[SerializeField] private RoomOption[] _rooms;
+		[SerializeField] private Room[] _rooms;
 	}
 
 	[Serializable]
 	internal struct RoomOption
 	{
-		public Room[] RoomOptions;
+		public GameObject[] Objects;
 	}
 
 	[Serializable]
 	internal struct Room
 	{
-		public GameObject[] Objects;
+		public RoomOption[] RoomOptions;
 	}
 }
