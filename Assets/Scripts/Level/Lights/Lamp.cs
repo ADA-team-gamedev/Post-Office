@@ -11,6 +11,7 @@ public class Lamp : MonoBehaviour
 
 	[SerializeField] private Light _light;
 
+	[Space(10)]
 	[SerializeField] private UnityEvent OnStay;
 
 	#region Flashing properties
@@ -36,7 +37,9 @@ public class Lamp : MonoBehaviour
 
 	private bool _isFlashing = false;
 
-	private Color _lightEmissionOffColor = Color.black;
+	[Space(10)]
+	[SerializeField] private Renderer _lampRenderer;
+	private MaterialPropertyBlock _block;
 
 	private float _maxLightRange;
 	private float _maxLightIntensity;
@@ -45,23 +48,36 @@ public class Lamp : MonoBehaviour
 
 	#endregion
 
+	#region Destroying Properties
+
+	[SerializeField] private ParticleSystem _electronicalSparkVF;
+
+	public bool IsLampDestroyed { get; private set; } = false;
+
+	#endregion
+
 	private void Start()
 	{
 		_maxLightIntensity = _light.intensity;
-
+		
 		_maxLightRange = _light.range;
 
 		_possibleCountOfCurves = _flashingCurves.Curves.Count;
+
+		_block = new();
 	}
 
 	private void Update()
 	{
 		TryStartFlashingEvent();
+
+		if (Input.GetKeyDown(KeyCode.V))
+			DestroyLamp();
 	}
 
 	private void OnTriggerStay(Collider other)
 	{
-		if (!IsLampEnabled || !other.CompareTag(_playerTag))
+		if (!IsLampEnabled || IsLampDestroyed || !other.CompareTag(_playerTag))
 			return;
 	
 		OnStay.Invoke();
@@ -74,11 +90,11 @@ public class Lamp : MonoBehaviour
 		_light.gameObject.SetActive(IsLampEnabled);
 	}
 
-	#region Flashing
+	#region Flashing Event
 
 	private void TryStartFlashingEvent()
 	{
-		if (!_isFlashableLamp || Time.realtimeSinceStartup < _timeSinceGameStartToStartFlashing)
+		if (!_isFlashableLamp || IsLampDestroyed || Time.realtimeSinceStartup < _timeSinceGameStartToStartFlashing)
 			return;
 
 		if (!_isFlashing)
@@ -88,7 +104,7 @@ public class Lamp : MonoBehaviour
 				int randomNumber = Random.Range(1, 101);
 
 				if (_flashingStartChance >= randomNumber)
-					EnableFlashing();
+					StartFlashEvent();
 			}
 			else
 			{
@@ -99,7 +115,7 @@ public class Lamp : MonoBehaviour
 		}
 	}
 	
-	public void EnableFlashing()
+	public void StartFlashEvent()
 	{
 		if (_isFlashing)
 			return;
@@ -150,7 +166,10 @@ public class Lamp : MonoBehaviour
 		{
 			float t = curve.Evaluate(elapsedTime);
 
-			//Color curretnEmissionColor = Color.Lerp(Color.black, Color.white, t);
+			Color currentEmissionColor = Color.Lerp(Color.black, Color.white, t);
+
+			_block.SetColor("_EmissionColor", currentEmissionColor);
+			_lampRenderer.SetPropertyBlock(_block);
 
 			_light.intensity = Mathf.Lerp(0, _maxLightIntensity, t);
 
@@ -167,7 +186,50 @@ public class Lamp : MonoBehaviour
 
 		_flashingCooldownRemaining = Random.Range(_minFlashingCooldownDelay, _maxFlashingCooldownDelay);
 
+		_lampRenderer.material.SetColor("_EmissionColor", Color.white);
+
 		_isFlashing = false;
+	}
+
+	#endregion
+
+	#region Destroying Lamp Event
+
+	public void RepairLamp()
+	{
+		if (!IsLampDestroyed)
+			return;		
+
+		_lampRenderer.gameObject.SetActive(true);
+
+		_light.gameObject.SetActive(true);
+
+		StartFlashEvent();
+
+		IsLampDestroyed = false;
+	}
+
+	public void DestroyLamp()
+	{
+		//if (_isLampDestroyed)
+		//	return;
+
+		IsLampDestroyed = true;
+
+		_lampRenderer.gameObject.SetActive(false);
+
+		_light.gameObject.SetActive(false);
+
+		StartCoroutine(PlaySpark(2));
+	}
+
+	private IEnumerator PlaySpark(float delay)
+	{
+		_electronicalSparkVF.Play();
+
+		yield return new WaitForSeconds(delay);
+
+		_electronicalSparkVF.Stop();
 	}
 
 	#endregion

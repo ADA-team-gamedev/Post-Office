@@ -3,6 +3,8 @@ using UnityEngine;
 [System.Serializable]
 public class Icon
 {
+	[SerializeField] private bool _isIconNeeded = true;
+
 	[field: SerializeField] protected GameObject ItemIcon { get; private set; }
 
 	[field: SerializeField] protected Transform IconTargetToLook { get; private set; }
@@ -11,7 +13,7 @@ public class Icon
 
 	public void RotateIconToObject()
 	{
-		if (!IsIconEnabled)
+		if (!_isIconNeeded || !IsIconEnabled)
 			return;
 
 		Vector3 targetPosition = IconTargetToLook.position;
@@ -23,7 +25,7 @@ public class Icon
 
 	public void HideIcon()
 	{
-		if (!IsIconEnabled)
+		if (!_isIconNeeded || !IsIconEnabled)
 			return;
 		
 		ItemIcon.SetActive(false);
@@ -31,7 +33,7 @@ public class Icon
 
 	public void ShowIcon()
 	{
-		if (IsIconEnabled)
+		if (!_isIconNeeded || !IsIconEnabled)
 			return;
 
 		ItemIcon.SetActive(true);

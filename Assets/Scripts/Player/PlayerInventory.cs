@@ -102,7 +102,7 @@ public class PlayerInventory : MonoBehaviour
 		}
 	}
 
-	private void DropItem()
+	public void DropItem()
 	{
 		if (!_currentObjectTransform)
 			return;
@@ -209,7 +209,7 @@ public class PlayerInventory : MonoBehaviour
 		ChangeSelectedSlot();
 	}
 
-	public void RemoveItem()
+	private void RemoveItem()
 	{
 		_inventory.RemoveAt(_currentSlotIndex);
 
