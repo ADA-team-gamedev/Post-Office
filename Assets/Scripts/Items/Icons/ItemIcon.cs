@@ -7,13 +7,13 @@ public class ItemIcon : Icon
 
 	public void ShowIcon(Item item)
 	{
-		base.ShowIcon();
+		ShowIcon();
 
 		ItemIcon.transform.position = new(item.transform.position.x, ItemIcon.transform.position.y, item.transform.position.z);
 	}
 
 	public void HideIcon(Item item)
 	{
-		base.HideIcon();
+		HideIcon();
 	}
 }

@@ -18,15 +18,19 @@ public class Task
 
 	[field: SerializeField, TextArea(5, 5)] public string Description { get; private set; }
 
+	[field: SerializeField] public SerializedTime AddedTime { get; private set; }
+
 	public event Action<Task> OnCompleted;
 
-	public Task(int id, string name, string description)
+	public Task(int id, string name, string description, SerializedTime addedTime)
 	{
 		ID = id;
 
 		Name = name;
 
 		Description = description;
+
+		AddedTime = addedTime;
 	}
 
 	public Task(Task task)
@@ -36,6 +40,8 @@ public class Task
 		Name = task.Name;
 
 		Description = task.Description;
+
+		AddedTime = task.AddedTime;
 	}
 
 	public void Complete()

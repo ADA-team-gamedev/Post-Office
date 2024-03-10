@@ -33,7 +33,7 @@ public class Icon
 
 	public void ShowIcon()
 	{
-		if (!_isIconNeeded || !IsIconEnabled)
+		if (!_isIconNeeded || IsIconEnabled)
 			return;
 
 		ItemIcon.SetActive(true);

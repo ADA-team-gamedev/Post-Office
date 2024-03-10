@@ -7,38 +7,72 @@ public class TimeClock : MonoBehaviour
 	[Header("Clock settings")]
     [SerializeField] private TextMeshProUGUI _clockText;
 
-	[SerializeField] private string _clockformat = "HH:mm:ss";
+	[SerializeField] private string _clockFormat = "HH:mm:ss";
 
 	[SerializeField] private float _timeRateSpeed = 1f;
 
-	[Header("Started time")]
-	[SerializeField, Range(0, 24)] private int _startedHours = 0;
-	[SerializeField, Range(0, 60)] private int _startedMinutes = 0;
-	[SerializeField, Range(0, 60)] private int _startedSeconds = 0;
+	[Header("Time values")]
 
-	public TimeSpan GetTime => new(_timeSpan.Hours, _timeSpan.Minutes, _timeSpan.Seconds);
+	[SerializeField] private SerializedTime _startedTime;
 
-	private TimeSpan _timeSpan;
+	[SerializeField, Tooltip("Started time + Limits")] private SerializedTime _addedTimeLimit;
+	private TimeSpan _timeLimit;
+
+	[SerializeField] private SerializedTime _timeToCompleteGame;
+	private TimeSpan _timeToComplete;
+
+	public TimeSpan GetTime => new(_currentGameTime.Hours, _currentGameTime.Minutes, _currentGameTime.Seconds);
+
+	private TimeSpan _currentGameTime;
 
 	private void Start()
 	{
-		_timeSpan = new(_startedHours, _startedMinutes, _startedSeconds);
+		_timeToComplete = new(1, _timeToCompleteGame.Hours, _timeToCompleteGame.Minutes, _timeToCompleteGame.Seconds); //1 day because we start at p.m. and must survive to the new day a.m.
+
+		_currentGameTime = new (_startedTime.Hours, _startedTime.Minutes, _startedTime.Seconds);
+
+		TimeSpan timeLimit = new (_addedTimeLimit.Hours, _addedTimeLimit.Minutes, _addedTimeLimit.Seconds);
+
+		_timeLimit = _currentGameTime + timeLimit;
 	}
 
 	private void Update()
 	{
+		IsGameOver();
+
 		CalculateTime();
 	}
 
 	private void CalculateTime()
 	{
+		if (_currentGameTime >= _timeLimit)
+			return;
+
 		float milliSeconds = Time.deltaTime * 1000f * _timeRateSpeed;
 
-		_timeSpan += new TimeSpan(0,0,0,0, (int)milliSeconds);
+		_currentGameTime += new TimeSpan(0,0,0,0, (int)milliSeconds);
 		
-		DateTime dateTime = DateTime.MinValue.Add(_timeSpan);
+		DateTime dateTime = DateTime.MinValue.Add(_currentGameTime);
 
-		_clockText.text = dateTime.ToString(_clockformat);
+		_clockText.text = dateTime.ToString(_clockFormat);
+	}
+
+	public void IsGameOver()
+	{
+		if (_currentGameTime < _timeToComplete)
+			return;
+
+		CompleteGame();
+	}
+
+	public void IncreaseTimeLimit(TimeSpan timeSpan)
+	{
+		_timeLimit += timeSpan;
+	}
+
+	private void CompleteGame()
+	{
+		Debug.Log("The game is completed!");
 	}
 
 	private void OnValidate()
@@ -46,4 +80,12 @@ public class TimeClock : MonoBehaviour
 		if (_timeRateSpeed < 0)
 			_timeRateSpeed = 0;
 	}
+}
+
+[Serializable]
+public struct SerializedTime
+{
+	[field: SerializeField, Range(0, 24)] public int Hours { get; private set; }
+	[field: SerializeField, Range(0, 60)] public int Minutes { get; private set; }
+	[field: SerializeField, Range(0, 60)] public int Seconds { get; private set; }
 }

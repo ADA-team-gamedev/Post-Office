@@ -23,6 +23,8 @@ public class TaskManager : MonoBehaviour
 
 	private List<Task> _tasks = new();
 
+	[SerializeField] private TimeClock _timeClock;
+
 	private void Awake()
 	{
 		if (Instance == null)
@@ -37,7 +39,7 @@ public class TaskManager : MonoBehaviour
 
 		foreach (var task in _tasks)
 		{
-			task.OnCompleted += RemoveCurrentTask;
+			task.OnCompleted += CompleteTask;
 		}
 	}
 
@@ -104,7 +106,7 @@ public class TaskManager : MonoBehaviour
 
 	public bool TryAddNewTask(TaskData taskData)
 	{
-		Task task = new Task(taskData.Task.ID, taskData.Task.Name, taskData.Task.Description);
+		Task task = new Task(taskData.Task);
 
 		return TryAddNewTask(task);
 	}
@@ -120,7 +122,7 @@ public class TaskManager : MonoBehaviour
 
 		_tasks.Add(task);
 
-		task.OnCompleted += RemoveCurrentTask;
+		task.OnCompleted += CompleteTask;
 
 		OnAddedNewTask?.Invoke();
 
@@ -141,31 +143,21 @@ public class TaskManager : MonoBehaviour
 		return false;
 	}
 
-	private void RemoveCurrentTask(Task completedTask)
+	private void CompleteTask(Task completedTask)
 	{
-		if (CurrentTask != completedTask)
-			return;
+		TimeSpan addedLimit = new (completedTask.AddedTime.Hours, completedTask.AddedTime.Minutes, completedTask.AddedTime.Seconds);
 
-		CurrentTask = null;
+		_timeClock.IncreaseTimeLimit(addedLimit);
 
-		CurrentTaskCompleted?.Invoke();
+		bool isCompleteTaskIsCurrent = CurrentTask == completedTask;
 
-		//Delete task form task collection when the player complete him
+		if (isCompleteTaskIsCurrent)
+			CurrentTaskCompleted?.Invoke();
+
 		_tasks.Remove(completedTask);
 
-		if (TaskCount > 0)
+		if (TaskCount > 0 && isCompleteTaskIsCurrent)
 			SetNewCurrentTask(0);
-
-		//Just making task completed and making the text style as completed for task text in notebook
-		//foreach (var item in _tasks)
-		//{
-		//	if (!item.IsCompleted)
-		//	{
-		//		SetNewCurrentTask(item);
-
-		//		return;
-		//	}
-		//}
 
 		Debug.Log($"Task: {completedTask.Name} has been completed");
 	}

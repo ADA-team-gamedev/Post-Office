@@ -28,19 +28,19 @@ public class RemoteControl : Item, IUsable
 
 	private void Update()
 	{
-		base.ItemIcon.RotateIconToObject();
+		ItemIcon.RotateIconToObject();
 	}
 
 	private void ChangeItemIconState(Task currentTask)
 	{
 		if (currentTask.ID != _findRemoteControlTask.Task.ID)
 		{
-			base.ItemIcon.HideIcon();
+			ItemIcon.HideIcon();
 
 			return;
 		}	
 
-		base.ItemIcon.ShowIcon();
+		ItemIcon.ShowIcon();
 	}
 
 	private void Completetask(Item item)
@@ -48,7 +48,7 @@ public class RemoteControl : Item, IUsable
 		if (!TaskManager.Instance.TryGetTask(_findRemoteControlTask.Task.ID, out Task task))
 			return;
 
-		base.ItemIcon.HideIcon();
+		ItemIcon.HideIcon();
 
 		TaskManager.Instance.OnNewCurrentTaskSet -= ChangeItemIconState;
 
@@ -56,7 +56,7 @@ public class RemoteControl : Item, IUsable
 
 		OnPickUpItem -= Completetask;
 
-		base.ActivateAutoIconStateChanging();
+		ActivateAutoIconStateChanging();
 	}
 
 	public void Use()
