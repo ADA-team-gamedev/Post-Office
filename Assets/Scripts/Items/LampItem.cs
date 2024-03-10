@@ -11,7 +11,7 @@ public class LampItem : Item, IUsable
 		{
 			Debug.DrawRay(_playerCamera.transform.position, _playerCamera.transform.forward * _interactionDistance);
 
-			if (hit.transform.TryGetComponent(out Lamp lamp) && lamp.IsLampDestroyed)
+			if (hit.transform.TryGetComponent(out BreakableLamp lamp) && lamp.IsLampDestroyed)
 			{
 				lamp.RepairLamp();
 
