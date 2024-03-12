@@ -4,11 +4,14 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Options : MonoBehaviour
+namespace Menu
 {
-	[Header("Resolution")]
+	public class Options : MonoBehaviour
+	{
+		[Header("Resolution")]
 
-	[SerializeField] private List<Vector2Int> _screenResolutions = new()
+		[SerializeField]
+		private List<Vector2Int> _screenResolutions = new()
 	{
 		new(1920, 1080),
 		new(1024, 768),
@@ -27,18 +30,19 @@ public class Options : MonoBehaviour
 		new(1680, 1050),
 	};
 
-	[SerializeField] private TMP_Text _resolutionViewText;
+		[SerializeField] private TMP_Text _resolutionViewText;
 
-	[Header("Screen Mode")]
-	[SerializeField] private TMP_Text _screenModeText;
-	private FullScreenMode _screenMode;
+		[Header("Screen Mode")]
+		[SerializeField] private TMP_Text _screenModeText;
+		private FullScreenMode _screenMode;
 
-	private int _selectedResolutionIndex = 0;
+		private int _selectedResolutionIndex = 0;
 
-	[Header("Frame Rate")]
-	[SerializeField] private TMP_Text _frameRateText;
+		[Header("Frame Rate")]
+		[SerializeField] private TMP_Text _frameRateText;
 
-	[SerializeField] private List<int> _frameRates = new()
+		[SerializeField]
+		private List<int> _frameRates = new()
 	{
 		0,
 		15,
@@ -51,155 +55,156 @@ public class Options : MonoBehaviour
 		120,
 	};
 
-	private int _selectedFrameRateIndex = 0;
+		private int _selectedFrameRateIndex = 0;
 
-	[SerializeField] private Toggle _vSyncToggle;
+		[SerializeField] private Toggle _vSyncToggle;
 
-	private void Start()
-	{
-		LoadSettings();
-	}
-	
-	public void SaveChanges()
-    {
-		Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
-
-		UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
-
-		Screen.SetResolution(resolution.x, resolution.y, _screenMode);
-
-		QualitySettings.vSyncCount = _vSyncToggle.isOn ? 1 : 0;
-
-		if (QualitySettings.vSyncCount == 0)
-			_vSyncToggle.isOn = false;
-		else
-			_vSyncToggle.isOn = true;
-
-		UpdateOptionText(_screenModeText, $"{_screenMode}");
-
-		UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
-	}
-
-	private void LoadSettings()
-	{
-		bool hasSaves = false;
-
-		//downloading values from user's pc save files
-
-		if (hasSaves)
+		private void Start()
 		{
-
+			LoadSettings();
 		}
-		else
-		{
-			Vector2Int resolution = _screenResolutions[0];
 
-			_screenMode = FullScreenMode.FullScreenWindow;
+		public void SaveChanges()
+		{
+			Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
+
+			UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
 
 			Screen.SetResolution(resolution.x, resolution.y, _screenMode);
 
-			QualitySettings.vSyncCount = 1;
+			QualitySettings.vSyncCount = _vSyncToggle.isOn ? 1 : 0;
 
-			Application.targetFrameRate = _frameRates[0];
+			if (QualitySettings.vSyncCount == 0)
+				_vSyncToggle.isOn = false;
+			else
+				_vSyncToggle.isOn = true;
+
+			UpdateOptionText(_screenModeText, $"{_screenMode}");
+
+			UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
 		}
 
-		SaveChanges();
-	}
+		private void LoadSettings()
+		{
+			bool hasSaves = false;
 
-	#region Resolution
+			//downloading values from user's pc save files
 
-	public void RightResolutionChangeButton()
-    {
-		_selectedResolutionIndex++;
+			if (hasSaves)
+			{
 
-		if (_selectedResolutionIndex > _screenResolutions.Count - 1)
-			_selectedResolutionIndex = 0;
+			}
+			else
+			{
+				Vector2Int resolution = _screenResolutions[0];
 
-		Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
+				_screenMode = FullScreenMode.FullScreenWindow;
 
-		UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
-	}
+				Screen.SetResolution(resolution.x, resolution.y, _screenMode);
 
-	public void LeftResolutionChangeButton()
-	{
-        _selectedResolutionIndex--;
+				QualitySettings.vSyncCount = 1;
 
-        if (_selectedResolutionIndex < 0)
-            _selectedResolutionIndex = _screenResolutions.Count - 1;
+				Application.targetFrameRate = _frameRates[0];
+			}
 
-		Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
+			SaveChanges();
+		}
 
-		UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
-	}
+		#region Resolution
 
-	#endregion
+		public void RightResolutionChangeButton()
+		{
+			_selectedResolutionIndex++;
 
-	#region ScreenMode
+			if (_selectedResolutionIndex > _screenResolutions.Count - 1)
+				_selectedResolutionIndex = 0;
 
-	public void RightScreenModeButton()
-	{
-		_screenMode--;
+			Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
 
-		var fullScreenMode = Enum.GetValues(typeof(FullScreenMode));
+			UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
+		}
 
-		FullScreenMode maxEnumValue = (FullScreenMode)fullScreenMode.GetValue(fullScreenMode.Length - 1);
-		FullScreenMode minEnumValue = (FullScreenMode)fullScreenMode.GetValue(0);
+		public void LeftResolutionChangeButton()
+		{
+			_selectedResolutionIndex--;
 
-		if (_screenMode == FullScreenMode.MaximizedWindow)
+			if (_selectedResolutionIndex < 0)
+				_selectedResolutionIndex = _screenResolutions.Count - 1;
+
+			Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
+
+			UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
+		}
+
+		#endregion
+
+		#region ScreenMode
+
+		public void RightScreenModeButton()
+		{
 			_screenMode--;
-		
-		if (_screenMode < minEnumValue)
-			_screenMode = maxEnumValue;
 
-		UpdateOptionText(_screenModeText, $"{_screenMode}");
-	}
+			var fullScreenMode = Enum.GetValues(typeof(FullScreenMode));
 
-	public void LeftScreenModeButton()
-	{
-		_screenMode++;
+			FullScreenMode maxEnumValue = (FullScreenMode)fullScreenMode.GetValue(fullScreenMode.Length - 1);
+			FullScreenMode minEnumValue = (FullScreenMode)fullScreenMode.GetValue(0);
 
-		if (_screenMode == FullScreenMode.MaximizedWindow)
+			if (_screenMode == FullScreenMode.MaximizedWindow)
+				_screenMode--;
+
+			if (_screenMode < minEnumValue)
+				_screenMode = maxEnumValue;
+
+			UpdateOptionText(_screenModeText, $"{_screenMode}");
+		}
+
+		public void LeftScreenModeButton()
+		{
 			_screenMode++;
 
-		var fullScreenMode = Enum.GetValues(typeof(FullScreenMode));
+			if (_screenMode == FullScreenMode.MaximizedWindow)
+				_screenMode++;
 
-		FullScreenMode maxEnumValue = (FullScreenMode)fullScreenMode.GetValue(fullScreenMode.Length - 1);
-		FullScreenMode minEnumValue = (FullScreenMode)fullScreenMode.GetValue(0);
+			var fullScreenMode = Enum.GetValues(typeof(FullScreenMode));
 
-		if (_screenMode > maxEnumValue)
-			_screenMode = minEnumValue;
+			FullScreenMode maxEnumValue = (FullScreenMode)fullScreenMode.GetValue(fullScreenMode.Length - 1);
+			FullScreenMode minEnumValue = (FullScreenMode)fullScreenMode.GetValue(0);
 
-		UpdateOptionText(_screenModeText, $"{_screenMode}");
-	}
+			if (_screenMode > maxEnumValue)
+				_screenMode = minEnumValue;
 
-	#endregion
+			UpdateOptionText(_screenModeText, $"{_screenMode}");
+		}
 
-	#region FPS
+		#endregion
 
-	public void RightFrameRateChangeButton()
-	{
-		_selectedFrameRateIndex++;
+		#region FPS
 
-		if (_selectedFrameRateIndex > _frameRates.Count - 1)
-			_selectedFrameRateIndex = 0;
+		public void RightFrameRateChangeButton()
+		{
+			_selectedFrameRateIndex++;
 
-		UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
-	}
+			if (_selectedFrameRateIndex > _frameRates.Count - 1)
+				_selectedFrameRateIndex = 0;
 
-	public void LeftFrameRateChangeButton()
-	{
-		_selectedFrameRateIndex--;
+			UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
+		}
 
-		if (_selectedFrameRateIndex < 0)
-			_selectedFrameRateIndex = _frameRates.Count - 1;
+		public void LeftFrameRateChangeButton()
+		{
+			_selectedFrameRateIndex--;
 
-		UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
-	}
+			if (_selectedFrameRateIndex < 0)
+				_selectedFrameRateIndex = _frameRates.Count - 1;
 
-	#endregion
+			UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
+		}
 
-	private void UpdateOptionText(TMP_Text textObject, string text)
-	{
-		textObject.text = text;
+		#endregion
+
+		private void UpdateOptionText(TMP_Text textObject, string text)
+		{
+			textObject.text = text;
+		}
 	}
 }

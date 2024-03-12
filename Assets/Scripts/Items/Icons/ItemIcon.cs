@@ -1,19 +1,22 @@
 using UnityEngine;
 
-[System.Serializable]
-public class ItemIcon : Icon
+namespace Items.Icon
 {
-	[field: SerializeField] public bool ChangeIconStateAutomatically { get; private set; } = false;
-
-	public void ShowIcon(Item item)
+	[System.Serializable]
+	public class ItemIcon : Icon
 	{
-		ShowIcon();
+		[field: SerializeField] public bool ChangeIconStateAutomatically { get; private set; } = false;
 
-		ItemIcon.transform.position = new(item.transform.position.x, ItemIcon.transform.position.y, item.transform.position.z);
-	}
+		public void ShowIcon(Item item)
+		{
+			ShowIcon();
 
-	public void HideIcon(Item item)
-	{
-		HideIcon();
+			ItemIcon.transform.position = new(item.transform.position.x, ItemIcon.transform.position.y, item.transform.position.z);
+		}
+
+		public void HideIcon(Item item)
+		{
+			HideIcon();
+		}
 	}
 }

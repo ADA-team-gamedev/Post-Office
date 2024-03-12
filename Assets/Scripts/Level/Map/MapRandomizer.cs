@@ -1,22 +1,22 @@
 using System;
 using UnityEngine;
 
-namespace MapRandomizer
+namespace Level.Map
 {
 	public class MapRandomizer : MonoBehaviour
 	{
-		[SerializeField] private Room[] _rooms;
+		[SerializeField] private RoomOption[] _roomOptions;
 	}
 
 	[Serializable]
-	internal struct RoomOption
+	public struct RoomOption
+	{
+		public Room[] Rooms;
+	}
+
+	[Serializable]
+	public struct Room
 	{
 		public GameObject[] Objects;
-	}
-
-	[Serializable]
-	internal struct Room
-	{
-		public RoomOption[] RoomOptions;
 	}
 }

@@ -1,41 +1,44 @@
 using UnityEngine;
 
-[System.Serializable]
-public class Icon
+namespace Items.Icon
 {
-	[SerializeField] private bool _isIconNeeded = true;
-
-	[field: SerializeField] protected GameObject ItemIcon { get; private set; }
-
-	[field: SerializeField] protected Transform IconTargetToLook { get; private set; }
-
-	public bool IsIconEnabled => ItemIcon.activeSelf;
-
-	public void RotateIconToObject()
+	[System.Serializable]
+	public class Icon
 	{
-		if (!_isIconNeeded || !IsIconEnabled)
-			return;
+		[SerializeField] private bool _isIconNeeded = true;
 
-		Vector3 targetPosition = IconTargetToLook.position;
+		[field: SerializeField] protected GameObject ItemIcon { get; private set; }
 
-		targetPosition.y = ItemIcon.transform.position.y; //constrain y axis
-		
-		ItemIcon.transform.LookAt(targetPosition);
-	}
+		[field: SerializeField] protected Transform IconTargetToLook { get; private set; }
 
-	public void HideIcon()
-	{
-		if (!_isIconNeeded || !IsIconEnabled)
-			return;
-		
-		ItemIcon.SetActive(false);
-	}
+		public bool IsIconEnabled => ItemIcon.activeSelf;
 
-	public void ShowIcon()
-	{
-		if (!_isIconNeeded || IsIconEnabled)
-			return;
+		public void RotateIconToObject()
+		{
+			if (!_isIconNeeded || !IsIconEnabled)
+				return;
 
-		ItemIcon.SetActive(true);
+			Vector3 targetPosition = IconTargetToLook.position;
+
+			targetPosition.y = ItemIcon.transform.position.y; //constrain y axis
+
+			ItemIcon.transform.LookAt(targetPosition);
+		}
+
+		public void HideIcon()
+		{
+			if (!_isIconNeeded || !IsIconEnabled)
+				return;
+
+			ItemIcon.SetActive(false);
+		}
+
+		public void ShowIcon()
+		{
+			if (!_isIconNeeded || IsIconEnabled)
+				return;
+
+			ItemIcon.SetActive(true);
+		}
 	}
 }

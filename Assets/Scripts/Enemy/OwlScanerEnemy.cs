@@ -1,91 +1,95 @@
+using Player;
 using System.Collections;
 using UnityEngine;
 
-[RequireComponent(typeof(FieldOfView))]
-public class OwlScanerEnemy : MonoBehaviour
+namespace Enemy
 {
-    private FieldOfView _fieldOfView;
-
-	[Header("Player")]
-	[SerializeField] private PlayerSanity _playerSanity;
-
-	[Header("Values")]
-	[SerializeField][Range(0.01f, 1f)] private float _sanityPercentToStartScanning = 0.6f;
-	[SerializeField][Range(10, 300)] private float _breakDelayInSeconds = 60f;
-
-	[SerializeField] private BoxEnemy[] _boxEnemies;
-
-	private bool _isEnemyCalledOut = false;
-
-	private void Start()
+	[RequireComponent(typeof(FieldOfView))]
+	public class OwlScanerEnemy : MonoBehaviour
 	{
-		_fieldOfView ??= GetComponent<FieldOfView>();
-	}
+		private FieldOfView _fieldOfView;
 
-	private void Update()
-	{
-		if (_playerSanity.SanityPercent > _sanityPercentToStartScanning || _isEnemyCalledOut)
-			return;
-		
-		_fieldOfView.VisionCheck();
+		[Header("Player")]
+		[SerializeField] private PlayerSanity _playerSanity;
 
-		if (_fieldOfView.SeesInFOV)
-			TryCallEnemy();
-	}
+		[Header("Values")]
+		[SerializeField][Range(0.01f, 1f)] private float _sanityPercentToStartScanning = 0.6f;
+		[SerializeField][Range(10, 300)] private float _breakDelayInSeconds = 60f;
 
-	private void TryCallEnemy()
-	{
-		if (_boxEnemies.Length < 0 || _isEnemyCalledOut)
-			return;
+		[SerializeField] private BoxEnemy[] _boxEnemies;
 
-		if (TryTakeBoxForOrder(out BoxEnemy boxEnemy))
+		private bool _isEnemyCalledOut = false;
+
+		private void Start()
 		{
-			_isEnemyCalledOut = true;
+			_fieldOfView ??= GetComponent<FieldOfView>();
+		}
 
-			if (!boxEnemy.IsAIActivated)
-				boxEnemy.ActivateEnemyBox();
-
-			StartCoroutine(OrderEnemy(boxEnemy));
-		}	
-	}
-
-	private IEnumerator OrderEnemy(BoxEnemy boxEnemy)
-	{
-		yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay);
-
-		boxEnemy.OrderToAttack(_fieldOfView.Target.position);
-
-		StartCoroutine(TakeBreak());
-	}
-
-	private IEnumerator TakeBreak()
-	{
-		yield return new WaitForSeconds(_breakDelayInSeconds);
-
-		_isEnemyCalledOut = false;
-	}
-
-	private bool TryTakeBoxForOrder(out BoxEnemy boxToOrder)
-	{
-		foreach (var boxEnemy in _boxEnemies)
+		private void Update()
 		{
-			if (boxEnemy.IsAIActivated)
+			if (_playerSanity.SanityPercent > _sanityPercentToStartScanning || _isEnemyCalledOut)
+				return;
+
+			_fieldOfView.VisionCheck();
+
+			if (_fieldOfView.SeesInFOV)
+				TryCallEnemy();
+		}
+
+		private void TryCallEnemy()
+		{
+			if (_boxEnemies.Length < 0 || _isEnemyCalledOut)
+				return;
+
+			if (TryTakeBoxForOrder(out BoxEnemy boxEnemy))
 			{
-				boxToOrder = boxEnemy;		
+				_isEnemyCalledOut = true;
 
-				return true;
-			}
+				if (!boxEnemy.IsAIActivated)
+					boxEnemy.ActivateEnemyBox();
 
-			if (boxEnemy.IsCanActivateEnemy())
-			{
-				boxToOrder = boxEnemy;
-
-				return true;
+				StartCoroutine(OrderEnemy(boxEnemy));
 			}
 		}
 
-		boxToOrder = null;
+		private IEnumerator OrderEnemy(BoxEnemy boxEnemy)
+		{
+			yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay);
 
-		return false;
+			boxEnemy.OrderToAttack(_fieldOfView.Target.position);
+
+			StartCoroutine(TakeBreak());
+		}
+
+		private IEnumerator TakeBreak()
+		{
+			yield return new WaitForSeconds(_breakDelayInSeconds);
+
+			_isEnemyCalledOut = false;
+		}
+
+		private bool TryTakeBoxForOrder(out BoxEnemy boxToOrder)
+		{
+			foreach (var boxEnemy in _boxEnemies)
+			{
+				if (boxEnemy.IsAIActivated)
+				{
+					boxToOrder = boxEnemy;
+
+					return true;
+				}
+
+				if (boxEnemy.IsCanActivateEnemy())
+				{
+					boxToOrder = boxEnemy;
+
+					return true;
+				}
+			}
+
+			boxToOrder = null;
+
+			return false;
+		}
 	}
 }

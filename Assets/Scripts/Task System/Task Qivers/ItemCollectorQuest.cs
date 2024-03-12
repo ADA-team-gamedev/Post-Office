@@ -1,107 +1,111 @@
+using Items;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(BoxCollider))]
-public class ItemCollectorQuest : MonoBehaviour
+namespace TaskSystem.TaskGivers
 {
-	[Header("Task")]
-	[SerializeField] private string _playerTag = "Player";
-
-	[SerializeField] private bool _giveTaskOnStart = false;
-	[SerializeField] private bool _canPlayerPickUpItemAfterQuestFinishing = false;
-
-	[SerializeField] private TaskData _addedTask;
-
-	[Header("Items")]
-	[SerializeField] private List<Item> _neededItems;
-	
-	private List<Item> _addedItem = new();
-
-	private bool _isTaskAdded = false;
-
-	private void Start()
+	[RequireComponent(typeof(BoxCollider))]
+	public class ItemCollectorQuest : MonoBehaviour
 	{
-		GetComponent<BoxCollider>().isTrigger = true;
+		[Header("Task")]
+		[SerializeField] private string _playerTag = "Player";
 
-		if (_giveTaskOnStart)
-			GiveTaskToPlayer();	
-	}
+		[SerializeField] private bool _giveTaskOnStart = false;
+		[SerializeField] private bool _canPlayerPickUpItemAfterQuestFinishing = false;
 
-	private void OnTriggerEnter(Collider other)
-	{
-		if (!_isTaskAdded && other.CompareTag(_playerTag))
-			GiveTaskToPlayer();	
+		[SerializeField] private TaskData _addedTask;
 
-		if (other.TryGetComponent(out Item item) && !_addedItem.Contains(item))
+		[Header("Items")]
+		[SerializeField] private List<Item> _neededItems;
+
+		private List<Item> _addedItem = new();
+
+		private bool _isTaskAdded = false;
+
+		private void Start()
 		{
-			_addedItem.Add(item);
+			GetComponent<BoxCollider>().isTrigger = true;
 
-			item.OnPickUpItem += RemoveBoxFromCollection;
-
-			TryCompleteTask();		
+			if (_giveTaskOnStart)
+				GiveTaskToPlayer();
 		}
-	}
 
-	private void OnTriggerExit(Collider other)
-	{
-		if (other.TryGetComponent(out Item item))
+		private void OnTriggerEnter(Collider other)
 		{
-			if (_addedItem.Contains(item))
-				_addedItem.Remove(item);
+			if (!_isTaskAdded && other.CompareTag(_playerTag))
+				GiveTaskToPlayer();
+
+			if (other.TryGetComponent(out Item item) && !_addedItem.Contains(item))
+			{
+				_addedItem.Add(item);
+
+				item.OnPickUpItem += RemoveBoxFromCollection;
+
+				TryCompleteTask();
+			}
+		}
+
+		private void OnTriggerExit(Collider other)
+		{
+			if (other.TryGetComponent(out Item item))
+			{
+				if (_addedItem.Contains(item))
+					_addedItem.Remove(item);
+
+				TryCompleteTask();
+			}
+		}
+
+		private void GiveTaskToPlayer()
+		{
+			if (_isTaskAdded)
+				return;
+
+			TaskManager.Instance.SetNewCurrentTask(_addedTask);
+
+			_isTaskAdded = true;
+		}
+
+		private void TryCompleteTask()
+		{
+			bool taskPerformanceCondition = IsAllBoxesCollected();
+
+			if (!taskPerformanceCondition)
+				return;
+
+			TaskManager.Instance.CurrentTask.Complete();
+
+			foreach (Item item in _addedItem)
+			{
+				item.CanBePicked = _canPlayerPickUpItemAfterQuestFinishing;
+
+				item.DeactivateAutoIconStateChanging();
+
+				item.ItemIcon.HideIcon();
+			}
+		}
+
+		private bool IsAllBoxesCollected()
+		{
+			if (_neededItems.Count != _addedItem.Count)
+				return false;
+
+			for (int i = 0; i < _neededItems.Count; i++)
+			{
+				if (!_neededItems.Contains(_addedItem[i]))
+					return false;
+			}
+
+			return true;
+		}
+
+		private void RemoveBoxFromCollection(Item item)
+		{
+			_addedItem.Remove(item);
+
+			item.OnPickUpItem -= RemoveBoxFromCollection;
 
 			TryCompleteTask();
 		}
-	}
-
-	private void GiveTaskToPlayer()
-	{
-		if (_isTaskAdded)
-			return;
-
-		TaskManager.Instance.SetNewCurrentTask(_addedTask);
-
-		_isTaskAdded = true;
-	}
-
-	private void TryCompleteTask()
-	{
-		bool taskPerformanceCondition = IsAllBoxesCollected();
-
-		if (!taskPerformanceCondition)
-			return;
-
-		TaskManager.Instance.CurrentTask.Complete();
-
-		foreach (Item item in _addedItem)
-		{
-			item.CanBePicked = _canPlayerPickUpItemAfterQuestFinishing;
-
-			item.DeactivateAutoIconStateChanging();
-
-			item.ItemIcon.HideIcon();
-		}
-	}
-
-	private bool IsAllBoxesCollected()
-	{
-		if (_neededItems.Count != _addedItem.Count)
-			return false;
-
-		for (int i = 0; i < _neededItems.Count; i++)
-		{
-			if (!_neededItems.Contains(_addedItem[i]))
-				return false;
-		}
-
-		return true;
-	}
-
-	private void RemoveBoxFromCollection(Item item)
-	{
-		_addedItem.Remove(item);
-
-		item.OnPickUpItem -= RemoveBoxFromCollection;
-
-		TryCompleteTask();
 	}
 }

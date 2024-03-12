@@ -1,35 +1,38 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+namespace Menu
 {
-	[Header("Menus")]
-	[SerializeField] private GameObject _settingsWindow;
-
-	private void Awake()
+	public class MainMenu : MonoBehaviour
 	{
-		_settingsWindow.SetActive(false);
+		[Header("Menus")]
+		[SerializeField] private GameObject _settingsWindow;
 
-		Cursor.lockState = CursorLockMode.None;
-	}
+		private void Awake()
+		{
+			_settingsWindow.SetActive(false);
 
-	public void OnResumeButton(string sceneName)
-	{
-		SceneManager.LoadScene(sceneName); 
-	}
+			Cursor.lockState = CursorLockMode.None;
+		}
 
-	public void OnNewGameButton()
-	{
-		//reset level data and create new, then load game scene
-	}
+		public void OnResumeButton(string sceneName)
+		{
+			SceneManager.LoadScene(sceneName);
+		}
 
-	public void OnLoadButton()
-	{
-		//Load game data with level
-	}
+		public void OnNewGameButton()
+		{
+			//reset level data and create new, then load game scene
+		}
 
-	public void OnExit()
-	{
-		Application.Quit();
+		public void OnLoadButton()
+		{
+			//Load game data with level
+		}
+
+		public void OnExit()
+		{
+			Application.Quit();
+		}
 	}
 }

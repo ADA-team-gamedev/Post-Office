@@ -1,40 +1,43 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(BoxCollider))]
-public class Lamp : MonoBehaviour
+namespace Level.Lights.Lamp
 {
-	[field:SerializeField] public bool IsLampEnabled { get; set; } = true;
-
-	[SerializeField] private string _playerTag = "Player";
-
-	[field: SerializeField] protected Light Light { get; private set; }
-
-	[Space(10)]
-	[SerializeField] private UnityEvent OnStay;
-
-	private void OnTriggerStay(Collider other)
+	[RequireComponent(typeof(BoxCollider))]
+	public class Lamp : MonoBehaviour
 	{
-		TryInvokeLamp(other);	
-	}
+		[field: SerializeField] public bool IsLampEnabled { get; set; } = true;
 
-	protected virtual void TryInvokeLamp(Collider other)
-	{
-		if (!IsLampEnabled || !other.CompareTag(_playerTag))
-			return;
+		[SerializeField] private string _playerTag = "Player";
 
-		OnStay.Invoke();
-	}
+		[field: SerializeField] protected Light Light { get; private set; }
 
-	public void SwitchLampState(bool isEnabled)
-	{
-		IsLampEnabled = isEnabled;
+		[Space(10)]
+		[SerializeField] private UnityEvent OnStay;
 
-		Light.gameObject.SetActive(IsLampEnabled);
-	}
+		private void OnTriggerStay(Collider other)
+		{
+			TryInvokeLamp(other);
+		}
 
-	private void OnValidate()
-	{
-		Light.gameObject?.SetActive(IsLampEnabled);
+		protected virtual void TryInvokeLamp(Collider other)
+		{
+			if (!IsLampEnabled || !other.CompareTag(_playerTag))
+				return;
+
+			OnStay.Invoke();
+		}
+
+		public void SwitchLampState(bool isEnabled)
+		{
+			IsLampEnabled = isEnabled;
+
+			Light.gameObject.SetActive(IsLampEnabled);
+		}
+
+		private void OnValidate()
+		{
+			Light.gameObject?.SetActive(IsLampEnabled);
+		}
 	}
 }

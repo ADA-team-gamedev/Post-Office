@@ -1,64 +1,68 @@
 using System;
 using UnityEngine;
+using Items.Icon;
 
-[RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(Collider))]
-public class Item : MonoBehaviour
+namespace Items
 {
-	[field: Header("Item")]
-
-	[field: SerializeField] public bool CanBePicked { get; set; } = true;
-
-	[field: SerializeField] public ItemIcon ItemIcon { get; private set; }
-
-	public Action<Item> OnPickUpItem { get; set; }
-
-	public Action<Item> OnDropItem { get; set; }
-
-	private void Start()
-	{		
-		InitializeItem();
-	}
-
-	private void Update()
+	[RequireComponent(typeof(Rigidbody))]
+	[RequireComponent(typeof(Collider))]
+	public class Item : MonoBehaviour
 	{
-		ItemIcon.RotateIconToObject();
-	}
+		[field: Header("Item")]
 
-	protected virtual void InitializeItem()
-	{
-		InitializeItemIcon();
-	}
+		[field: SerializeField] public bool CanBePicked { get; set; } = true;
 
-	#region Icon Logic
+		[field: SerializeField] public ItemIcon ItemIcon { get; private set; }
 
-	private void InitializeItemIcon()
-	{
-		if (ItemIcon.ChangeIconStateAutomatically)
+		public Action<Item> OnPickUpItem { get; set; }
+
+		public Action<Item> OnDropItem { get; set; }
+
+		private void Start()
 		{
-			ActivateAutoIconStateChanging();
-
-			ItemIcon.ShowIcon();
+			InitializeItem();
 		}
-		else
+
+		private void Update()
 		{
-			ItemIcon.HideIcon();
+			ItemIcon.RotateIconToObject();
 		}
+
+		protected virtual void InitializeItem()
+		{
+			InitializeItemIcon();
+		}
+
+		#region Icon Logic
+
+		private void InitializeItemIcon()
+		{
+			if (ItemIcon.ChangeIconStateAutomatically)
+			{
+				ActivateAutoIconStateChanging();
+
+				ItemIcon.ShowIcon();
+			}
+			else
+			{
+				ItemIcon.HideIcon();
+			}
+		}
+
+		public void ActivateAutoIconStateChanging()
+		{
+			OnPickUpItem += ItemIcon.HideIcon;
+
+			OnDropItem += ItemIcon.ShowIcon;
+		}
+
+		public void DeactivateAutoIconStateChanging()
+		{
+			OnPickUpItem -= ItemIcon.HideIcon;
+
+			OnDropItem -= ItemIcon.ShowIcon;
+		}
+
+		#endregion
 	}
-
-	public void ActivateAutoIconStateChanging()
-	{
-		OnPickUpItem += ItemIcon.HideIcon;
-
-		OnDropItem += ItemIcon.ShowIcon;
-	}
-
-	public void DeactivateAutoIconStateChanging()
-	{
-		OnPickUpItem -= ItemIcon.HideIcon;
-
-		OnDropItem -= ItemIcon.ShowIcon;
-	}
-
-	#endregion
 }

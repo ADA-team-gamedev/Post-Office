@@ -1,187 +1,191 @@
+using Player;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class NoteBook : MonoBehaviour
+namespace TaskSystem.NoteBook
 {
-    [Header("Text UI")]
-    [SerializeField] private TextMeshProUGUI _taskName;
-    [SerializeField] private TextMeshProUGUI _taskDescription;
-
-    [Header("Values")]
-	[SerializeField] private float _animationSpeed = 2f;
-
-    [SerializeField] private Vector3 _openedPositionOffset = new(0.18f, 0.22f, 0);
-
-	[Header("Player Death")]
-	[SerializeField] private PlayerDeathController _playerDeathController;
-
-	private bool _isViewing = false;
-
-    private Vector3 _defaultPosition;
-
-    private PlayerInput _playerInput;
-
-	private FontStyles _defaultFontStyle;
-
-	private int _taskIndex = -1;
-
-	private void Awake()
+	public class NoteBook : MonoBehaviour
 	{
-		_defaultPosition = transform.position;
+		[Header("Text UI")]
+		[SerializeField] private TextMeshProUGUI _taskName;
+		[SerializeField] private TextMeshProUGUI _taskDescription;
 
-		_playerDeathController.OnDeath += DisableNoteBook;
+		[Header("Values")]
+		[SerializeField] private float _animationSpeed = 2f;
 
-		_playerInput = new();
+		[SerializeField] private Vector3 _openedPositionOffset = new(0.18f, 0.22f, 0);
 
-		_playerInput.UI.NoteBook.performed += OnNoteBook;
-		_playerInput.UI.NoteBook.canceled += OnNoteBook;
+		[Header("Player Death")]
+		[SerializeField] private PlayerDeathController _playerDeathController;
 
-		_playerInput.Player.ScrollWheelY.performed += OnTaskScroll;
+		private bool _isViewing = false;
 
-		ClearNotebook();
+		private Vector3 _defaultPosition;
 
-		_defaultFontStyle = _taskName.fontStyle;
-	}
+		private PlayerInput _playerInput;
 
-	private void Start()
-	{
-		TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
+		private FontStyles _defaultFontStyle;
 
-		TaskManager.Instance.CurrentTaskCompleted += ClearNotebook;
+		private int _taskIndex = -1;
 
-		_taskIndex = TaskManager.Instance.TaskCount - 1;
-
-		if (TaskManager.Instance.CurrentTask != null) //For cases when we add a task at start but we still haven't subscribed to the TaskManager
-			WriteTextInNoteBook(TaskManager.Instance.CurrentTask);	
-	}
-	
-	private void Update()
-	{
-		if (_playerInput.UI.NoteBook.IsPressed())
-			OpenNoteBook();
-		else
-			CloseNoteBook();
-	}
-
-	#region Input
-
-	private void OnNoteBook(InputAction.CallbackContext context)
-	{
-		if (context.performed)
-			_isViewing = true;
-		else if (context.canceled)
-			_isViewing = false;
-	}
-
-	private void OnTaskScroll(InputAction.CallbackContext context)
-	{
-		if (!_playerInput.UI.NoteBook.IsPressed())
-			return;
-
-		float scrollWheelValue = context.ReadValue<float>();
-
-		if (scrollWheelValue != 0)
+		private void Awake()
 		{
-			if (scrollWheelValue > 0)
-				_taskIndex++;
-			else
-				_taskIndex--;
+			_defaultPosition = transform.position;
 
-			if (_taskIndex < 0)
-				_taskIndex = TaskManager.Instance.TaskCount - 1;
-			else if (_taskIndex > TaskManager.Instance.TaskCount - 1)
-				_taskIndex = 0;
+			_playerDeathController.OnDeath += DisableNoteBook;
 
-			TaskManager.Instance.SetNewCurrentTask(_taskIndex);
+			_playerInput = new();
+
+			_playerInput.UI.NoteBook.performed += OnNoteBook;
+			_playerInput.UI.NoteBook.canceled += OnNoteBook;
+
+			_playerInput.Player.ScrollWheelY.performed += OnTaskScroll;
+
+			ClearNotebook();
+
+			_defaultFontStyle = _taskName.fontStyle;
 		}
-	}
 
-	#endregion
+		private void Start()
+		{
+			TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
 
-	private void OpenNoteBook()
-    {
-		Vector3 newPosition = _defaultPosition + _openedPositionOffset;
+			TaskManager.Instance.CurrentTaskCompleted += ClearNotebook;
 
-		if (!_isViewing || transform.position == newPosition)
-			return;
-
-		transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * _animationSpeed);
-    }
-
-	private void CloseNoteBook()
-    {
-		if (_isViewing || transform.position == _defaultPosition)
-			return;
-
-		transform.position = Vector3.Lerp(transform.position, _defaultPosition, Time.deltaTime * _animationSpeed);
-	}
-
-	#region Text Methods
-
-	public void RewriteText(string text)
-	{
-		_taskDescription.text = text;
-	}
-
-	public void AddExtraText(string extraText)
-    {
-		string currentText = _taskDescription.text;
-
-		_taskDescription.text = $"{currentText}\n{extraText}";
-	}
-
-	private void WriteTextInNoteBook(Task task)
-	{
-		//Play writing text sound
-
-		FontStyles fontStyle = _defaultFontStyle;
-
-		if (task.IsCompleted)
-			fontStyle += (int)FontStyles.Strikethrough;	
-
-		_taskName.fontStyle = fontStyle;
-
-		_taskDescription.fontStyle = fontStyle;
-
-		_taskName.text = task.Name;
-
-		_taskDescription.text = task.Description;
-	}
-
-	private void ClearNotebook()
-	{
-		_taskName.text = "";
-
-		_taskDescription.text = "";
-
-		if (_taskIndex == 0)
 			_taskIndex = TaskManager.Instance.TaskCount - 1;
-		else if (_taskIndex > 0)
-			_taskIndex--;
-	}
 
-	#endregion
+			if (TaskManager.Instance.CurrentTask != null) //For cases when we add a task at start but we still haven't subscribed to the TaskManager
+				WriteTextInNoteBook(TaskManager.Instance.CurrentTask);
+		}
 
-	private void DisableNoteBook()
-	{
-		Destroy(this);
-	}
+		private void Update()
+		{
+			if (_playerInput.UI.NoteBook.IsPressed())
+				OpenNoteBook();
+			else
+				CloseNoteBook();
+		}
 
-	private void OnEnable()
-	{
-		_playerInput.Enable();
-	}
+		#region Input
 
-	private void OnDisable()
-	{
-		_playerInput.Disable();
-	}
+		private void OnNoteBook(InputAction.CallbackContext context)
+		{
+			if (context.performed)
+				_isViewing = true;
+			else if (context.canceled)
+				_isViewing = false;
+		}
 
-	private void OnDrawGizmosSelected()
-	{
-		Gizmos.color = Color.green;
+		private void OnTaskScroll(InputAction.CallbackContext context)
+		{
+			if (!_playerInput.UI.NoteBook.IsPressed())
+				return;
 
-		Gizmos.DrawWireSphere(_defaultPosition + _openedPositionOffset, 0.01f);
+			float scrollWheelValue = context.ReadValue<float>();
+
+			if (scrollWheelValue != 0)
+			{
+				if (scrollWheelValue > 0)
+					_taskIndex++;
+				else
+					_taskIndex--;
+
+				if (_taskIndex < 0)
+					_taskIndex = TaskManager.Instance.TaskCount - 1;
+				else if (_taskIndex > TaskManager.Instance.TaskCount - 1)
+					_taskIndex = 0;
+
+				TaskManager.Instance.SetNewCurrentTask(_taskIndex);
+			}
+		}
+
+		#endregion
+
+		private void OpenNoteBook()
+		{
+			Vector3 newPosition = _defaultPosition + _openedPositionOffset;
+
+			if (!_isViewing || transform.position == newPosition)
+				return;
+
+			transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * _animationSpeed);
+		}
+
+		private void CloseNoteBook()
+		{
+			if (_isViewing || transform.position == _defaultPosition)
+				return;
+
+			transform.position = Vector3.Lerp(transform.position, _defaultPosition, Time.deltaTime * _animationSpeed);
+		}
+
+		#region Text Methods
+
+		public void RewriteText(string text)
+		{
+			_taskDescription.text = text;
+		}
+
+		public void AddExtraText(string extraText)
+		{
+			string currentText = _taskDescription.text;
+
+			_taskDescription.text = $"{currentText}\n{extraText}";
+		}
+
+		private void WriteTextInNoteBook(Task task)
+		{
+			//Play writing text sound
+
+			FontStyles fontStyle = _defaultFontStyle;
+
+			if (task.IsCompleted)
+				fontStyle += (int)FontStyles.Strikethrough;
+
+			_taskName.fontStyle = fontStyle;
+
+			_taskDescription.fontStyle = fontStyle;
+
+			_taskName.text = task.Name;
+
+			_taskDescription.text = task.Description;
+		}
+
+		private void ClearNotebook()
+		{
+			_taskName.text = "";
+
+			_taskDescription.text = "";
+
+			if (_taskIndex == 0)
+				_taskIndex = TaskManager.Instance.TaskCount - 1;
+			else if (_taskIndex > 0)
+				_taskIndex--;
+		}
+
+		#endregion
+
+		private void DisableNoteBook()
+		{
+			Destroy(this);
+		}
+
+		private void OnEnable()
+		{
+			_playerInput.Enable();
+		}
+
+		private void OnDisable()
+		{
+			_playerInput.Disable();
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.green;
+
+			Gizmos.DrawWireSphere(_defaultPosition + _openedPositionOffset, 0.01f);
+		}
 	}
 }

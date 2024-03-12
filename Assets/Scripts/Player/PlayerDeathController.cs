@@ -3,33 +3,36 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PlayerDeathController : MonoBehaviour
+namespace Player
 {
-    [SerializeField][Range(1f, 10f)] private float _afterDeathDelay = 5f;
-    [SerializeField] private string _menuSceneName = "Menu";
-
-    public bool IsAlive { get; private set; } = true;
-
-    public event Action OnDeath;
-
-	public void Die()
+    public class PlayerDeathController : MonoBehaviour
     {
-        if (!IsAlive)
-            return;
+        [SerializeField][Range(1f, 10f)] private float _afterDeathDelay = 5f;
+        [SerializeField] private string _menuSceneName = "Menu";
 
-		Debug.Log("The player has died");
+        public bool IsAlive { get; private set; } = true;
 
-        IsAlive = false;
+        public event Action OnDeath;
 
-        OnDeath?.Invoke();
+        public void Die()
+        {
+            if (!IsAlive)
+                return;
 
-		StartCoroutine(LoadMenuScene());
-	}
+            Debug.Log("The player has died");
 
-    private IEnumerator LoadMenuScene()
-    {
-        yield return new WaitForSeconds(_afterDeathDelay);
+            IsAlive = false;
 
-        SceneManager.LoadScene(_menuSceneName);
+            OnDeath?.Invoke();
+
+            StartCoroutine(LoadMenuScene());
+        }
+
+        private IEnumerator LoadMenuScene()
+        {
+            yield return new WaitForSeconds(_afterDeathDelay);
+
+            SceneManager.LoadScene(_menuSceneName);
+        }
     }
 }

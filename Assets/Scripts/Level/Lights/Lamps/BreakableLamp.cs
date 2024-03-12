@@ -1,105 +1,110 @@
 using UnityEngine;
 
-public class BreakableLamp : FlickeringLamp
+namespace Level.Lights.Lamp
 {
-	public bool IsLampDestroyed { get; private set; } = false;
-
-	[Header("Destroying Lamp Event")]
-
-	[SerializeField] private ParticleSystem _electronicalSparkVF;
-
-	[Space(10)]
-	[SerializeField] private float _minLampLifeDelayBeforeBreaking = 40;
-	[SerializeField] private float _maxLampLifeDelayBeforeBreaking = 180;
-
-	private float _lampDelayBeforeBreakingRemaining;
-
-	private void Start()
+	public class BreakableLamp : FlickeringLamp
 	{
-		_electronicalSparkVF.gameObject.SetActive(false);
+		public bool IsLampDestroyed { get; private set; } = false;
 
-		_lampDelayBeforeBreakingRemaining = _maxLampLifeDelayBeforeBreaking;
+		[Header("Destroying Lamp Event")]
 
-		InitializeFlickeringLamp();
-	}	
+		[SerializeField] private ParticleSystem _electronicalSparkVF;
 
-	private void Update()
-	{
-		TryStartFlashingEvent();
+		[Space(10)]
+		[SerializeField] private float _minLampLifeDelayBeforeBreaking = 40;
+		[SerializeField] private float _maxLampLifeDelayBeforeBreaking = 180;
 
-		TryBreakLamp();
-	}
+		private float _lampDelayBeforeBreakingRemaining;
 
-	private void OnTriggerEnter(Collider other)
-	{
-		TryInvokeLamp(other);
-	}
-
-	private void TryBreakLamp()
-	{
-		if (!IsLampDestroyed)
+		private void Start()
 		{
-			_lampDelayBeforeBreakingRemaining -= Time.deltaTime;
+			_electronicalSparkVF.gameObject.SetActive(false);
 
-			if (_lampDelayBeforeBreakingRemaining <= 0)
-				BreakLamp();
+			_lampDelayBeforeBreakingRemaining = _maxLampLifeDelayBeforeBreaking;
+
+			InitializeFlickeringLamp();
 		}
-		else if (_lampDelayBeforeBreakingRemaining <= 0)
-			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
-	}
 
-	protected override void TryInvokeLamp(Collider other)
-	{
-		if (IsLampDestroyed)
-			return;
+		private void Update()
+		{
+			TryStartFlashingEvent();
 
-		base.TryInvokeLamp(other);
-	}
+			TryBreakLamp();
+		}
 
-	protected override bool IsCanStartFlashingEvent()
-	{
-		if (IsLampDestroyed)
-			return false;
+		private void OnTriggerEnter(Collider other)
+		{
+			TryInvokeLamp(other);
+		}
 
-		return base.IsCanStartFlashingEvent();
-	}
+		private void TryBreakLamp()
+		{
+			if (!IsLampDestroyed)
+			{
+				_lampDelayBeforeBreakingRemaining -= Time.deltaTime;
 
-	public void RepairLamp()
-	{
-		if (!IsLampDestroyed)
-			return;
+				if (_lampDelayBeforeBreakingRemaining <= 0)
+					BreakLamp();
+			}
+			else if (_lampDelayBeforeBreakingRemaining <= 0)
+				_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
+		}
 
-		LampRenderer.gameObject.SetActive(true);
+		protected override void TryInvokeLamp(Collider other)
+		{
+			if (IsLampDestroyed)
+				return;
 
-		_electronicalSparkVF.gameObject.SetActive(false);
+			base.TryInvokeLamp(other);
+		}
 
-		SwitchLampState(true);
+		protected override bool IsCanStartFlashingEvent()
+		{
+			if (IsLampDestroyed)
+				return false;
 
-		StartFlashingEvent();
+			return base.IsCanStartFlashingEvent();
+		}
 
-		IsLampDestroyed = false;
-	}
+		[ContextMenu(nameof(RepairLamp))]
+		public void RepairLamp()
+		{
+			if (!IsLampDestroyed)
+				return;
 
-	public void BreakLamp()
-	{
-		if (IsLampDestroyed)
-			return;
+			LampRenderer.gameObject.SetActive(true);
 
-		IsLampDestroyed = true;
+			_electronicalSparkVF.gameObject.SetActive(false);
 
-		LampRenderer.gameObject.SetActive(false);
+			SwitchLampState(true);
 
-		SwitchLampState(false);
+			StartFlashingEvent();
 
-		_electronicalSparkVF.gameObject.SetActive(true);
-	}
+			IsLampDestroyed = false;
+		}
 
-	private void OnValidate()
-	{
-		if (_minLampLifeDelayBeforeBreaking < 0)
-			_minLampLifeDelayBeforeBreaking = 0;
+		[ContextMenu(nameof(BreakLamp))]
+		public void BreakLamp()
+		{
+			if (IsLampDestroyed)
+				return;
 
-		if (_maxLampLifeDelayBeforeBreaking < _minLampLifeDelayBeforeBreaking)
-			_maxLampLifeDelayBeforeBreaking = _minLampLifeDelayBeforeBreaking;
+			IsLampDestroyed = true;
+
+			LampRenderer.gameObject.SetActive(false);
+
+			SwitchLampState(false);
+
+			_electronicalSparkVF.gameObject.SetActive(true);
+		}
+
+		private void OnValidate()
+		{
+			if (_minLampLifeDelayBeforeBreaking < 0)
+				_minLampLifeDelayBeforeBreaking = 0;
+
+			if (_maxLampLifeDelayBeforeBreaking < _minLampLifeDelayBeforeBreaking)
+				_maxLampLifeDelayBeforeBreaking = _minLampLifeDelayBeforeBreaking;
+		}
 	}
 }

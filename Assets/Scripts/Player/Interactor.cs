@@ -1,125 +1,129 @@
+using Items;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(PlayerDeathController))]
-public class Interactor : MonoBehaviour
+namespace Player
 {
-	[field: SerializeField] public Camera PlayerCamera { get; private set; }
-
-	public float InteractionDistance { get; private set; } = 3f;
-
-	[Header("Crosshair")]
-	[SerializeField] private Image _crosshairImage;
-
-	[SerializeField] private Color _defaultCrosshairColor = new(108, 108, 108, 255);
-	[SerializeField] private Color _interactableCrosshairColor = new(152, 152, 152, 255);
-
-	private PlayerInput _playerInput;
-
-	private PlayerDeathController _playerDeathController;
-
-	private IInteractable _interactableObject;
-
-	private Ray _interactionRay => new(PlayerCamera.transform.position, PlayerCamera.transform.forward);
-
-	private bool _isHitInteractableObject = false;
-
-	private void Awake()
+	[RequireComponent(typeof(PlayerDeathController))]
+	public class Interactor : MonoBehaviour
 	{
-		_playerInput = new();
+		[field: SerializeField] public Camera PlayerCamera { get; private set; }
 
-		_playerInput.Player.Interact.performed += OnStartInteract;
-		_playerInput.Player.Interact.canceled += OnStopInteract;
+		public float InteractionDistance { get; private set; } = 3f;
 
-		_crosshairImage.color = _defaultCrosshairColor;
+		[Header("Crosshair")]
+		[SerializeField] private Image _crosshairImage;
 
-		_playerDeathController = GetComponent<PlayerDeathController>();
+		[SerializeField] private Color _defaultCrosshairColor = new(108, 108, 108, 255);
+		[SerializeField] private Color _interactableCrosshairColor = new(152, 152, 152, 255);
 
-		_playerDeathController.OnDeath += DisableInteractor;
-	}
+		private PlayerInput _playerInput;
 
-	private void Update()
-	{
-		PaintCrossHair();
-	}
+		private PlayerDeathController _playerDeathController;
 
-	private void PaintCrossHair()
-	{
-		bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);
+		private IInteractable _interactableObject;
 
-		bool isInteractable = false;
+		private Ray _interactionRay => new(PlayerCamera.transform.position, PlayerCamera.transform.forward);
 
-		bool isHaveInteractableParent = false;
+		private bool _isHitInteractableObject = false;
 
-		if (isHitted)
+		private void Awake()
 		{
-			isInteractable = hit.collider.TryGetComponent(out IInteractable _) || hit.collider.TryGetComponent(out Item _);
+			_playerInput = new();
 
-			if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
-				isHaveInteractableParent = hit.transform.TryGetComponent(out IInteractable _) || hit.transform.TryGetComponent(out Item _);
-		}
+			_playerInput.Player.Interact.performed += OnStartInteract;
+			_playerInput.Player.Interact.canceled += OnStopInteract;
 
-		_isHitInteractableObject = isHitted && (isInteractable || isHaveInteractableParent);
-
-		if (_isHitInteractableObject)
-			_crosshairImage.color = _interactableCrosshairColor;
-		else
 			_crosshairImage.color = _defaultCrosshairColor;
-	}
 
-	#region Input Actions
+			_playerDeathController = GetComponent<PlayerDeathController>();
 
-	private void OnStartInteract(InputAction.CallbackContext context)
-	{
-		if (Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance))
+			_playerDeathController.OnDeath += DisableInteractor;
+		}
+
+		private void Update()
 		{
-			if (hit.collider.TryGetComponent(out _interactableObject))
+			PaintCrossHair();
+		}
+
+		private void PaintCrossHair()
+		{
+			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);
+
+			bool isInteractable = false;
+
+			bool isHaveInteractableParent = false;
+
+			if (isHitted)
 			{
-				_interactableObject.StartInteract();
+				isInteractable = hit.collider.TryGetComponent(out IInteractable _) || hit.collider.TryGetComponent(out Item _);
+
+				if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
+					isHaveInteractableParent = hit.transform.TryGetComponent(out IInteractable _) || hit.transform.TryGetComponent(out Item _);
 			}
-			else if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
+
+			_isHitInteractableObject = isHitted && (isInteractable || isHaveInteractableParent);
+
+			if (_isHitInteractableObject)
+				_crosshairImage.color = _interactableCrosshairColor;
+			else
+				_crosshairImage.color = _defaultCrosshairColor;
+		}
+
+		#region Input Actions
+
+		private void OnStartInteract(InputAction.CallbackContext context)
+		{
+			if (Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance))
 			{
-				if (hit.transform.TryGetComponent(out _interactableObject))
+				if (hit.collider.TryGetComponent(out _interactableObject))
+				{
 					_interactableObject.StartInteract();
+				}
+				else if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
+				{
+					if (hit.transform.TryGetComponent(out _interactableObject))
+						_interactableObject.StartInteract();
+				}
 			}
 		}
-	}
 
-	private void OnStopInteract(InputAction.CallbackContext context)
-	{
-		if (_interactableObject != null)
+		private void OnStopInteract(InputAction.CallbackContext context)
 		{
-			_interactableObject.StopInteract();
+			if (_interactableObject != null)
+			{
+				_interactableObject.StopInteract();
 
-			_interactableObject = null;
+				_interactableObject = null;
+			}
 		}
-	}
 
-	#endregion
+		#endregion
 
-	private void DisableInteractor()
-	{
-		Destroy(this);
-	}
+		private void DisableInteractor()
+		{
+			Destroy(this);
+		}
 
-	private void OnEnable()
-	{
-		_playerInput.Enable();
-	}
+		private void OnEnable()
+		{
+			_playerInput.Enable();
+		}
 
-	private void OnDisable()
-	{
-		_playerInput.Disable();
-	}
+		private void OnDisable()
+		{
+			_playerInput.Disable();
+		}
 
-	private void OnDrawGizmosSelected()
-	{
-		if (_isHitInteractableObject)
-			Gizmos.color = Color.green;
-		else
-			Gizmos.color = Color.red;
+		private void OnDrawGizmosSelected()
+		{
+			if (_isHitInteractableObject)
+				Gizmos.color = Color.green;
+			else
+				Gizmos.color = Color.red;
 
-		Gizmos.DrawRay(_interactionRay.origin, _interactionRay.direction * InteractionDistance);
+			Gizmos.DrawRay(_interactionRay.origin, _interactionRay.direction * InteractionDistance);
+		}
 	}
 }

@@ -1,23 +1,28 @@
+using Level.Lights.Lamp;
+using Player;
 using UnityEngine;
 
-public class LampItem : Item, IUsable
+namespace Items
 {
-	[SerializeField] private Camera _playerCamera;
-	[SerializeField, Range(0.5f, 5f)] private float _interactionDistance = 1f;
-
-	public void Use()
+	public class LampItem : Item, IUsable
 	{
-		if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _interactionDistance))
+		[SerializeField] private Camera _playerCamera;
+		[SerializeField, Range(0.5f, 5f)] private float _interactionDistance = 1f;
+
+		public void Use()
 		{
-			Debug.DrawRay(_playerCamera.transform.position, _playerCamera.transform.forward * _interactionDistance);
-
-			if (hit.transform.TryGetComponent(out BreakableLamp lamp) && lamp.IsLampDestroyed)
+			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _interactionDistance))
 			{
-				lamp.RepairLamp();
+				Debug.DrawRay(_playerCamera.transform.position, _playerCamera.transform.forward * _interactionDistance);
 
-				PlayerInventory.Instance.DropItem();
+				if (hit.transform.TryGetComponent(out BreakableLamp lamp) && lamp.IsLampDestroyed)
+				{
+					lamp.RepairLamp();
 
-				Destroy(gameObject);
+					PlayerInventory.Instance.DropItem();
+
+					Destroy(gameObject);
+				}
 			}
 		}
 	}
