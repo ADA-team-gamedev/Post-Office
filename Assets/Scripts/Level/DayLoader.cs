@@ -30,7 +30,7 @@ namespace Level
 
         [SerializedDictionary(nameof(WeekDay), nameof(Room))]
         public SerializedDictionary<WeekDay, Room> _dayObjects;
-
+        
         private WeekDay _currentWeekDay = WeekDay.Monday;
         private const string _path = "/WeekDay";
 
@@ -48,9 +48,14 @@ namespace Level
         [ContextMenu(nameof(LoadDayProgress))]
         public void LoadDayProgress()
         {
-            WeekDay weekDay = _dataService.LoadData<WeekDay>(_path, _isEncrypted);
-
-            _currentWeekDay = weekDay;
+            if (_dataService.LoadData(out WeekDay weekDay, _path, _isEncrypted))
+            {
+                _currentWeekDay = weekDay;
+            }
+            else
+            {
+                SaveDayProgress();
+			}
         }
 
         [ContextMenu(nameof(SaveDayProgress))]

@@ -1,4 +1,5 @@
 using Items;
+using Level.Lights.Lamp;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -51,19 +52,21 @@ namespace Player
 		{
 			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);
 
-			bool isInteractable = false;
-
 			bool isHaveInteractableParent = false;
 
 			if (isHitted)
 			{
-				isInteractable = hit.collider.TryGetComponent(out IInteractable _) || hit.collider.TryGetComponent(out Item _);
+				bool isPickableItem = hit.collider.TryGetComponent(out Item item) && item.CanBePicked;
+
+				bool isInteractable = hit.collider.TryGetComponent(out IInteractable _) || hit.collider.TryGetComponent(out Lamp _);
 
 				if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
-					isHaveInteractableParent = hit.transform.TryGetComponent(out IInteractable _) || hit.transform.TryGetComponent(out Item _);
-			}
+					isHaveInteractableParent = hit.transform.TryGetComponent(out IInteractable _);
 
-			_isHitInteractableObject = isHitted && (isInteractable || isHaveInteractableParent);
+				_isHitInteractableObject = isInteractable || isHaveInteractableParent || isPickableItem;
+			}
+			else
+				_isHitInteractableObject = false;
 
 			if (_isHitInteractableObject)
 				_crosshairImage.color = _interactableCrosshairColor;

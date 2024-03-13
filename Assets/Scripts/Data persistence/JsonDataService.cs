@@ -14,18 +14,18 @@ namespace DataPersistance
 
 		public bool SaveData<T>(string relativePath, T data, bool encrypted)
 		{
-			string path = $"{Application.persistentDataPath}{relativePath}";
+			string path = $"{Application.persistentDataPath}/Saves{relativePath}";
 
 			try
 			{
 				if (File.Exists(path))
 				{
-					Debug.Log($"Data alredy exists in path: {path}. Deleting old file and writing a new one!");
+					Debug.Log($"Data alredy exists in path: {path}. <color=green>Deleting old file and writing a new one!</color>");
 
 					File.Delete(path);
 				}
 				else
-					Debug.Log("Writing file for the first time!");
+					Debug.Log("<color=green>Writing file for the first time!</color>");
 
 				using FileStream stream = File.Create(path);
 
@@ -61,31 +61,37 @@ namespace DataPersistance
 			cryptoStream.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(data)));
 		}
 
-		public T LoadData<T>(string relativePath, bool encrypted)
+		public bool LoadData<T>(out T savedData, string relativePath, bool encrypted)
 		{
-			string path = $"{Application.persistentDataPath}{relativePath}";
-
+			string path = $"{Application.persistentDataPath}/Saves{relativePath}";
+			
 			if (!File.Exists(path))
 			{
 				Debug.LogError($"Cannot load file at {path}. File doesn't exist!");
+
+				savedData = default;
+
+				return false;
 
 				throw new FileNotFoundException($"{path} doesn't exist!");
 			}
 
 			try
 			{
-				T data;
-
 				if (encrypted)
-					data = ReadEncryptedData<T>(path);
+					savedData = ReadEncryptedData<T>(path);
 				else
-					data = JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
+					savedData = JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
 
-				return data;
+				return true;
 			}
 			catch (Exception exception)
 			{
 				Debug.LogError($"Failed to load data due to: {exception.Message} {exception.StackTrace}");
+
+				savedData = default;
+
+				return false;
 
 				throw exception;
 			}
@@ -109,7 +115,8 @@ namespace DataPersistance
 
 			string result = reader.ReadToEnd();
 
-			Debug.Log($"Decrypted result (if the following is not legible, probably wrond key or iv): {result}");
+			Debug.Log($"<color=green>Decrypted result</color> (if the following is not legible, probably wrond key or iv): {result}");
+
 			return JsonConvert.DeserializeObject<T>(result);
 		}
 	}
