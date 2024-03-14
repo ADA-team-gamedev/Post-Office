@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 namespace Menu
@@ -6,7 +6,7 @@ namespace Menu
 	public class OptionData
 	{
 		[field: SerializeField]
-		public List<Vector2Int> ScreenResolutions { get; private set; } = new()
+		public Vector2Int[] ScreenResolutions { get; private set; } = 
 		{
 			new(1920, 1080),
 			new(1024, 768),
@@ -31,21 +31,43 @@ namespace Menu
 			{
 				return _selectedScreenResolution;
 			}
-			private set
+			set
 			{
-				if (value < 0 || value >= ScreenResolutions.Count)
-					return;
-
-				_selectedScreenResolution = value;
+				if (value < 0)
+					_selectedScreenResolution = ScreenResolutions.Length - 1;
+				else if (value > ScreenResolutions.Length - 1)
+					_selectedScreenResolution = 0;
+				else
+					_selectedScreenResolution = value;
 			}
 		}
 
 		private int _selectedScreenResolution = 0;
 
-		public FullScreenMode FullScreenMode { get; set; } = FullScreenMode.ExclusiveFullScreen;
+		public FullScreenMode FullScreenMode 
+		{
+			get
+			{
+				return _selectedScreenMode;
+			}
+			set
+			{
+				int enumLength = Enum.GetValues(typeof(FullScreenMode)).Length;
+
+				FullScreenMode lastElement = (FullScreenMode)(enumLength - 1);
+
+				if (value < 0)
+					_selectedScreenMode = lastElement;
+				else if (value > lastElement)
+					_selectedScreenMode = 0;
+				else
+					_selectedScreenMode = value;
+			}
+		} 
+		private FullScreenMode _selectedScreenMode = FullScreenMode.ExclusiveFullScreen;
 
 		[field: SerializeField]
-		public List<int> FrameRates { get; private set; } = new()
+		public int[] FrameRates { get; private set; } = 
 		{
 			0,
 			15,
@@ -64,12 +86,14 @@ namespace Menu
 			{
 				return _selectedFrameRates;
 			}
-			private set
+			set
 			{
-				if (value < 0 || value >= FrameRates.Count)
-					return;
-
-				_selectedFrameRates = value;
+				if (value < 0)
+					_selectedFrameRates = FrameRates.Length - 1;
+				else if (value > FrameRates.Length - 1)
+					_selectedFrameRates = 0;
+				else
+					_selectedFrameRates = value;
 			}
 		}
 

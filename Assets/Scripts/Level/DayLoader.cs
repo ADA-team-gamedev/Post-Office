@@ -24,7 +24,6 @@ namespace Level
         [Header("Save System")]
 
         private IDataService _dataService = new JsonDataService();
-        [SerializeField] private bool _isEncrypted = false;
 
         [Header("Spawn Objects")]
 
@@ -48,20 +47,16 @@ namespace Level
         [ContextMenu(nameof(LoadDayProgress))]
         public void LoadDayProgress()
         {
-            if (_dataService.LoadData(out WeekDay weekDay, _path, _isEncrypted))
-            {
-                _currentWeekDay = weekDay;
-            }
-            else
-            {
-                SaveDayProgress();
-			}
+            if (_dataService.LoadData(out WeekDay weekDay, _path, true))
+				_currentWeekDay = weekDay;
+
+            SaveDayProgress();
         }
 
         [ContextMenu(nameof(SaveDayProgress))]
         public void SaveDayProgress()
         {
-            _dataService.SaveData(_path, _currentWeekDay, _isEncrypted);
+            _dataService.SaveData(_path, _currentWeekDay, true);
         }
 
         [ContextMenu(nameof(ResetSaves))]

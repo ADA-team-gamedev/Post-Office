@@ -61,7 +61,7 @@ namespace DataPersistance
 			cryptoStream.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(data)));
 		}
 
-		public bool LoadData<T>(out T savedData, string relativePath, bool encrypted)
+		public bool LoadData<T>(out T data, string relativePath, bool encrypted)
 		{
 			string path = $"{Application.persistentDataPath}/Saves{relativePath}";
 			
@@ -69,7 +69,7 @@ namespace DataPersistance
 			{
 				Debug.LogError($"Cannot load file at {path}. File doesn't exist!");
 
-				savedData = default;
+				data = default(T);	
 
 				return false;
 
@@ -79,9 +79,9 @@ namespace DataPersistance
 			try
 			{
 				if (encrypted)
-					savedData = ReadEncryptedData<T>(path);
+					data = ReadEncryptedData<T>(path);
 				else
-					savedData = JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
+					data = JsonConvert.DeserializeObject<T>(File.ReadAllText(path));
 
 				return true;
 			}
@@ -89,7 +89,7 @@ namespace DataPersistance
 			{
 				Debug.LogError($"Failed to load data due to: {exception.Message} {exception.StackTrace}");
 
-				savedData = default;
+				data = default(T);
 
 				return false;
 

@@ -17,10 +17,9 @@ namespace Menu
 
 		#region Load System
 
-		private OptionData _optionData = new();
+		public OptionData _optionData = new();
 
 		private IDataService _dataService = new JsonDataService();
-		private bool _isEncrypted = false;
 		private string _path = "/Settings";
 
 		#endregion
@@ -30,15 +29,31 @@ namespace Menu
 			LoadSettings();
 		}
 
+		[ContextMenu(nameof(LoadSettings))]
 		private void LoadSettings()
 		{
-			if (_dataService.LoadData(out OptionData optionData, _path, _isEncrypted))
-				_optionData = optionData;		
+			if (_dataService.LoadData(out OptionData optionData, _path, true))
+				_optionData = optionData;
 
 			ApplyChanges();
 		}
 
-		private void ApplyChanges()
+		[ContextMenu(nameof(ResetSave))]
+		private void ResetSave()
+		{
+			OptionData optionData = new();
+
+			_dataService.SaveData(_path, optionData, true);
+		}
+
+		[ContextMenu(nameof(SaveSettings))]
+		private void SaveSettings()
+		{
+			_dataService.SaveData(_path, _optionData, true);
+		}
+
+		[ContextMenu(nameof(ApplyChanges))]
+		public void ApplyChanges()
 		{
 			Vector2Int resolution = _optionData.ScreenResolutions[_optionData.SelectedScreenResolutionIndex];
 
@@ -51,122 +66,58 @@ namespace Menu
 			SaveSettings();
 			
 			UpdateTexts();
-		}
+		}	
 
-		private void UpdateTexts()
+		public void UpdateTexts()
 		{
+			Debug.Log(_optionData.SelectedScreenResolutionIndex);
+
 			Vector2Int resolution = _optionData.ScreenResolutions[_optionData.SelectedScreenResolutionIndex];
 
 			_resolutionViewText.text = $"{resolution.x}x{resolution.y}";
-
-			_vSyncToggle.isOn = _optionData.VSyncCountEnable;
 
 			_screenModeText.text = $"{_optionData.FullScreenMode}";
 
 			_frameRateText.text = $"{_optionData.FrameRates[_optionData.SelectedFrameRatesIndex]}";
 		}
 
-		private void SaveSettings()
+		#region Buttons
+
+		public void RightResolutionButton()
 		{
-			_dataService.SaveData(_path, _optionData, _isEncrypted);
+			_optionData.SelectedScreenResolutionIndex++;
 		}
 
-		[ContextMenu("Change")]
-		private void ChangeSetting()
+		public void LeftResolutionButton()
 		{
-
+			_optionData.SelectedScreenResolutionIndex--;
 		}
 
-		//#region Resolution
+		public void RightFrameRateButton()
+		{
+			_optionData.SelectedFrameRatesIndex++;
+		}
 
-		//public void RightResolutionChangeButton()
-		//{
-		//	_selectedResolutionIndex++;
+		public void LeftFrameRateButton()
+		{
+			_optionData.SelectedFrameRatesIndex--;
+		}
 
-		//	if (_selectedResolutionIndex > _screenResolutions.Count - 1)
-		//		_selectedResolutionIndex = 0;
+		public void RightFullScreenModeButton()
+		{
+			_optionData.FullScreenMode++;
+		}
 
-		//	Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
+		public void LeftFullScreenModeButton()
+		{
+			_optionData.FullScreenMode--;
+		}
 
-		//	UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
-		//}
+		public void ChangeVSyncState()
+		{
+			_optionData.VSyncCountEnable = !_optionData.VSyncCountEnable;
+		}
 
-		//public void LeftResolutionChangeButton()
-		//{
-		//	_selectedResolutionIndex--;
-
-		//	if (_selectedResolutionIndex < 0)
-		//		_selectedResolutionIndex = _screenResolutions.Count - 1;
-
-		//	Vector2Int resolution = _screenResolutions[_selectedResolutionIndex];
-
-		//	UpdateOptionText(_resolutionViewText, $"{resolution.x}x{resolution.y}");
-		//}
-
-		//#endregion
-
-		//#region ScreenMode
-
-		//public void RightScreenModeButton()
-		//{
-		//	_screenMode--;
-
-		//	var fullScreenMode = Enum.GetValues(typeof(FullScreenMode));
-
-		//	FullScreenMode maxEnumValue = (FullScreenMode)fullScreenMode.GetValue(fullScreenMode.Length - 1);
-		//	FullScreenMode minEnumValue = (FullScreenMode)fullScreenMode.GetValue(0);
-
-		//	if (_screenMode == FullScreenMode.MaximizedWindow)
-		//		_screenMode--;
-
-		//	if (_screenMode < minEnumValue)
-		//		_screenMode = maxEnumValue;
-
-		//	UpdateOptionText(_screenModeText, $"{_screenMode}");
-		//}
-
-		//public void LeftScreenModeButton()
-		//{
-		//	_screenMode++;
-
-		//	if (_screenMode == FullScreenMode.MaximizedWindow)
-		//		_screenMode++;
-
-		//	var fullScreenMode = Enum.GetValues(typeof(FullScreenMode));
-
-		//	FullScreenMode maxEnumValue = (FullScreenMode)fullScreenMode.GetValue(fullScreenMode.Length - 1);
-		//	FullScreenMode minEnumValue = (FullScreenMode)fullScreenMode.GetValue(0);
-
-		//	if (_screenMode > maxEnumValue)
-		//		_screenMode = minEnumValue;
-
-		//	UpdateOptionText(_screenModeText, $"{_screenMode}");
-		//}
-
-		//#endregion
-
-		//#region FPS
-
-		//public void RightFrameRateChangeButton()
-		//{
-		//	_selectedFrameRateIndex++;
-
-		//	if (_selectedFrameRateIndex > _frameRates.Count - 1)
-		//		_selectedFrameRateIndex = 0;
-
-		//	UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
-		//}
-
-		//public void LeftFrameRateChangeButton()
-		//{
-		//	_selectedFrameRateIndex--;
-
-		//	if (_selectedFrameRateIndex < 0)
-		//		_selectedFrameRateIndex = _frameRates.Count - 1;
-
-		//	UpdateOptionText(_frameRateText, $"{_frameRates[_selectedFrameRateIndex]}");
-		//}
-
-		//#endregion
+		#endregion
 	}
 }
