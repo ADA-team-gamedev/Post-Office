@@ -1,3 +1,5 @@
+using DataPersistance;
+using Level;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,26 +10,27 @@ namespace Menu
 		[Header("Menus")]
 		[SerializeField] private GameObject _settingsWindow;
 
-		private void Awake()
+		private IDataService _dataService = new JsonDataService();
+
+		private void Start()
 		{
 			_settingsWindow.SetActive(false);
 
 			Cursor.lockState = CursorLockMode.None;
 		}
 
-		public void OnResumeButton(string sceneName)
+		public void OnResumeButton(string sceneToLoad)
 		{
-			SceneManager.LoadScene(sceneName);
+			if (_dataService.SaveData(SceneLoader.LoadingInfoPath, sceneToLoad, true))
+				SceneManager.LoadScene(SceneLoader.LoadingSceneName);
 		}
 
-		public void OnNewGameButton()
+		public void OnNewGameButton(string sceneToLoad)
 		{
-			//reset level data and create new, then load game scene
-		}
+			WeekDay weekDay = WeekDay.Monday;
 
-		public void OnLoadButton()
-		{
-			//Load game data with level
+			if (_dataService.SaveData(DayObjectLoader.WeekDayPath, weekDay, true))
+				OnResumeButton(sceneToLoad);		
 		}
 
 		public void OnExit()

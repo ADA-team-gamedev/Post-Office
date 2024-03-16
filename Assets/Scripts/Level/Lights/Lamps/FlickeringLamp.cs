@@ -10,7 +10,7 @@ namespace Level.Lights.Lamp
 		[SerializeField] private bool _isFlashableLamp = true;
 
 		[SerializeField] private float _timeSinceGameStartToStartFlashing = 60f;
-		[SerializeField, Range(1, 100)] private int _flashingStartChance = 10;
+		[SerializeField, Range(1, 100)] private int _flashingStartChance = 50;
 
 		[Space(10)]
 		[SerializeField] private float _minFlashingCooldownDelay = 30;
@@ -91,7 +91,13 @@ namespace Level.Lights.Lamp
 				int randomNumber = Random.Range(1, 100);
 
 				if (_flashingStartChance > randomNumber)
+				{
 					StartFlashingEvent();
+				}
+				else
+				{
+					_flashingCooldownRemaining = Random.Range(_minFlashingCooldownDelay, _maxFlashingCooldownDelay);
+				}
 			}
 			else
 			{
@@ -111,7 +117,7 @@ namespace Level.Lights.Lamp
 
 		protected virtual bool IsCanStartFlashingEvent()
 		{
-			if (!_isFlashableLamp || Time.realtimeSinceStartup < _timeSinceGameStartToStartFlashing)
+			if (!_isFlashableLamp || Time.timeSinceLevelLoad < _timeSinceGameStartToStartFlashing)
 				return false;
 
 			return true;

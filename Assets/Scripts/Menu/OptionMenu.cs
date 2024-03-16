@@ -20,7 +20,7 @@ namespace Menu
 		public OptionData _optionData = new();
 
 		private IDataService _dataService = new JsonDataService();
-		private string _path = "/Settings";
+		public const string SettingDataPath = "/Settings";
 
 		#endregion
 
@@ -32,9 +32,9 @@ namespace Menu
 		[ContextMenu(nameof(LoadSettings))]
 		private void LoadSettings()
 		{
-			if (_dataService.LoadData(out OptionData optionData, _path, true))
+			if (_dataService.LoadData(out OptionData optionData, SettingDataPath, true))
 				_optionData = optionData;
-
+			
 			ApplyChanges();
 		}
 
@@ -43,13 +43,13 @@ namespace Menu
 		{
 			OptionData optionData = new();
 
-			_dataService.SaveData(_path, optionData, true);
+			_dataService.SaveData(SettingDataPath, optionData, true);
 		}
 
 		[ContextMenu(nameof(SaveSettings))]
 		private void SaveSettings()
 		{
-			_dataService.SaveData(_path, _optionData, true);
+			_dataService.SaveData(SettingDataPath, _optionData, true);
 		}
 
 		[ContextMenu(nameof(ApplyChanges))]
@@ -70,8 +70,6 @@ namespace Menu
 
 		public void UpdateTexts()
 		{
-			Debug.Log(_optionData.SelectedScreenResolutionIndex);
-
 			Vector2Int resolution = _optionData.ScreenResolutions[_optionData.SelectedScreenResolutionIndex];
 
 			_resolutionViewText.text = $"{resolution.x}x{resolution.y}";

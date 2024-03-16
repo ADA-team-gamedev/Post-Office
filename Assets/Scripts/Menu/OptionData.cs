@@ -64,7 +64,7 @@ namespace Menu
 					_selectedScreenMode = value;
 			}
 		} 
-		private FullScreenMode _selectedScreenMode = FullScreenMode.ExclusiveFullScreen;
+		private FullScreenMode _selectedScreenMode = FullScreenMode.FullScreenWindow;
 
 		[field: SerializeField]
 		public int[] FrameRates { get; private set; } = 
