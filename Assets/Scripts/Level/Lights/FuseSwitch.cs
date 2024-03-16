@@ -1,79 +1,111 @@
+using Player;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class FuseSwitch : MonoBehaviour, IInteractable
+namespace Level.Lights
 {
-	[field: SerializeField] public bool IsEnabled { get; private set; }
-
-	[Space(10)]
-
-	public UnityEvent OnSwitchEnabled;
-	public UnityEvent OnSwitchDisabled;
-
-	public event Action OnSwitchStateChanged;
-
-	private FuseBox _generator;
-
-	private Animator _animator;
-
-	private void Awake()
+	public class FuseSwitch : MonoBehaviour, IInteractable
 	{
-		_animator = GetComponent<Animator>();
+		[field: SerializeField] public bool IsEnabled { get; private set; } = false;
 
-		_generator = GetComponentInParent<FuseBox>();	
-	}
+		[Header("Switch Aniamtion")]
 
-	private void Start()
-	{
-		if (IsEnabled)
-			EnableSwitch();
-		else
-			DisableSwitch();
-	}
+		[SerializeField] private float _newSwitchYPosition = -1f;
 
-	public void StartInteract()
-	{
-		if (IsEnabled)
-			DisableSwitch();
-		else
-			EnableSwitch();		
-	}
+		[SerializeField][Range(1f, 100f)] private float _animationSpeed = 15f;
 
-	public void StopInteract()
-	{
+		private float _defaultSwitchYPosition;
 
-	}
+		[Header("Actions")]
 
-	public void DisableSwitch()
-	{
-		IsEnabled = false;
+		public UnityEvent OnSwitchEnabled;
+		public UnityEvent OnSwitchDisabled;
 
-		OnSwitchStateChanged?.Invoke();
+		public event Action OnSwitchStateChanged;
 
-		_animator.SetTrigger("OnDisable");
+		private FuseBox _generator;
 
-		OnSwitchDisabled.Invoke();
-		
-		_generator.OnFuseEnabled.RemoveListener(ActiveSwitchLater);
-	}
+		private void Awake()
+		{
+			_generator = GetComponentInParent<FuseBox>();
+		}
 
-	public void EnableSwitch()
-	{
-		IsEnabled = true;
+		private void Start()
+		{
+			_defaultSwitchYPosition = transform.position.y;
 
-		OnSwitchStateChanged?.Invoke();
+			if (IsEnabled)
+				EnableSwitch();
+			else
+				DisableSwitch();
+		}
 
-		_animator.SetTrigger("OnEnable");
+		private void Update()
+		{
+			if (IsEnabled)
+				MoveSwitchTo(_defaultSwitchYPosition + _newSwitchYPosition);
+			else
+				MoveSwitchTo(_defaultSwitchYPosition);
+		}
 
-		if (_generator.IsEnabled)
+		private void MoveSwitchTo(float newYPosition)
+		{
+			if (Mathf.Approximately(transform.position.y, newYPosition))
+				return;
+
+			Vector3 newPosition = new(transform.position.x, newYPosition, transform.position.z);
+
+			transform.position = Vector3.Lerp(transform.position, newPosition, _animationSpeed * Time.deltaTime);
+		}
+
+		#region Player Interaction
+
+		public void StartInteract()
+		{
+			if (IsEnabled)
+				DisableSwitch();
+			else
+				EnableSwitch();
+		}
+
+		public void StopInteract()
+		{
+
+		}
+
+		#endregion
+
+		#region Switch Logic
+
+		public void DisableSwitch()
+		{
+			IsEnabled = false;
+
+			OnSwitchStateChanged?.Invoke();
+
+			OnSwitchDisabled.Invoke();
+
+			_generator.OnFuseEnabled.RemoveListener(ActiveSwitchLater);
+		}
+
+		public void EnableSwitch()
+		{
+			IsEnabled = true;
+
+			OnSwitchStateChanged?.Invoke();
+
+			if (_generator.IsEnabled)
+				OnSwitchEnabled.Invoke();
+			else
+				_generator.OnFuseEnabled.AddListener(ActiveSwitchLater);
+		}
+
+		private void ActiveSwitchLater()
+		{
 			OnSwitchEnabled.Invoke();
-		else
-			_generator.OnFuseEnabled.AddListener(ActiveSwitchLater);
-	}
+		}
 
-	private void ActiveSwitchLater()
-	{
-		OnSwitchEnabled.Invoke();
+		#endregion
 	}
 }

@@ -391,6 +391,7 @@ MonoBehaviour:
   _rotationSpeed: 5
   _playerInventory: {fileID: 7057687486098593165}
   _playerCamera: {fileID: 363979862261386888}
+  _positionOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &8816672792301484319
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,6 +407,7 @@ GameObject:
   - component: {fileID: 7057687486098593165}
   - component: {fileID: 5243342986443899683}
   - component: {fileID: 4974854547316477124}
+  - component: {fileID: 6713602787324849256}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -543,6 +545,7 @@ MonoBehaviour:
   _maxSanityValue: 100
   _sanityDecreaseSpeed: 1
   _sanityVolume: {fileID: 0}
+  _slider: {fileID: 0}
 --- !u!114 &4974854547316477124
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -559,3 +562,17 @@ MonoBehaviour:
   _crosshairImage: {fileID: 0}
   _defaultCrosshairColor: {r: 0.42352942, g: 0.42352942, b: 0.42352942, a: 1}
   _interactableCrosshairColor: {r: 0.59607846, g: 0.59607846, b: 0.59607846, a: 1}
+--- !u!114 &6713602787324849256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8816672792301484319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eca1369fdd3f48748af1551d08aa304b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _afterDeathDelay: 5
+  _menuSceneName: Menu

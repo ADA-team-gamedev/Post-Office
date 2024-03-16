@@ -1,3 +1,4 @@
+using Enemy;
 using UnityEditor;
 using UnityEngine;
 
@@ -35,11 +36,11 @@ public class FieldOfViewEditor : Editor
 
 		Handles.DrawLine(fieldOfView.transform.position, fieldOfView.transform.position + viewRightAngleSide * fieldOfView.ViewedRadius);
 
-		if (fieldOfView.CanSeePLayer)
+		if (fieldOfView.SeesInFOV)
 		{
 			Handles.color = Color.green;
 			
-			Handles.DrawLine(fieldOfView.transform.position, fieldOfView.TargetTransform.position);
+			Handles.DrawLine(fieldOfView.transform.position, fieldOfView.Target.position);
 		}
 	}
 

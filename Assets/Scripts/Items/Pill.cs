@@ -1,50 +1,65 @@
+using Player;
 using System;
 using System.Collections;
 using UnityEngine;
 
-public class Pill : Item, IUsable
+namespace Items
 {
-    [SerializeField][Range(1, 5)] private int _countOfUses = 1;
-
-    [SerializeField] private float _sanityAddingNumber;
-    [SerializeField] private float _sanityAddingDelay;
-
-    [SerializeField] private PlayerSanity _sanity;
-
-    private bool _isUsing = false;
-
-
-    public void Use()
+    public class Pill : Item, IUsable
     {
-        if (IsHaveCharge() && !_isUsing)
+        [Header("Pill settings")]
+        [SerializeField][Range(1, 5)] private int _countOfUses = 1;
+
+        [Header("Values")]
+        [SerializeField] private float _sanityAddingNumber;
+        [SerializeField] private float _sanityAddingDelay;
+
+        [SerializeField] private PlayerSanity _sanity;
+
+        private bool _isUsing = false;
+
+        public void Use()
         {
-            _countOfUses--;
+            if (IsHaveCharge())
+            {
+                if (!_isUsing)
+                {
+                    _countOfUses--;
 
-            StartCoroutine(EffectCooldown());          
-        }        
-    }  
+                    Debug.Log($"{gameObject.name}s are used");
 
-    private bool IsHaveCharge()
-        => _countOfUses > 0;
+                    //Play using pill sound
 
-    private IEnumerator EffectCooldown()
-    {
-        _isUsing = true;
+                    StartCoroutine(ResoteSanity());
+                }
+            }
+            else
+            {
+                Debug.Log($"These {gameObject.name} pills are empty");
 
-        if (!IsHaveCharge())
-            Destroy(gameObject, _sanityAddingDelay);            
-        
-        float timer = _sanityAddingDelay;
-
-        while (timer > 0)
-        {
-            timer -= Time.deltaTime;
-
-            _sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
-
-            yield return new WaitForSeconds(Time.deltaTime);
+                //Play empty sound
+            }
         }
 
-        _isUsing = false;
+        private bool IsHaveCharge()
+            => _countOfUses > 0;
+
+        private IEnumerator ResoteSanity()
+        {
+            _isUsing = true;
+
+            float timer = _sanityAddingDelay;
+
+            while (timer > 0)
+            {
+                timer -= Time.deltaTime;
+
+                _sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
+
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+
+            _isUsing = false;
+        }
     }
 }
