@@ -7,7 +7,7 @@ namespace Level.Lights.Lamp
 	{
 		[Header("Lamp flashing event")]
 
-		[SerializeField] private bool _isFlashableLamp = false;
+		[SerializeField] private bool _isFlashableLamp = true;
 
 		[SerializeField] private float _timeSinceGameStartToStartFlashing = 60f;
 		[SerializeField, Range(1, 100)] private int _flashingStartChance = 10;
@@ -99,6 +99,14 @@ namespace Level.Lights.Lamp
 
 				_flashingCooldownRemaining = Mathf.Clamp(_flashingCooldownRemaining, 0, _maxFlashingCooldownDelay);
 			}
+		}
+
+		protected override void TryInvokeLamp(Collider other)
+		{
+			if (_isFlashing)
+				return;
+
+			base.TryInvokeLamp(other);
 		}
 
 		protected virtual bool IsCanStartFlashingEvent()

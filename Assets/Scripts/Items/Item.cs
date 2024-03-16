@@ -38,15 +38,12 @@ namespace Items
 		private void InitializeItemIcon()
 		{
 			if (ItemIcon.ChangeIconStateAutomatically)
-			{
 				ActivateAutoIconStateChanging();
 
+			if (ItemIcon.EnableOnStart)
 				ItemIcon.ShowIcon();
-			}
 			else
-			{
 				ItemIcon.HideIcon();
-			}
 		}
 
 		public void ActivateAutoIconStateChanging()

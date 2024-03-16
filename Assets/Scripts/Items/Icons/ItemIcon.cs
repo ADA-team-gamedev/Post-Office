@@ -5,6 +5,7 @@ namespace Items.Icon
 	[System.Serializable]
 	public class ItemIcon : Icon
 	{
+		[field: SerializeField] public bool EnableOnStart { get; private set; } = false;
 		[field: SerializeField] public bool ChangeIconStateAutomatically { get; private set; } = false;
 
 		public void ShowIcon(Item item)

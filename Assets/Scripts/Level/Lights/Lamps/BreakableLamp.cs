@@ -10,7 +10,7 @@ namespace Level.Lights.Lamp
 
 		[SerializeField] private ParticleSystem _electronicalSparkVF;
 
-		[Space(10)]
+		[Header("Lamp Life Time Delay")]
 		[SerializeField] private float _minLampLifeDelayBeforeBreaking = 40;
 		[SerializeField] private float _maxLampLifeDelayBeforeBreaking = 180;
 

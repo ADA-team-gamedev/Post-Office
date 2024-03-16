@@ -13,12 +13,14 @@ namespace Level.Doors
 
 		[Header("Values")]
 
+		[SerializeField] private bool _isDoorMustBeClosedOnStart = true;
+
 		[SerializeField] private float _doorDragingDistance = 3f;
 
 		[SerializeField] private float _doorOpeningForce = 10f;
 		[SerializeField][Range(2000f, 10000f)] private float _doorRotationSpeed = 5000f;
 
-		#endregion
+		#endregion	
 
 		[Header("Objects")]
 
@@ -65,7 +67,7 @@ namespace Level.Doors
 
 			_playerClickedViewPoint = _doorModel.position;
 
-			_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
+			_doorRotation = _isDoorMustBeClosedOnStart ? _hingeJoint.limits.max : _hingeJoint.limits.min;
 
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
 		}

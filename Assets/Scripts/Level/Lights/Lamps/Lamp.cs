@@ -37,7 +37,8 @@ namespace Level.Lights.Lamp
 
 		private void OnValidate()
 		{
-			Light.gameObject?.SetActive(IsLampEnabled);
+			if (Light)
+				Light.gameObject?.SetActive(IsLampEnabled);
 		}
 	}
 }
