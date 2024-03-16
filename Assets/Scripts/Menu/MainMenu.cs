@@ -1,37 +1,38 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+namespace Menu
 {
-	[Header("Menus")]
-	[SerializeField] private GameObject _settingsWindow;
-
-	private void Awake()
+	public class MainMenu : MonoBehaviour
 	{
-		_settingsWindow.SetActive(false);
-	}
+		[Header("Menus")]
+		[SerializeField] private GameObject _settingsWindow;
 
-	public void OnResumeButton()
-	{
-		SceneManager.LoadScene("BuildMap"); //write here game scene
-	}
+		private void Awake()
+		{
+			_settingsWindow.SetActive(false);
 
-	public void OnNewGameButton()
-	{
-		//reset level data and create new, then load game scene
-	}
+			Cursor.lockState = CursorLockMode.None;
+		}
 
-	public void OnLoadButton()
-	{
-		//Load game data with level
-	}
+		public void OnResumeButton(string sceneName)
+		{
+			SceneManager.LoadScene(sceneName);
+		}
 
-	#region Settings
+		public void OnNewGameButton()
+		{
+			//reset level data and create new, then load game scene
+		}
 
-	#endregion
+		public void OnLoadButton()
+		{
+			//Load game data with level
+		}
 
-	public void OnExit()
-	{
-		Application.Quit();
+		public void OnExit()
+		{
+			Application.Quit();
+		}
 	}
 }

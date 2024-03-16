@@ -1,92 +1,42 @@
 using UnityEngine;
 
-public class FlashLight : Item, IUsable
+namespace Items
 {
-    [Header("Objects")]
-    [SerializeField] private Light _flashlight;
-
-    [SerializeField] private bool _disableOnStart = true;
-    //[SerializeField] private Slider _batteryEnergyBar;
-    //[SerializeField] private GameObject _energyBar;
-
-    //[Header("Values")]
-    //[SerializeField] private int _numberOfActivations = 0;
-    //[SerializeField][Range(1, 100)] private float _dischargeRate;
-
-    private bool _isCanTurnOn = false;
-
-    public bool IsWorking { get; private set; } = false;
-
-    //private bool _charged = true;
-
-	private void Awake()
-	{
-        //OnPickUpItem += PickUpItem;
-
-        IsWorking = !_disableOnStart;
-
-        _flashlight.enabled = IsWorking;
-	}
-
-	#region Pickable
-
-	public void PickUpItem()
+    public class FlashLight : Item, IUsable
     {
-        _isCanTurnOn = true;
-    }
+        [Header("Objects")]
+        [SerializeField] private Light _flashlight;
 
-    #endregion
+        [SerializeField] private bool _disableOnStart = true;
 
-    public void Use()
-    {
-        //if (_isCanTurnOn && _charged && _numberOfActivations == 0)
-        //    TurnOn();
-        //else if (_numberOfActivations != 0)
-        //    TurnOff();
+        public bool IsWorking { get; private set; } = false;
 
-        if (!IsWorking)
-            TurnOn();
-        else
-            TurnOff();
-    }  
+        private void Awake()
+        {
+            IsWorking = !_disableOnStart;
 
-    void Update()
-    {
-        //FlashLightWorking();
-    }
+            _flashlight.enabled = IsWorking;
+        }
 
-    private void FlashLightWorking()
-    {
-        //if (_batteryEnergyBar.value <= 0)
-        //{
-        //    _flashlight.enabled = false;
+        public void Use()
+        {
+            if (!IsWorking)
+                TurnOn();
+            else
+                TurnOff();
+        }
 
-        //    _charged = false;
-        //}
+        private void TurnOff()
+        {
+            _flashlight.enabled = false;
 
-        //if (_isWorking && _charged)        
-        //    _batteryEnergyBar.value -= Time.deltaTime / _dischargeRate;        
-    }
+            IsWorking = false;
+        }
+        private void TurnOn()
+        {
+            _flashlight.enabled = true;
 
-    private void TurnOff()
-    {                    
-        //_numberOfActivations--;
-
-        _flashlight.enabled = false;
-
-        IsWorking = false;       
-
-        //_energyBar.SetActive(false);
-        
-    }
-    private void TurnOn()
-    {
-        //_numberOfActivations++;
-
-        _flashlight.enabled = true;
-
-        IsWorking = true;          
-
-        //_energyBar.SetActive(true);
+            IsWorking = true;
+        }
     }
 }

@@ -1,4 +1,7 @@
-﻿public interface IUsable
+﻿namespace Items
 {
-	public void Use();
+	public interface IUsable
+	{
+		public void Use();
+	}
 }
