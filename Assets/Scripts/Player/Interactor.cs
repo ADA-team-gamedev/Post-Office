@@ -1,4 +1,5 @@
 using Items;
+using Level.Doors;
 using Level.Lights.Lamp;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,6 +16,10 @@ namespace Player
 
 		[Header("Crosshair")]
 		[SerializeField] private Image _crosshairImage;
+
+		[Header("Crosshair sprites")]
+		[SerializeField] private Sprite _defaultCrosshair;
+		[SerializeField] private Sprite _crosshairLock;
 
 		[SerializeField] private Color _defaultCrosshairColor = new(108, 108, 108, 255);
 		[SerializeField] private Color _interactableCrosshairColor = new(152, 152, 152, 255);
@@ -36,6 +41,8 @@ namespace Player
 			_playerInput.Player.Interact.performed += OnStartInteract;
 			_playerInput.Player.Interact.canceled += OnStopInteract;
 
+			_crosshairImage.sprite = _defaultCrosshair;
+
 			_crosshairImage.color = _defaultCrosshairColor;
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
@@ -45,10 +52,10 @@ namespace Player
 
 		private void Update()
 		{
-			PaintCrossHair();
+			ChangeCrossHair();
 		}
 
-		private void PaintCrossHair()
+		private void ChangeCrossHair()
 		{
 			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);
 
@@ -61,12 +68,23 @@ namespace Player
 				bool isInteractable = hit.collider.TryGetComponent(out IInteractable _) || hit.collider.TryGetComponent(out Lamp _);
 
 				if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
+				{
 					isHaveInteractableParent = hit.transform.TryGetComponent(out IInteractable _);
+
+					if (hit.transform.TryGetComponent(out Door door) && door.IsClosed)
+						_crosshairImage.sprite = _crosshairLock;
+					else
+						_crosshairImage.sprite = _defaultCrosshair;
+				} 
 
 				_isHitInteractableObject = isInteractable || isHaveInteractableParent || isPickableItem;
 			}
 			else
+			{
 				_isHitInteractableObject = false;
+
+				_crosshairImage.sprite = _defaultCrosshair;
+			}
 
 			if (_isHitInteractableObject)
 				_crosshairImage.color = _interactableCrosshairColor;

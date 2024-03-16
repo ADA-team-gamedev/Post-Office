@@ -42,12 +42,9 @@ namespace Level.Doors
 
 		[field: Header("Key Opening")]
 
-		[field: SerializeField] public bool IsKeyNeeded { get; private set; } = true;
+		[field: SerializeField] public bool IsClosed { get; private set; } = true;
 
 		[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
-
-
-		private bool _isClosed; //closed while we don't open it by our key
 
 		#endregion
 
@@ -68,8 +65,6 @@ namespace Level.Doors
 
 			_playerClickedViewPoint = _doorModel.position;
 
-			_isClosed = IsKeyNeeded;
-
 			_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
 
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
@@ -84,7 +79,7 @@ namespace Level.Doors
 
 		private void TryOpenDoorByKey()
 		{
-			if (!_isClosed)
+			if (!IsClosed)
 				return;
 
 			if (PlayerInventory.Instance.TryGetCurrentItem(out Key key))
@@ -93,9 +88,7 @@ namespace Level.Doors
 				{
 					//play door key opening sound
 
-					IsKeyNeeded = false;
-
-					_isClosed = false;
+					IsClosed = false;
 				}
 				else
 				{
@@ -130,7 +123,7 @@ namespace Level.Doors
 
 		private void StartRotateDoor()
 		{
-			if (_isClosed)
+			if (IsClosed)
 				return;
 
 			_isPlayerDragDoor = true;
@@ -175,7 +168,7 @@ namespace Level.Doors
 			if (_isPlayerDragDoor)
 				return;
 
-			if (_isClosed)
+			if (IsClosed)
 				TryOpenDoorByKey();
 
 			StartRotateDoor();
