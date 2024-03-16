@@ -6,7 +6,12 @@ namespace Items
 	{
 		Hall,
 		Storage,
+		Toilet,
+		Janitor,
+		Entrance,
+		Exit,
 		Office,
+		Boss,
 		Workshop,
 		Fuse,
 		Kitchen,

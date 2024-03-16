@@ -68,8 +68,9 @@ namespace Level.Doors
 			_playerClickedViewPoint = _doorModel.position;
 
 			_doorRotation = _isDoorMustBeClosedOnStart ? _hingeJoint.limits.max : _hingeJoint.limits.min;
-
+			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
+			//transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, _doorRotation, transform.rotation.eulerAngles.z);
 		}
 
 		private void Update()
@@ -121,6 +122,7 @@ namespace Level.Doors
 			_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
 
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
+			//transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, _doorRotation, transform.rotation.eulerAngles.z);
 		}
 
 		private void StartRotateDoor()
