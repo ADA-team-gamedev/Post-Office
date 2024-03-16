@@ -1,114 +1,128 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerCameraHandler : MonoBehaviour
+namespace Player
 {
-	#region Camera Settings
-
-	[Header("Camera Settigs")]
-
-	[SerializeField] private float _cameraSensitivity = 5f;
-	[SerializeField] private float _deffaultFOV = 60f;
-
-	[SerializeField][Range(0, 90)] private float _minCameraLookAngle = 90f;
-	[SerializeField][Range(0, 90)] private float _maxCameraLookAngle = 60f;
-
-	[Space(10)]
-	[SerializeField] private bool _isCameraInverted = false;
-
-	[Header("Sprinting phase")]
-	[SerializeField] private float _sprintFOV = 80f;
-	[SerializeField] private float _sprintFOVStepTime = 10f;
-
-	[Header("Objects")]
-	[SerializeField] private Camera _playerCamera;
-	[SerializeField] private Transform _playerBody;
-
-	// Internal Variables
-	private float _yaw = 0f;
-	private float _pitch = 0f;
-
-	#endregion
-
-	[SerializeField] private PlayerMovementHandler _playerMovement;
-
-	private PlayerInput _playerInput;
-
-	private Vector2 _lookDirection;
-
-	private void Awake()
+	public class PlayerCameraHandler : MonoBehaviour
 	{
-		_playerInput = new();
+		#region Camera Settings
 
-		_playerInput.Player.Look.performed += OnLook;
-		_playerInput.Player.Look.canceled += OnLook;
-	}
+		[Header("Camera Settigs")]
 
-	private void Start()
-	{
-		_playerCamera ??= GetComponent<Camera>();
+		[SerializeField] private float _cameraSensitivity = 5f;
+		[SerializeField] private float _deffaultFOV = 60f;
 
-		Cursor.lockState = CursorLockMode.Locked;
+		[SerializeField][Range(0, 90)] private float _minCameraLookAngle = 90f;
+		[SerializeField][Range(0, 90)] private float _maxCameraLookAngle = 60f;
 
-		_playerCamera.fieldOfView = _playerMovement.MovementState == MovementState.Sprinting ? _sprintFOV : _deffaultFOV;
-	}
+		[Space(10)]
+		[SerializeField] private bool _isCameraInverted = false;
 
-	private void Update()
-	{
-		Look();
+		[Header("Sprinting phase")]
+		[SerializeField] private float _sprintFOV = 80f;
+		[SerializeField] private float _sprintFOVStepTime = 10f;
 
-		ChangeFOV();
-	}
+		[Header("Objects")]
+		[SerializeField] private Camera _playerCamera;
+		[SerializeField] private Transform _playerBody;
 
-	private void Look()
-	{
-		if (_lookDirection == Vector2.zero)
-			return;	
+		// Internal Variables
+		private float _yaw = 0f;
+		private float _pitch = 0f;
 
-		_yaw = _playerBody.localEulerAngles.y + _lookDirection.x * _cameraSensitivity * Time.deltaTime;
+		#endregion
 
-		if (!_isCameraInverted)
-			_pitch -= _cameraSensitivity * _lookDirection.y * Time.deltaTime;
-		else
-			_pitch += _cameraSensitivity * _lookDirection.y * Time.deltaTime;
+		[SerializeField] private PlayerMovementHandler _playerMovement;
 
-		_pitch = Mathf.Clamp(_pitch, -_maxCameraLookAngle, _minCameraLookAngle); //max = to floar; min = to sky
+		private PlayerInput _playerInput;
 
-		_playerBody.localEulerAngles = new(0, _yaw, 0);
-		_playerCamera.transform.localEulerAngles = new(_pitch, 0, 0);
-	}
+		private PlayerDeathController _playerDeathController;
 
-	private void OnLook(InputAction.CallbackContext context)
-	{
-		_lookDirection = _playerInput.Player.Look.ReadValue<Vector2>();
-	}
+		private Vector2 _lookDirection;
 
-	private void ChangeFOV()
-	{
-		if (_playerMovement.MovementState != MovementState.Sprinting || _playerMovement.MoveDirection == Vector2.zero)
+		private void Awake()
 		{
-			_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _deffaultFOV, _sprintFOVStepTime * Time.deltaTime);
+			_playerInput = new();
 
-			return;
+			_playerInput.Player.Look.performed += OnLook;
+			_playerInput.Player.Look.canceled += OnLook;
 		}
 
-		_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _sprintFOV, _sprintFOVStepTime * Time.deltaTime);
-	}
+		private void Start()
+		{
+			_playerCamera ??= GetComponent<Camera>();
 
-	private void OnEnable()
-	{
-		_playerInput.Enable();
-	}
+			Cursor.lockState = CursorLockMode.Locked;
 
-	private void OnDisable()
-	{
-		_playerInput.Disable();
-	}
+			_playerCamera.fieldOfView = _playerMovement.MovementState == MovementState.Sprinting ? _sprintFOV : _deffaultFOV;
 
-	private void OnValidate()
-	{
-		_playerCamera ??= GetComponent<Camera>();
+			_playerDeathController = transform.parent.parent.GetComponent<PlayerDeathController>(); //Player with DeathController -> HeadJoint -> Camera
 
-		_playerCamera.fieldOfView = _deffaultFOV;
+			_playerDeathController.OnDeath += DisableCamera;
+		}
+
+		private void Update()
+		{
+			Look();
+
+			ChangeFOV();
+		}
+
+		private void Look()
+		{
+			if (_lookDirection == Vector2.zero)
+				return;
+
+			_yaw = _playerBody.localEulerAngles.y + _lookDirection.x * _cameraSensitivity * Time.deltaTime;
+
+			if (!_isCameraInverted)
+				_pitch -= _cameraSensitivity * _lookDirection.y * Time.deltaTime;
+			else
+				_pitch += _cameraSensitivity * _lookDirection.y * Time.deltaTime;
+
+			_pitch = Mathf.Clamp(_pitch, -_maxCameraLookAngle, _minCameraLookAngle); //max = to floar; min = to sky
+
+			_playerBody.localEulerAngles = new(0, _yaw, 0);
+			_playerCamera.transform.localEulerAngles = new(_pitch, 0, 0);
+		}
+
+		private void OnLook(InputAction.CallbackContext context)
+		{
+			_lookDirection = _playerInput.Player.Look.ReadValue<Vector2>();
+		}
+
+		private void ChangeFOV()
+		{
+			if (_playerMovement.MovementState != MovementState.Sprinting || _playerMovement.MoveDirection == Vector2.zero)
+			{
+				_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _deffaultFOV, _sprintFOVStepTime * Time.deltaTime);
+
+				return;
+			}
+
+			_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _sprintFOV, _sprintFOVStepTime * Time.deltaTime);
+		}
+
+		private void DisableCamera()
+		{
+			//Destroy(this);
+		}
+
+		private void OnEnable()
+		{
+			_playerInput.Enable();
+		}
+
+		private void OnDisable()
+		{
+			_playerInput.Disable();
+		}
+
+		private void OnValidate()
+		{
+			_playerCamera ??= GetComponent<Camera>();
+
+			_playerCamera.fieldOfView = _deffaultFOV;
+		}
 	}
 }

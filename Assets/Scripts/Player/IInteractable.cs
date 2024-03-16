@@ -1,6 +1,9 @@
-public interface IInteractable
+namespace Player
 {
-    public void StartInteract();
+    public interface IInteractable
+    {
+        public void StartInteract();
 
-    public void StopInteract();
+        public void StopInteract();
+    }
 }

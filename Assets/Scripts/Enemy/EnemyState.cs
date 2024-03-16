@@ -1,9 +1,12 @@
-public enum EnemyState 
+namespace Enemy
 {
-	None,
-	Idle,
-    Patroling,
-	Persecution,
-    Attacking,
-	Fleeing,
+	public enum EnemyState
+	{
+		None,
+		Idle,
+		Patroling,
+		Persecution,
+		Attacking,
+		Fleeing,
+	}
 }

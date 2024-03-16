@@ -1,415 +1,472 @@
+using Items;
+using Player;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(Box))]
-[RequireComponent(typeof(FieldOfView))]
-[RequireComponent(typeof(NavMeshAgent))]
-public class BoxEnemy : MonoBehaviour
+namespace Enemy
 {
-	[Header("Player Sanity")]
-	[SerializeField] private PlayerSanity _playerSanity;
-
-	#region Values
-
-	[Header("Values")]
-	[SerializeField] private float _patrolPointsRestDelay = 10f;
-
-	[SerializeField] private float _patrolingSpeed = 4f;
-	[SerializeField] private float _attackingSpeed = 4f;
-	[SerializeField] private float _runningSpeed = 6f;
-
-	[Header("Phases starts")]
-
-	[SerializeField] private float _patrolPhaseStart = 40f;
-	[SerializeField] private float _attackPhaseStart = 10f;
-
-	[Space(10)]
-	[SerializeField] private float _tranfromToEnemyDelay = 5f;
-
-	#endregion
-
-	#region Animation
-	[Header("Animation Settings")]	
-	[SerializeField] private Animator _animator;
-
-	[SerializeField] private string BecomeInsectTrigger = "BecomeInsect";
-	[SerializeField] private string BecomeBoxTrigger = "BecomeBox";
-
-	[SerializeField] private string IsMoving = "IsMoving";
-
-	[SerializeField] private string KillAnimationTrigger = "Jumpscare";
-
-	[Space(10), SerializeField] private Animation _killerBoxAnimation;
-
-	private float _defaultAnimationSpeed;
-
-	#endregion
-
-	[Header("Patrol points")]
-	[SerializeField] private List<Transform> _patrolPoints;
-
-	[Header("Hidden spots")]
-	[SerializeField] private List<Transform> _hiddenPoints;
-
-	private Vector3 _currentPointToMove;
-	private int _currentPatrolPointIndex = 0;
-
-	private EnemyState _enemyState = EnemyState.Patroling;
-
-	private Transform _attackingTarget;
-
-	private NavMeshAgent _agent;
-	private Rigidbody _rigidbody;
-	private FieldOfView _fieldOfView;
-
-	private Box _box;
-
-	//flags
-	private bool _isFleeing = false;
-	private bool _isPatroling = false;
-	private bool _isWaiting = false;
-
-	private bool _isPicked = false;
-
-	private bool _isTranformedIntoInsect = false;
-
-	private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
-
-	private void Awake()
+	[RequireComponent(typeof(Box))]
+	[RequireComponent(typeof(FieldOfView))]
+	[RequireComponent(typeof(NavMeshAgent))]
+	public class BoxEnemy : MonoBehaviour
 	{
-		_agent = GetComponent<NavMeshAgent>();
-		_agent.speed = _patrolingSpeed;
+		[Header("Player Sanity")]
+		[SerializeField] private PlayerSanity _playerSanity;
 
-		_fieldOfView = GetComponent<FieldOfView>();
-		
-		_box = GetComponent<Box>();
+		#region Values
 
-		_rigidbody = GetComponent<Rigidbody>();
+		[Header("AI check")]
+		[SerializeField] private LayerMask _groundLayer;
+		[SerializeField] private float _groundCheckDistance = 0.1f;
 
-		_currentPointToMove = transform.position;
-		
-		_agent.speed = _patrolingSpeed;
+		public bool IsAIActivated { get; private set; } = false;
 
-		DisableAI();
+		[Header("Values")]
+		[SerializeField] private float _patrolPointsRestDelay = 10f;
 
-		_box.OnPickUpItem += PickUpItem;
+		[SerializeField] private float _patrolingSpeed = 4f;
+		[SerializeField] private float _attackingSpeed = 4f;
+		[SerializeField] private float _runningSpeed = 6f;
 
-		_box.OnDropItem += DropItem;
+		[Header("Phases starts")]
 
-		_defaultAnimationSpeed = _animator.speed;
-	}
+		[SerializeField][Range(0.01f, 1f)] private float _patrolPhaseStartSanityPercent = 0.4f;
+		[SerializeField][Range(0.01f, 1f)] private float _attackPhaseStartSanityPercent = 0.1f;
 
-	private void Update()
-	{
-		if (_isPicked)
-			return;
+		[field: SerializeField, Space(10)] public float TranfromToEnemyDelay { get; private set; } = 5f;
 
-		if (!_isEnemyPhasesStarts && IsCanStartEnemyLogic()) //AI first start check
+		#endregion
+
+		#region Animation
+		[Header("Animation Settings")]
+		[SerializeField] private Animator _animator;
+
+		[SerializeField] private string BecomeInsectTrigger = "BecomeInsect";
+		[SerializeField] private string BecomeBoxTrigger = "BecomeBox";
+
+		[SerializeField] private string IsMoving = "IsMoving";
+
+		[Space(10), SerializeField] private GameObject _killerBoxJumpScare;
+
+		private float _defaultAnimationSpeed;
+
+		#endregion
+
+		[Header("Patrol points")]
+		[SerializeField] private List<Transform> _patrolPoints;
+
+		[Header("Hidden spots")]
+		[SerializeField] private List<Transform> _hiddenPoints;
+
+		private Vector3 _currentPointToMove;
+		private int _currentPatrolPointIndex = 0;
+
+		private EnemyState _enemyState = EnemyState.Patroling;
+
+		private Transform _attackingTarget;
+
+		private NavMeshAgent _agent;
+		private Rigidbody _rigidbody;
+		private FieldOfView _fieldOfView;
+
+		private Box _box;
+
+		//flags
+		private bool _isFleeing = false;
+		private bool _isPatroling = false;
+		private bool _isWaiting = false;
+
+		private bool _isPicked = false;
+
+		private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
+
+		private void Awake()
 		{
-			_isEnemyPhasesStarts = true;
-			
-			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));
+			_agent = GetComponent<NavMeshAgent>();
+			_agent.speed = _patrolingSpeed;
+
+			_fieldOfView = GetComponent<FieldOfView>();
+
+			_box = GetComponent<Box>();
+
+			_rigidbody = GetComponent<Rigidbody>();
+
+			_currentPointToMove = transform.position;
+
+			_agent.speed = _patrolingSpeed;
+
+			DisableAI();
+
+			_box.OnPickUpItem += PickUpItem;
+
+			_box.OnDropItem += DropItem;
+
+			_defaultAnimationSpeed = _animator.speed;
 		}
 
-		if (_isTranformedIntoInsect)
+		private void Update()
 		{
-			CheckVision();
+			if (_isPicked)
+				return;
 
-			HandleStateLauncher();
-		}
-	}
-
-	private bool IsCanStartEnemyLogic()
-		=> !_isTranformedIntoInsect && _playerSanity.Sanity <= _patrolPhaseStart;
-
-	private void CheckVision()
-	{
-		_fieldOfView.VisionCheck();
-
-		if (_fieldOfView.InstantDetectTarget && _enemyState == EnemyState.Attacking)
-		{
-			KillPlayer();
-		}
-		else if (_fieldOfView.CanSeePLayer || _fieldOfView.InstantDetectTarget)
-		{
-			if (!_isFleeing)
+			if (!_isEnemyPhasesStarts && IsCanStartEnemyLogic()) //AI first start check
 			{
-				_enemyState = _playerSanity.Sanity <= _attackPhaseStart ? EnemyState.Attacking : EnemyState.Fleeing;
+				_isEnemyPhasesStarts = true;
 
-				if (_enemyState == EnemyState.Attacking && !_attackingTarget)
-					_attackingTarget = _fieldOfView.TargetTransform;
-			}				
-		}
-		else //don't see player
-		{
-			if (_enemyState == EnemyState.Attacking && _attackingTarget)
-			{
-				_attackingTarget = null;
-
-				if (_agent.remainingDistance <= _agent.stoppingDistance)
-					_enemyState = EnemyState.Idle;
+				StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
 			}
-		}				
-	}
 
-	private void HandleStateLauncher()
-	{
-		switch (_enemyState)
+			if (IsAIActivated)
+			{
+				CheckVision();
+
+				HandleStateLauncher();
+			}
+		}
+
+		#region Checker
+
+		public bool IsCanActivateEnemy()
+			=> !_isPicked && IsOnGround();
+
+		private bool IsCanStartEnemyLogic()
+			=> !_isPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround();
+
+		private bool IsOnGround()
 		{
-			case EnemyState.Patroling:
-				Patroling();
-				break;
-			case EnemyState.Fleeing:
-				Fleeing();
-				break;
-			case EnemyState.Idle:
-				if (!_isWaiting)
+			return Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);
+		}
+
+		private void CheckVision()
+		{
+			_fieldOfView.VisionCheck();
+
+			if (_fieldOfView.InstantDetectTarget && _enemyState == EnemyState.Attacking)
+			{
+				KillPlayer();
+			}
+			else if (_fieldOfView.CanSeeTarget)
+			{
+				if (!_isFleeing)
 				{
-					_isWaiting = true;
+					_enemyState = _playerSanity.SanityPercent <= _attackPhaseStartSanityPercent ? EnemyState.Attacking : EnemyState.Fleeing;
 
-					_animator.SetBool(IsMoving, false);
-
-					StartCoroutine(TakeRestOnTime(_patrolPointsRestDelay));
+					if (_enemyState == EnemyState.Attacking && !_attackingTarget)
+						_attackingTarget = _fieldOfView.Target;
 				}
-				break;
-			case EnemyState.Attacking:
-				Attacking();
-				break;
-			default:
-				Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
-				break;
-		}
-	}
-
-	#region Phases
-
-	#region Patrol
-
-	private void MoveTo()
-	{
-		if (_patrolPoints.Count <= 0)
-			return;
-
-		_currentPatrolPointIndex = Random.Range(0, _patrolPoints.Count); //possible simillar points
-
-		_currentPointToMove = _patrolPoints[_currentPatrolPointIndex].position;
-
-		_animator.SetBool(IsMoving, true);
-
-		_agent.SetDestination(_currentPointToMove);	
-	}
-
-	private void Patroling()
-	{
-		if (_isPatroling)
-		{
-			if (_agent.remainingDistance <= _agent.stoppingDistance)
-			{
-				_isPatroling = false;
-
-				_enemyState = EnemyState.Idle;
 			}
-
-			return;
-		}
-
-		_isPatroling = true;
-
-		_agent.speed = _patrolingSpeed;
-
-		MoveTo();
-	}
-
-	private IEnumerator TakeRestOnTime(float delay)
-	{
-		yield return new WaitForSeconds(delay);
-
-		_isWaiting = false;
-
-		_enemyState = EnemyState.Patroling;
-	}
-
-	#endregion
-
-	#region Fleeing
-
-	private void Fleeing()
-	{
-		if (_isFleeing)
-		{
-			if (_agent.remainingDistance <= _agent.stoppingDistance)
+			else //don't see player
 			{
-				_animator.SetBool(IsMoving, false);
-			}
+				if (_enemyState == EnemyState.Attacking)
+				{
+					_attackingTarget = null;
 
-			return;
+					if (_agent.remainingDistance <= _agent.stoppingDistance)
+						_enemyState = EnemyState.Idle;
+				}
+			}
 		}
 
-		StopAllCoroutines();
+		#endregion
 
-		_isPatroling = false;
-		_isFleeing = true;
-
-		_agent.speed = _runningSpeed;
-
-		_animator.speed *= 1.5f;
-
-		_animator.SetBool(IsMoving, true);
-
-		if (_hiddenPoints.Count > 0)
+		private void HandleStateLauncher()
 		{
-			_currentPointToMove = _hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position;
+			switch (_enemyState)
+			{
+				case EnemyState.Patroling:
+					Patroling();
+					break;
+				case EnemyState.Fleeing:
+					Fleeing();
+					break;
+				case EnemyState.Idle:
+					if (!_isWaiting)
+					{
+						_isWaiting = true;
+
+						_animator.SetBool(IsMoving, false);
+
+						StartCoroutine(TakeRestOnTime(_patrolPointsRestDelay));
+					}
+					break;
+				case EnemyState.Attacking:
+					Attacking();
+					break;
+				default:
+					Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
+					break;
+			}
+		}
+
+		#region Phases
+
+		#region Patrol
+
+		private void MoveTo()
+		{
+			if (_patrolPoints.Count <= 0)
+				return;
+
+			_currentPatrolPointIndex = Random.Range(0, _patrolPoints.Count); //possible simillar points
+
+			_currentPointToMove = _patrolPoints[_currentPatrolPointIndex].position;
+
+			_animator.SetBool(IsMoving, true);
 
 			_agent.SetDestination(_currentPointToMove);
 		}
-		else
+
+		private void MoveTo(Vector3 point)
 		{
-			Debug.Log($"Can't start fleeing because the {gameObject} doesn't have points to hide");
+			_currentPointToMove = point;
+
+			_animator.SetBool(IsMoving, true);
+
+			_agent.SetDestination(_currentPointToMove);
 		}
-	}
 
-	#endregion
-
-	#region Attacking
-
-	private void Attacking()
-	{
-		if (!_attackingTarget)
+		private void Patroling()
 		{
-			if (_agent.remainingDistance <= _agent.stoppingDistance)
+			if (_isPatroling)
 			{
-				_isPatroling = true; //for cases when we lost player. (watch patroling method)
+				if (_agent.remainingDistance <= _agent.stoppingDistance)
+				{
+					_isPatroling = false;
 
-				Patroling();
+					_enemyState = EnemyState.Idle;
+				}
+
+				return;
 			}
 
-			return;
+			_isPatroling = true;
+
+			_agent.speed = _patrolingSpeed;
+
+			MoveTo();
 		}
 
-		StopAllCoroutines();
-
-		_agent.speed = _attackingSpeed;
-
-		_isWaiting = false;
-		_isPatroling = false; 
-
-		_agent.SetDestination(_attackingTarget.position);
-
-		_animator.SetBool(IsMoving, true);
-	}
-
-	private void KillPlayer()
-	{
-		_killerBoxAnimation.Play();
-		
-		DisableAI();
-
-		gameObject.SetActive(false);
-	}
-
-	#endregion
-
-	#endregion
-
-	#region Inventory interaction
-
-	#region PickUp
-
-	public void PickUpItem()
-	{
-		_isPicked = true;
-
-		_attackingTarget = null;
-
-		DisableAI();
-	}
-
-	private void DisableAI()
-	{
-		StopAllCoroutines();
-
-		if (_isTranformedIntoInsect)
+		private IEnumerator TakeRestOnTime(float delay)
 		{
-			//_animator.speed = _runningSpeed;
+			yield return new WaitForSeconds(delay);
 
-			_animator.SetTrigger(BecomeBoxTrigger);
+			_isWaiting = false;
+
+			_enemyState = EnemyState.Patroling;
 		}
 
-		_isTranformedIntoInsect = false;
+		#endregion
 
-		_agent.enabled = true;
+		#region Fleeing
 
-		_agent.isStopped = true;
+		private void Fleeing()
+		{
+			if (_isFleeing)
+			{
+				if (_agent.remainingDistance <= _agent.stoppingDistance)
+				{
+					_animator.SetBool(IsMoving, false);
+				}
 
-		_agent.enabled = false;
+				return;
+			}
 
-		_isPatroling = false;
-		_isFleeing = false;
-		_isWaiting = false;
+			StopAllCoroutines();
 
-		_enemyState = EnemyState.None;	
-	}
+			_isPatroling = false;
+			_isFleeing = true;
 
-	#endregion
+			_agent.speed = _runningSpeed;
 
-	#region Drop
+			_animator.speed *= 1.5f;
 
-	public void DropItem()
-	{
-		_isPicked = false;
+			_animator.SetBool(IsMoving, true);
 
-		if (IsCanStartEnemyLogic())
-			StartCoroutine(TransformFromBoxToInsect(_tranfromToEnemyDelay));			
-	}
+			if (_hiddenPoints.Count > 0)
+			{
+				_currentPointToMove = _hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position;
 
-	private IEnumerator TransformFromBoxToInsect(float delay)
-	{
-		yield return new WaitForSeconds(delay);
+				_agent.SetDestination(_currentPointToMove);
+			}
+			else
+			{
+				Debug.Log($"Can't start fleeing because the {gameObject} doesn't have points to hide");
+			}
+		}
 
-		EnableAI();
+		#endregion
 
-		_animator.speed = _defaultAnimationSpeed;
+		#region Attacking
 
-		_animator.SetTrigger(BecomeInsectTrigger);
+		public void OrderToAttack(Vector3 point)
+		{
+			if (!IsAIActivated)
+				return;
 
-		yield return new WaitForSeconds(delay);
+			StopAllCoroutines();
 
-		_isTranformedIntoInsect = true;
-	}
+			_enemyState = EnemyState.Attacking;
 
-	private void EnableAI()
-	{
-		_agent.enabled = true;
+			_isWaiting = false;
+			_isPatroling = false;
+			_isFleeing = false;
 
-		_agent.isStopped = false;
+			_agent.speed = _attackingSpeed;
 
-		_enemyState = EnemyState.Patroling;
+			MoveTo(point);
+		}
 
-		_rigidbody.isKinematic = true;
-	}
+		private void Attacking()
+		{
+			if (!_attackingTarget)
+			{
+				if (_agent.remainingDistance <= _agent.stoppingDistance)
+				{
+					_isPatroling = true; //for cases when we lost player. (watch patroling method)
 
-	#endregion
+					Patroling();
+				}
 
-	#endregion
+				return;
+			}
 
-	private void OnValidate()
-	{
-		if (_patrolingSpeed >= _runningSpeed)
-			_runningSpeed = _patrolingSpeed + 1;
-	}
+			StopAllCoroutines();
 
-	private void OnDrawGizmosSelected()
-	{
-		Gizmos.color = Color.red;
+			_agent.speed = _attackingSpeed;
 
-		foreach (var point in _patrolPoints)
-			Gizmos.DrawSphere(point.position, 0.3f);
+			_isWaiting = false;
+			_isPatroling = false;
 
-		Gizmos.color = Color.green;
+			_agent.SetDestination(_attackingTarget.position);
 
-		foreach (var point in _hiddenPoints)
-			Gizmos.DrawSphere(point.position, 0.3f);
+			_animator.SetBool(IsMoving, true);
+		}
+
+		private void KillPlayer()
+		{
+			DisableAI();
+
+			_fieldOfView.Target.GetComponent<PlayerDeathController>().Die();
+
+			_killerBoxJumpScare.SetActive(true);
+
+			gameObject.SetActive(false);
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Inventory interaction
+
+		#region PickUp
+
+		private void PickUpItem(Item item)
+		{
+			_isPicked = true;
+
+			_attackingTarget = null;
+
+			DisableAI();
+		}
+
+		private void DisableAI()
+		{
+			StopAllCoroutines();
+
+			if (IsAIActivated)
+			{
+				//_animator.speed = _runningSpeed;
+
+				_animator.SetTrigger(BecomeBoxTrigger);
+			}
+
+			IsAIActivated = false;
+
+			_agent.enabled = true;
+
+			_agent.isStopped = true;
+
+			_agent.enabled = false;
+
+			_isPatroling = false;
+			_isFleeing = false;
+			_isWaiting = false;
+
+			_enemyState = EnemyState.None;
+		}
+
+		#endregion
+
+		#region Drop
+
+		private void DropItem(Item item)
+		{
+			_isPicked = false;
+
+			if (IsCanStartEnemyLogic())
+				StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
+		}
+
+		private IEnumerator TransformFromBoxToInsect(float delay)
+		{
+			_animator.speed = _defaultAnimationSpeed;
+
+			_animator.SetTrigger(BecomeInsectTrigger);
+
+			yield return new WaitForSeconds(delay);
+
+			EnableAI();
+		}
+
+		private void EnableAI()
+		{
+			_agent.enabled = true;
+
+			_agent.isStopped = false;
+
+			_enemyState = EnemyState.Patroling;
+
+			_rigidbody.isKinematic = true;
+
+			IsAIActivated = true;
+		}
+
+		#endregion
+
+		#endregion
+
+		public void ActivateEnemyBox()
+		{
+			if (!gameObject.activeSelf || !IsCanActivateEnemy())
+				return;
+
+			_isPicked = false;
+
+			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
+		}
+
+		private void OnValidate()
+		{
+			if (_patrolingSpeed >= _runningSpeed)
+				_runningSpeed = _patrolingSpeed + 1;
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.red;
+
+			Gizmos.DrawRay(transform.position, Vector3.down * _groundCheckDistance);
+
+			foreach (var point in _patrolPoints)
+				Gizmos.DrawSphere(point.position, 0.3f);
+
+			Gizmos.color = Color.green;
+
+			foreach (var point in _hiddenPoints)
+				Gizmos.DrawSphere(point.position, 0.3f);
+		}
 	}
 }
