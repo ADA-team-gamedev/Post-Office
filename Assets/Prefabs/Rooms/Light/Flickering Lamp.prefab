@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4895918473878184565}
   - component: {fileID: 6520440024599584830}
   - component: {fileID: 4696897479196895342}
+  - component: {fileID: 7847750736144876921}
   m_Layer: 0
   m_Name: Flickering Lamp
   m_TagString: Untagged
@@ -34,7 +35,7 @@ Transform:
   - {fileID: 7103845116959014288}
   - {fileID: 1338458884699567466}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!65 &4895918473878184565
 BoxCollider:
@@ -105,6 +106,26 @@ MonoBehaviour:
   _maxFlashingDelay: 7
   _flashingCurves: {fileID: 11400000, guid: 564591a613ff6f741ac8e2c9af728a24, type: 2}
   <LampRenderer>k__BackingField: {fileID: 930907785034465957}
+--- !u!205 &7847750736144876921
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455089629715625253}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.056120932, y: 0.08196291, z: -0.001161933}
+  m_Size: 1.891912
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.045749456
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 8742628718090973336}
+    - renderer: {fileID: 930907785034465957}
+  m_Enabled: 1
 --- !u!1 &4873450321613074736
 GameObject:
   m_ObjectHideFlags: 0
@@ -266,7 +287,7 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 5
+  m_Intensity: 3
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
