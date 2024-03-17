@@ -44,7 +44,7 @@ namespace Items
 				return;
 			}
 
-			ItemIcon.ShowIcon();
+			ItemIcon.ShowIcon(this);
 		}
 
 		private void Completetask(Item item)

@@ -14,15 +14,9 @@ namespace Audio
 		private void Awake()
 		{
 			if (Instance == null)
-			{
-				Instance = this;
-				
-				DontDestroyOnLoad(gameObject);
-			}
+				Instance = this;		
 			else
-			{
-				Debug.LogError("AudioManager Instance already exists!");
-			}
+				Debug.LogError("AudioManager Instance already exists!");		
 		}
 
 		private void Start()
