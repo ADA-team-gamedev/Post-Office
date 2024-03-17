@@ -1,5 +1,7 @@
+using Enemy;
 using Items;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -96,11 +98,11 @@ namespace Player
 
 					SetPickedItem();
 
-					AddItem(_currentObjectTransform.gameObject);
-
 					item.OnPickUpItem?.Invoke(item);
 
 					OnItemPicked?.Invoke(item);
+
+					AddItem(_currentObjectTransform.gameObject);
 				}
 			}
 		}

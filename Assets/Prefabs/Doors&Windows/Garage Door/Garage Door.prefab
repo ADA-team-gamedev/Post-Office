@@ -62,7 +62,7 @@ Transform:
   - {fileID: 1291252165800722207}
   - {fileID: 5625131643586503250}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4983302271902598168
 GameObject:
@@ -74,6 +74,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7417109607647533841}
   - component: {fileID: 6267454140924320430}
+  - component: {fileID: 512639696426941963}
   m_Layer: 6
   m_Name: Garage Door Center
   m_TagString: Untagged
@@ -118,6 +119,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: -6.1, y: 3.14, z: 0.35}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &512639696426941963
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4983302271902598168}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 2.955, y: 1.635, z: 0.145}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6835708719883683348
 GameObject:
   m_ObjectHideFlags: 0

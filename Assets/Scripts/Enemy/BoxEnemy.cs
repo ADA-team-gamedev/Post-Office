@@ -86,7 +86,7 @@ namespace Enemy
 		{
 			_agent = GetComponent<NavMeshAgent>();
 			_agent.speed = _patrolingSpeed;
-
+			
 			_fieldOfView = GetComponent<FieldOfView>();
 
 			_box = GetComponent<Box>();
@@ -135,9 +135,7 @@ namespace Enemy
 			=> !_isPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround();
 
 		private bool IsOnGround()
-		{
-			return Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);
-		}
+			=> Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);		
 
 		private void CheckVision()
 		{
@@ -234,7 +232,7 @@ namespace Enemy
 				if (_agent.remainingDistance <= _agent.stoppingDistance)
 				{
 					_isPatroling = false;
-
+					
 					_enemyState = EnemyState.Idle;
 				}
 
@@ -380,6 +378,8 @@ namespace Enemy
 			{
 				//_animator.speed = _runningSpeed;
 
+				_animator.SetBool(IsMoving, false);
+
 				_animator.SetTrigger(BecomeBoxTrigger);
 			}
 
@@ -414,9 +414,11 @@ namespace Enemy
 		{
 			_animator.speed = _defaultAnimationSpeed;
 
+			yield return new WaitForSeconds(delay / 2);
+
 			_animator.SetTrigger(BecomeInsectTrigger);
 
-			yield return new WaitForSeconds(delay);
+			yield return new WaitForSeconds(delay / 2);
 
 			EnableAI();
 		}

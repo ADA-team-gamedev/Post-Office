@@ -11,7 +11,8 @@ GameObject:
   - component: {fileID: 5921856583991090438}
   - component: {fileID: 8576118779094445048}
   - component: {fileID: 495930326821552422}
-  m_Layer: 0
+  - component: {fileID: 7940493298683135393}
+  m_Layer: 12
   m_Name: Appearance Obstacle V1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -74,6 +75,22 @@ MonoBehaviour:
   _playerTag: Player
   _playerCamera: {fileID: 0}
   _playerSanity: {fileID: 0}
+--- !u!208 &7940493298683135393
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8246239377732731730}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 3, y: 1.605, z: 1.88}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.21, y: 1.25, z: -1.29}
+  m_TimeToStationary: 0.5
 --- !u!1001 &410483205095855905
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82,10 +99,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5921856583991090438}
     m_Modifications:
+    - target: {fileID: 2322704519975694821, guid: 30350af193fe4b547a5dc0503ad10802,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 2469161349147072754, guid: 30350af193fe4b547a5dc0503ad10802,
         type: 3}
       propertyPath: m_Name
       value: Wood Box Horizontal
+      objectReference: {fileID: 0}
+    - target: {fileID: 2469161349147072754, guid: 30350af193fe4b547a5dc0503ad10802,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 4188747877627895721, guid: 30350af193fe4b547a5dc0503ad10802,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 5434307922162799458, guid: 30350af193fe4b547a5dc0503ad10802,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 5720796327289386452, guid: 30350af193fe4b547a5dc0503ad10802,
         type: 3}
@@ -141,6 +178,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6160305336859881424, guid: 30350af193fe4b547a5dc0503ad10802,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 8189681159003169089, guid: 30350af193fe4b547a5dc0503ad10802,
+        type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -485,11 +485,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _energyIncreasingSpeed: 1
-  _energyDecreasingSpeed: 1
+  _energyDecreasingSpeed: 0.305
   _maxEnergyAmount: 100
   _taskData: {fileID: 11400000, guid: d2e13b31c44345546804aff25406d05c, type: 2}
   _fuseIconForTask:
-    _isIconNeeded: 1
+    <IsIconNeeded>k__BackingField: 1
     <ItemIcon>k__BackingField: {fileID: 0}
     <IconTargetToLook>k__BackingField: {fileID: 0}
   generatorSwitches:
@@ -1675,8 +1675,8 @@ MonoBehaviour:
   _doorRotationSpeed: 10000
   _doorModel: {fileID: 8878504986903011619}
   _playerInteractor: {fileID: 0}
-  <IsClosed>k__BackingField: 0
-  <DoorKeyType>k__BackingField: 4
+  <IsClosed>k__BackingField: 1
+  <DoorKeyType>k__BackingField: 9
 --- !u!1 &7162989682918446349
 GameObject:
   m_ObjectHideFlags: 0

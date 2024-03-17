@@ -1008,7 +1008,7 @@ Transform:
   m_Children:
   - {fileID: 2440531477012399853}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7645819808550993125
 BoxCollider:
@@ -1092,6 +1092,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d12371ec5987544814dbd200d72d7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <CanBePicked>k__BackingField: 1
+  <ItemIcon>k__BackingField:
+    <IsIconNeeded>k__BackingField: 1
+    <ItemIcon>k__BackingField: {fileID: 0}
+    <IconTargetToLook>k__BackingField: {fileID: 0}
+    <EnableOnStart>k__BackingField: 0
+    <ChangeIconStateAutomatically>k__BackingField: 0
   <BoxData>k__BackingField: {fileID: 11400000, guid: 73cc89b89a35cb54680d60d34e314a6b,
     type: 2}
 --- !u!114 &4758825172621725928
@@ -1106,9 +1113,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08492dd13551f2440a6ef3b52c88b275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerLayer:
+  _targetLayer:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 0
   _obstacleLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -1128,28 +1135,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerSanity: {fileID: 0}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  _groundCheckDistance: 0.1
   _patrolPointsRestDelay: 10
   _patrolingSpeed: 4
   _attackingSpeed: 4
   _runningSpeed: 6
-  _patrolPhaseStart: 80
-  _attackPhaseStart: 10
-  _tranfromToEnemyDelay: 5
+  _patrolPhaseStartSanityPercent: 0.4
+  _attackPhaseStartSanityPercent: 0.1
+  <TranfromToEnemyDelay>k__BackingField: 5
   _animator: {fileID: 614259189827869997}
   BecomeInsectTrigger: BecomeInsect
   BecomeBoxTrigger: BecomeBox
   IsMoving: IsMoving
-  KillAnimationTrigger: Jumpscare
-  _patrolPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  _hiddenPoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  _killerBoxJumpScare: {fileID: 0}
+  _patrolPoints: []
+  _hiddenPoints: []
 --- !u!1 &3549820214157772160
 GameObject:
   m_ObjectHideFlags: 0
