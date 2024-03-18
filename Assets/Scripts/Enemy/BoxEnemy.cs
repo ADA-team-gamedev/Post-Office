@@ -1,4 +1,5 @@
 using Items;
+using Items.Icon;
 using Player;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,6 +13,8 @@ namespace Enemy
 	[RequireComponent(typeof(NavMeshAgent))]
 	public class BoxEnemy : MonoBehaviour
 	{
+		[SerializeField] private bool _isAliveBox = true;
+
 		[Header("Player Sanity")]
 		[SerializeField] private PlayerSanity _playerSanity;
 
@@ -71,7 +74,7 @@ namespace Enemy
 		private Rigidbody _rigidbody;
 		private FieldOfView _fieldOfView;
 
-		private Box _box;
+		private Box _boxItem;
 
 		//flags
 		private bool _isFleeing = false;
@@ -89,7 +92,7 @@ namespace Enemy
 			
 			_fieldOfView = GetComponent<FieldOfView>();
 
-			_box = GetComponent<Box>();
+			_boxItem = GetComponent<Box>();
 
 			_rigidbody = GetComponent<Rigidbody>();
 
@@ -99,9 +102,11 @@ namespace Enemy
 
 			DisableAI();
 
-			_box.OnPickUpItem += PickUpItem;
+			_boxItem.OnPickUpItem += PickUpItem;
 
-			_box.OnDropItem += DropItem;
+			_boxItem.OnDropItem += DropItem;
+
+			_boxItem.OnItemPickingPropertyChanged += OnItemPickingPropertyChanged;
 
 			_defaultAnimationSpeed = _animator.speed;
 		}
@@ -124,6 +129,9 @@ namespace Enemy
 
 				HandleStateLauncher();
 			}
+
+			if (_boxItem.ItemIcon.IsIconEnabled) //For task. If task enable item icons we update icon position
+				_boxItem.ItemIcon.ShowIcon(_boxItem);		
 		}
 
 		#region Checker
@@ -132,7 +140,7 @@ namespace Enemy
 			=> !_isPicked && IsOnGround();
 
 		private bool IsCanStartEnemyLogic()
-			=> !_isPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround();
+			=> !_isPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround() && _isAliveBox;
 
 		private bool IsOnGround()
 			=> Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);		
@@ -211,9 +219,13 @@ namespace Enemy
 
 			_currentPointToMove = _patrolPoints[_currentPatrolPointIndex].position;
 
-			_animator.SetBool(IsMoving, true);
+			_agent.speed = _patrolingSpeed;
 
 			_agent.SetDestination(_currentPointToMove);
+
+			_isPatroling = true;
+
+			_animator.SetBool(IsMoving, true);
 		}
 
 		private void MoveTo(Vector3 point)
@@ -232,16 +244,12 @@ namespace Enemy
 				if (_agent.remainingDistance <= _agent.stoppingDistance)
 				{
 					_isPatroling = false;
-					
+
 					_enemyState = EnemyState.Idle;
 				}
 
 				return;
 			}
-
-			_isPatroling = true;
-
-			_agent.speed = _patrolingSpeed;
 
 			MoveTo();
 		}
@@ -365,13 +373,13 @@ namespace Enemy
 		{
 			_isPicked = true;
 
-			_attackingTarget = null;
-
 			DisableAI();
 		}
 
 		private void DisableAI()
 		{
+			_attackingTarget = null;
+
 			StopAllCoroutines();
 
 			if (IsAIActivated)
@@ -438,6 +446,13 @@ namespace Enemy
 
 		#endregion
 
+		private void OnItemPickingPropertyChanged()
+		{
+			StopAllCoroutines();
+
+			_isAliveBox = _boxItem.CanBePicked;
+		}
+
 		#endregion
 
 		public void ActivateEnemyBox()
@@ -463,12 +478,18 @@ namespace Enemy
 			Gizmos.DrawRay(transform.position, Vector3.down * _groundCheckDistance);
 
 			foreach (var point in _patrolPoints)
-				Gizmos.DrawSphere(point.position, 0.3f);
+			{
+				if (point)
+					Gizmos.DrawSphere(point.position, 0.3f);
+			}
 
 			Gizmos.color = Color.green;
 
 			foreach (var point in _hiddenPoints)
-				Gizmos.DrawSphere(point.position, 0.3f);
+			{
+				if (point)
+					Gizmos.DrawSphere(point.position, 0.3f);
+			}
 		}
 	}
 }

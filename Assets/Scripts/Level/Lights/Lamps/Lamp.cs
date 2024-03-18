@@ -3,7 +3,7 @@ using UnityEngine.Events;
 
 namespace Level.Lights.Lamp
 {
-	[RequireComponent(typeof(BoxCollider))]
+	[RequireComponent(typeof(BoxCollider))] //triger zone
 	public class Lamp : MonoBehaviour
 	{
 		[field: SerializeField] public bool IsLampEnabled { get; set; } = true;

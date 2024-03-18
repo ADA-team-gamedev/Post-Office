@@ -63,18 +63,25 @@ namespace Player
 
 			if (isHitted)
 			{
-				bool isPickableItem = hit.collider.TryGetComponent(out Item item) && item.CanBePicked;
+				bool isPickableItem = hit.transform.TryGetComponent(out Item item) && item.CanBePicked;
 
-				bool isInteractable = hit.collider.TryGetComponent(out IInteractable _) || hit.collider.TryGetComponent(out Lamp _);
+				bool isInteractable = hit.transform.TryGetComponent(out IInteractable _);
 
-				if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
+                if (hit.transform.TryGetComponent(out Door door))
 				{
-					isHaveInteractableParent = hit.transform.TryGetComponent(out IInteractable _);
+					isInteractable = true;
 
-					if (hit.transform.TryGetComponent(out Door door) && door.IsClosed)
+					if (door.IsClosed)
 						_crosshairImage.sprite = _crosshairLock;
-					else
-						_crosshairImage.sprite = _defaultCrosshair;
+				}
+				else
+				{
+					_crosshairImage.sprite = _defaultCrosshair;		
+				}
+
+				if (hit.transform.parent) //hit object with col or parent object(door or something, what doesn't have collider on himself)
+				{
+					isHaveInteractableParent = hit.transform.parent.TryGetComponent(out IInteractable _) || hit.transform.parent.TryGetComponent(out Lamp _);		
 				} 
 
 				_isHitInteractableObject = isInteractable || isHaveInteractableParent || isPickableItem;

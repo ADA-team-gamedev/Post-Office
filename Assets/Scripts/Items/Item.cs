@@ -10,7 +10,18 @@ namespace Items
 	{
 		[field: Header("Item")]
 
-		[field: SerializeField] public bool CanBePicked { get; set; } = true;
+		[field: SerializeField] private bool _canBePicked = true;
+
+		public bool CanBePicked
+		{
+			get { return _canBePicked; }
+			set
+			{
+				_canBePicked = value;
+
+				OnItemPickingPropertyChanged?.Invoke();
+			}
+		}
 
 		public bool IsPicked { get; private set; } = false;
 
@@ -19,6 +30,8 @@ namespace Items
 		public Action<Item> OnPickUpItem { get; set; }
 
 		public Action<Item> OnDropItem { get; set; }
+
+		public Action OnItemPickingPropertyChanged {  get; set; }
 
 		private void Start()
 		{
