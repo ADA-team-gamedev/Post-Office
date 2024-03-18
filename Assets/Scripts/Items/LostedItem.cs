@@ -1,33 +1,35 @@
-using Items;
 using UnityEngine;
 using TaskSystem.NoteBook;
 
-public class LostedItem : Item
+namespace Items
 {
-    [SerializeField] private GameObject _lostedItemPhoto;
-
-	[SerializeField] private SerializedTime _lostedItemAddTime;
-
-	[SerializeField] private TimeClock _timeClock;
-
-	private void Start()
+	public class LostedItem : Item
 	{
-		InitializeItem();
-	}
+		[SerializeField] private GameObject _lostedItemPhoto;
 
-	protected override void InitializeItem()
-	{
-		base.InitializeItem();
+		[SerializeField] private SerializedTime _lostedItemAddTime;
 
-		OnPickUpItem += OnPlayerFindItem;
-	}
+		[SerializeField] private TimeClock _timeClock;
 
-	private void OnPlayerFindItem(Item item)
-	{
-		OnPickUpItem -= OnPlayerFindItem;
+		private void Start()
+		{
+			InitializeItem();
+		}
 
-		_lostedItemPhoto.gameObject.SetActive(false);
+		protected override void InitializeItem()
+		{
+			base.InitializeItem();
 
-		_timeClock.IncreaseTimeLimit(new(_lostedItemAddTime.Hours, _lostedItemAddTime.Minutes, _lostedItemAddTime.Seconds));
+			OnPickUpItem += OnPlayerFindItem;
+		}
+
+		private void OnPlayerFindItem(Item item)
+		{
+			OnPickUpItem -= OnPlayerFindItem;
+
+			_lostedItemPhoto.gameObject.SetActive(false);
+
+			_timeClock.IncreaseTimeLimit(new(_lostedItemAddTime.Hours, _lostedItemAddTime.Minutes, _lostedItemAddTime.Seconds));
+		}
 	}
 }

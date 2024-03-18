@@ -25,10 +25,10 @@ namespace Level
 
         private IDataService _dataService = new JsonDataService();
 
-        [Header("Spawn Objects")]
+        [field: Header("Spawn Objects")]
 
         [SerializedDictionary(nameof(WeekDay), nameof(Room))]
-        public SerializedDictionary<WeekDay, Room> _dayObjects;
+        public SerializedDictionary<WeekDay, Room> DayObjects;
         
         private WeekDay _currentWeekDay = WeekDay.Monday;
         public const string WeekDayPath = "/WeekDay";
@@ -49,6 +49,8 @@ namespace Level
         {
             if (_dataService.LoadData(out WeekDay weekDay, WeekDayPath, true))
 				_currentWeekDay = weekDay;
+
+            Debug.Log($"Loaded current week day as {_currentWeekDay}");
 
             SaveDayProgress();
         }
@@ -71,11 +73,11 @@ namespace Level
 
         private void LoadDayObjectsOnMap()
         {
-            for (WeekDay weekDayIndex = WeekDay.Monday; (int)weekDayIndex <= _dayObjects.Keys.Count; weekDayIndex++)
+            for (WeekDay weekDayIndex = WeekDay.Monday; (int)weekDayIndex <= DayObjects.Keys.Count; weekDayIndex++)
             {
                 bool isNeedToEnable = weekDayIndex == _currentWeekDay;
 
-                foreach (var item in _dayObjects[weekDayIndex].Objects)
+                foreach (var item in DayObjects[weekDayIndex].Objects)
                 {
                     item.SetActive(isNeedToEnable);
                 }
@@ -84,25 +86,14 @@ namespace Level
 
         private void IncreasePlayerDayProgress()
         {
+            _timeclock.OnGameCompleted -= IncreasePlayerDayProgress;
+
             _currentWeekDay++;
+
+            if (_currentWeekDay == WeekDay.Sunday)
+                _currentWeekDay = WeekDay.Monday;
 
             SaveDayProgress();
         }
-
-        #region Temp Changers
-
-        [ContextMenu("Increase")]
-        private void IncreaseWeekDay()
-        {
-            _currentWeekDay++;
-        }
-
-        [ContextMenu("Decrease")]
-        private void DecreaseWeekDay()
-        {
-            _currentWeekDay--;
-        }
-
-        #endregion
     }
 }

@@ -130,7 +130,7 @@ namespace Enemy
 				HandleStateLauncher();
 			}
 
-			if (_boxItem.ItemIcon.IsIconEnabled) //For task. If task enable item icons we update icon position
+			if (_boxItem.ItemIcon.IsIconEnabled()) //For task. If task enable item icons we update icon position
 				_boxItem.ItemIcon.ShowIcon(_boxItem);		
 		}
 
@@ -354,7 +354,14 @@ namespace Enemy
 		{
 			DisableAI();
 
-			_fieldOfView.Target.GetComponent<PlayerDeathController>().Die();
+			if (!_fieldOfView.Target.TryGetComponent(out PlayerDeathController playerDeath))
+			{
+				Debug.LogError($"No {nameof(PlayerDeathController)} in the target({_fieldOfView.Target})");
+
+				return;
+			}
+
+			playerDeath.Die();
 
 			_killerBoxJumpScare.SetActive(true);
 

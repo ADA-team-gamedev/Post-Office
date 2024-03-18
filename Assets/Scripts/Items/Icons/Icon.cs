@@ -11,11 +11,9 @@ namespace Items.Icon
 
 		[field: SerializeField] protected Transform IconTargetToLook { get; private set; }
 
-		public bool IsIconEnabled => ItemIcon.activeSelf;
-
 		public void RotateIconToObject()
 		{
-			if (!IsIconNeeded || !IsIconEnabled)
+			if (!IsIconNeeded || !IsIconEnabled())
 				return;
 
 			Vector3 targetPosition = IconTargetToLook.position;
@@ -27,7 +25,7 @@ namespace Items.Icon
 
 		public virtual void HideIcon()
 		{
-			if (!IsIconNeeded || !IsIconEnabled)
+			if (!IsIconNeeded || !IsIconEnabled())
 				return;
 
 			ItemIcon.SetActive(false);
@@ -35,10 +33,18 @@ namespace Items.Icon
 
 		public virtual void ShowIcon()
 		{
-			if (!IsIconNeeded || IsIconEnabled)
+			if (!IsIconNeeded || IsIconEnabled())
 				return;
 
 			ItemIcon.SetActive(true);
+		}
+
+		public bool IsIconEnabled()
+		{
+			if (!ItemIcon)
+				return false;
+
+			return ItemIcon.activeSelf;
 		}
 	}
 }

@@ -22,6 +22,7 @@ namespace TaskSystem.NoteBook
 
 		[SerializeField] private SerializedTime _timeToCompleteGame;
 		private TimeSpan _timeToComplete;
+		private bool _isGameCompleted = false;
 
 		public event Action OnGameCompleted;
 
@@ -76,9 +77,14 @@ namespace TaskSystem.NoteBook
 
 		private void CompleteGame()
 		{
+			if (_isGameCompleted)
+				return;
+
+			_isGameCompleted = true;
+
 			Debug.Log("The game is completed!");
 
-			OnGameCompleted.Invoke();
+			OnGameCompleted?.Invoke();
 		}
 
 		private void OnValidate()

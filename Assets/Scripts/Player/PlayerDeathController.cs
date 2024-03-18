@@ -1,14 +1,15 @@
+using Level;
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Player
 {
     public class PlayerDeathController : MonoBehaviour
     {
         [SerializeField][Range(1f, 10f)] private float _afterDeathDelay = 5f;
-        [SerializeField] private string _menuSceneName = "Menu";
+
+        [SerializeField] private DayFinisher _dayFinisher;
 
         public bool IsAlive { get; private set; } = true;
 
@@ -25,14 +26,14 @@ namespace Player
 
             OnDeath?.Invoke();
 
-            StartCoroutine(LoadMenuScene());
-        }
+            StartCoroutine(FinishDay());
+		}
 
-        private IEnumerator LoadMenuScene()
+        private IEnumerator FinishDay()
         {
             yield return new WaitForSeconds(_afterDeathDelay);
 
-            SceneManager.LoadScene(_menuSceneName);
-        }
+            _dayFinisher.FinishDayWork();
+		}
     }
 }
