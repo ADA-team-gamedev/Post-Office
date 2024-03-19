@@ -1,3 +1,4 @@
+using Audio;
 using Player;
 using System;
 using System.Collections;
@@ -28,17 +29,17 @@ namespace Items
 
                     Debug.Log($"{gameObject.name}s are used");
 
-                    //Play using pill sound
+					AudioManager.Instance.PlaySound("Pill Use", transform.position);
 
-                    StartCoroutine(ResoteSanity());
+					StartCoroutine(ResoteSanity());
                 }
             }
             else
             {
                 Debug.Log($"These {gameObject.name} pills are empty");
 
-                //Play empty sound
-            }
+				AudioManager.Instance.PlaySound("Pill Empty", transform.position);
+			}
         }
 
         private bool IsHaveCharge()

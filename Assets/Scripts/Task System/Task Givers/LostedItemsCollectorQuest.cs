@@ -24,16 +24,14 @@ public class LostedItemsCollectorQuest : MonoBehaviour
 
 	private void TryCompleteTask(Item item)
 	{
-		if (_lostedItems.Count > 0)
+		_lostedItems.Remove(item);
+
+		item.OnPickUpItem -= TryCompleteTask;
+
+		if (_lostedItems.Count <= 0)
 		{
-			item.OnPickUpItem -= TryCompleteTask;
-
-			_lostedItems.Remove(item);
-
-			return;
+			if (TaskManager.Instance.TryGetTask(_lostedItemsTask.Task.ID, out Task task))
+				task.Complete();
 		}
-
-		if (TaskManager.Instance.TryGetTask(_lostedItemsTask.Task.ID, out Task task))
-			task.Complete();
 	}
 }

@@ -1,3 +1,4 @@
+using Audio;
 using Items;
 using System;
 using UnityEngine;
@@ -106,6 +107,8 @@ namespace Player
 
 			if (!_playerInventory.TryGetCurrentItem(out FlashLight flashlight))
 				_light.enabled = !_light.enabled;
+
+			AudioManager.Instance.PlaySound("Flashlight On", transform.position);
 		}
 
 		#endregion
