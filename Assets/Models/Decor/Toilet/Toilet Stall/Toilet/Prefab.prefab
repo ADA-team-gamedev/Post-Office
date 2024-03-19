@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
@@ -88,6 +88,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Toilet
       objectReference: {fileID: 0}
+    - target: {fileID: -6409901993374903308, guid: 2d6d367c4041c694f9f4748e070f5bfd,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 08c06d081927f81418e3dd53ec6e5537, type: 2}
+    - target: {fileID: -6409901993374903308, guid: 2d6d367c4041c694f9f4748e070f5bfd,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 08c06d081927f81418e3dd53ec6e5537, type: 2}
     - target: {fileID: -5976331087214761048, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
       propertyPath: m_LocalPosition.y
@@ -116,22 +126,27 @@ PrefabInstance:
     - target: {fileID: -2199227987608521689, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
       propertyPath: m_Name
-      value: Cap
+      value: Seat
       objectReference: {fileID: 0}
     - target: {fileID: -205486168955617007, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 08c06d081927f81418e3dd53ec6e5537, type: 2}
+    - target: {fileID: -205486168955617007, guid: 2d6d367c4041c694f9f4748e070f5bfd,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 08c06d081927f81418e3dd53ec6e5537, type: 2}
     - target: {fileID: 919132149155446097, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
       propertyPath: m_Name
-      value: Toilet Variant
+      value: Prefab
       objectReference: {fileID: 0}
     - target: {fileID: 4057882156472680308, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
       propertyPath: m_Name
-      value: Seat
+      value: Cap
       objectReference: {fileID: 0}
     - target: {fileID: 6721540362325620393, guid: 2d6d367c4041c694f9f4748e070f5bfd,
         type: 3}
