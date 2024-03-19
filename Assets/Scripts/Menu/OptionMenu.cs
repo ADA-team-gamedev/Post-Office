@@ -1,12 +1,15 @@
 using DataPersistance;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UI;
 
 namespace Menu
 {
 	public class OptionMenu : MonoBehaviour
 	{
+		[Header("Video")]
+
 		[SerializeField] private TMP_Text _resolutionViewText;
 
 		[SerializeField] private TMP_Text _screenModeText;
@@ -14,6 +17,20 @@ namespace Menu
 		[SerializeField] private TMP_Text _frameRateText;
 
 		[SerializeField] private Toggle _vSyncToggle;
+
+		[Header("Audio")]
+
+		[SerializeField] private AudioMixer _masterMixer;
+
+		[SerializeField] private TMP_Text _masterMixerPercentText;
+		[SerializeField] private TMP_Text _effectMixerPercentText;
+		[SerializeField] private TMP_Text _musicMixerPercentText;
+		[SerializeField] private TMP_Text _uiMixerPercentText;
+
+		[SerializeField] private Slider _masterSlider;
+		[SerializeField] private Slider _effectSlider;
+		[SerializeField] private Slider _musicSlider;
+		[SerializeField] private Slider _uiSlider;
 
 		#region Load System
 
@@ -79,7 +96,7 @@ namespace Menu
 			_frameRateText.text = $"{_optionData.FrameRates[_optionData.SelectedFrameRatesIndex]}";
 		}
 
-		#region Buttons
+		#region Video Buttons
 
 		public void RightResolutionButton()
 		{
@@ -114,6 +131,46 @@ namespace Menu
 		public void ChangeVSyncState()
 		{
 			_optionData.VSyncCountEnable = !_optionData.VSyncCountEnable;
+		}
+
+		#endregion
+
+		#region Audio
+
+		public void SetMasterVolume()
+		{
+			_masterMixerPercentText.text = $"{_masterSlider.value + 80}";
+
+			_masterMixer.SetFloat("MasterVolume", _masterSlider.value);
+
+			_optionData.MasterVolume = _masterSlider.value;
+		}
+
+		public void SetMusicVolume()
+		{
+			_musicMixerPercentText.text = $"{_musicSlider.value + 80}";
+
+			_masterMixer.SetFloat("MusicVolume", _musicSlider.value);
+
+			_optionData.MusicVolume = _musicSlider.value;
+		}
+
+		public void SetEffectVolume()
+		{
+			_effectMixerPercentText.text = $"{_effectSlider.value + 80}";
+
+			_masterMixer.SetFloat("EffectVolume", _effectSlider.value);
+
+			_optionData.EffectVolume = _effectSlider.value;
+		}
+
+		public void SetUIVolume()
+		{
+			_uiMixerPercentText.text = $"{_uiSlider.value + 80}";
+
+			_masterMixer.SetFloat("UIVolume", _uiSlider.value);
+
+			_optionData.UIVolume = _uiSlider.value;
 		}
 
 		#endregion

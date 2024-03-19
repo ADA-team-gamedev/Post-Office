@@ -5,6 +5,8 @@ namespace Menu
 {
 	public class OptionData
 	{
+		#region Video
+
 		[field: SerializeField]
 		public Vector2Int[] ScreenResolutions { get; private set; } = 
 		{
@@ -101,6 +103,20 @@ namespace Menu
 
 		public bool VSyncCountEnable { get; set; } = false;
 
-		public float ScreenBrightness { get; set; } = 1; 
+		public float ScreenBrightness { get; set; } = 1;
+
+		#endregion
+
+		#region Audio
+
+		public float MasterVolume { get; set; } = 0;
+
+		public float EffectVolume { get; set; } = 0;
+
+		public float MusicVolume { get; set; } = 0;
+
+		public float UIVolume { get; set; } = 0;
+
+		#endregion
 	}
 }
