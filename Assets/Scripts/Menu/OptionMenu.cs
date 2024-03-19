@@ -94,6 +94,11 @@ namespace Menu
 			_screenModeText.text = $"{_optionData.FullScreenMode}";
 
 			_frameRateText.text = $"{_optionData.FrameRates[_optionData.SelectedFrameRatesIndex]}";
+
+			_masterSlider.value = _optionData.MasterVolume;
+			_musicSlider.value = _optionData.MusicVolume;
+			_effectSlider.value = _optionData.EffectVolume;
+			_uiSlider.value = _optionData.UIVolume;
 		}
 
 		#region Video Buttons

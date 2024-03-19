@@ -21,7 +21,7 @@ namespace Level.Lights.Lamp
 		{
 			_electronicalSparkVF.gameObject.SetActive(false);
 
-			_lampDelayBeforeBreakingRemaining = _maxLampLifeDelayBeforeBreaking;
+			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
 
 			InitializeFlickeringLamp();
 		}
