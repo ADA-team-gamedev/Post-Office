@@ -99,6 +99,11 @@ namespace Menu
 			_musicSlider.value = _optionData.MusicVolume;
 			_effectSlider.value = _optionData.EffectVolume;
 			_uiSlider.value = _optionData.UIVolume;
+
+			_masterMixerPercentText.text = $"{_masterSlider.value + 80}";
+			_musicMixerPercentText.text = $"{_musicSlider.value + 80}";
+			_effectMixerPercentText.text = $"{_effectSlider.value + 80}";
+			_uiMixerPercentText.text = $"{_uiSlider.value + 80}";
 		}
 
 		#region Video Buttons
