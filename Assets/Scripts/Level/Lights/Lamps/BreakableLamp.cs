@@ -1,3 +1,4 @@
+using Audio;
 using UnityEngine;
 
 namespace Level.Lights.Lamp
@@ -88,6 +89,8 @@ namespace Level.Lights.Lamp
 		{
 			if (IsLampDestroyed)
 				return;
+
+			AudioManager.Instance.PlaySound("Lamp Crush", transform.position, spatialBlend: 0.5f);
 
 			IsLampDestroyed = true;
 

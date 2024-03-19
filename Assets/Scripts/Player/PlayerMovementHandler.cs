@@ -1,3 +1,4 @@
+using Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -86,6 +87,16 @@ namespace Player
 
 		#endregion
 
+		#region Footstep
+
+		[Header("FootStep")]
+
+		[SerializeField] private float _footstepCooldown = 9f;
+
+		private float _footstepRemaining = 0f;
+
+		#endregion
+
 		private PlayerInput _playerInput;
 
 		private PlayerDeathController _playerDeathController;
@@ -129,6 +140,8 @@ namespace Player
 			_sprintBarCanvasGroup.gameObject.SetActive(true);
 
 			_sprintBarCanvasGroup.alpha = 0;
+
+			_footstepRemaining = _footstepCooldown;
 		}
 
 		private void Update()
@@ -144,6 +157,8 @@ namespace Player
 
 			if (HeadBobEnabled)
 				HeadBob();
+
+			PlayFootsteps();
 		}
 
 		private void FixedUpdate()
@@ -278,6 +293,21 @@ namespace Player
 			z = _jointOriginalPosition.z + Mathf.Sin(_timer) * _bobAmount.z;
 
 			_joint.localPosition = new Vector3(x, y, z);
+		}
+
+		private void PlayFootsteps()
+		{
+			if (MovementState == MovementState.Idle || MoveDirection == Vector2.zero)
+				return;		
+
+			if (_footstepRemaining < 0)
+			{
+				_footstepRemaining = _footstepCooldown;
+
+				AudioManager.Instance.PlaySound("Footstep", transform.position);
+			}
+
+			_footstepRemaining -= Time.deltaTime * _playerSpeed;
 		}
 
 		#region Chekers

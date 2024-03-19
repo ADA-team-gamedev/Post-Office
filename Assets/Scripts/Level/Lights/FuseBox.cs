@@ -1,3 +1,4 @@
+using Audio;
 using Items.Icon;
 using TaskSystem;
 using UnityEngine;
@@ -124,6 +125,8 @@ namespace Level.Lights
 				switches.DisableSwitch();
 
 			OnFuseDisabled?.Invoke();
+
+			AudioManager.Instance.PlaySound("Fuse Off", transform.position, spatialBlend: 0.5f);
 
 			GiveTask();	
 		}

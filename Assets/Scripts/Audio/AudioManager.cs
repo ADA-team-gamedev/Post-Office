@@ -1,6 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Audio;
+using AYellowpaper.SerializedCollections;
+using System;
 
 namespace Audio
 {
@@ -8,116 +9,68 @@ namespace Audio
     {
         public static AudioManager Instance { get; private set; }
 
-		[SerializeField] private List<SoundClip> _soundClips = new();
-		[SerializeField] private List<AudioSource> _audioSources = new();
+		[SerializedDictionary(nameof(String), nameof(SoundClipData))]
+		public SerializedDictionary<string, SoundClipData> SoundClips;
+
+		[SerializedDictionary(nameof(AudioMixerGroup), nameof(AudioSource))]
+        public SerializedDictionary<AudioMixerGroup, AudioSource> AudioSources;
 
 		private void Awake()
 		{
 			if (Instance == null)
 				Instance = this;		
 			else
-				Debug.LogError("AudioManager Instance already exists!");		
+				Debug.LogError($"{nameof(AudioManager)} Instance already exists!");		
 		}
 
 		private void Start()
 		{
-			DontDestroyOnLoad(gameObject);
-			
-			foreach (var item in _audioSources)
-			{
-				DontDestroyOnLoad(item.gameObject);
-			}
+			FillAudioSources();
 		}
 
-		public void Play(string clipName)
+		private void FillAudioSources()
 		{
-			if (!TryGetClipByName(clipName, out SoundClip soundClip))
-			{
-				Debug.LogWarning($"No clip with {clipName} name!");
-			}
+			//AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
 
-			Play(soundClip);
+			//foreach (var source in audioSources)
+			//{
+			//	AudioSources.Add(source.outputAudioMixerGroup, source);
+			//}
 		}
 
-		public void Play(int clipID)
+		public void PlaySound(string clipName, Vector3 spawnPosition, float volume = 1f, float spatialBlend = 0)
 		{
-			if (!TryGetClipByID(clipID, out SoundClip soundClip))
+			if (!SoundClips.TryGetValue(clipName, out SoundClipData soundClipData))
 			{
-				Debug.LogWarning($"No clip with {clipID} ID!");
-
-				return;
-			}
-			
-			Play(soundClip);	
-		}
-
-		private void Play(SoundClip soundClip)
-		{
-			if (!TryGetAudioSourceByMixer(soundClip.MixerGroup, out AudioSource selectedSource))
-			{
-				Debug.LogWarning($"We don't have audio source with {soundClip.MixerGroup} mixer in our mixers collection!");
+				Debug.LogWarning($"No clip with name {clipName}");
 
 				return;
 			}
 
-			selectedSource.clip = soundClip.Clip;
+			SoundClip soundClip = soundClipData.SoundClip;
 
-			selectedSource.volume = soundClip.Volume;
-
-			selectedSource.pitch = soundClip.Pitch;
-
-			selectedSource.PlayOneShot(soundClip.Clip);
-		}
-
-		private bool TryGetClipByName(string clipName, out SoundClip soundClip)
-		{
-			foreach (var clip in _soundClips)
+			if (!AudioSources.TryGetValue(soundClip.MixerGroup, out AudioSource basedAudioSource))
 			{
-				if (clip.ClipName == clipName)
-				{
-					soundClip = clip;
+				Debug.LogWarning($"No audio source with {soundClip.MixerGroup}");
 
-					return true;
-				}	
+				return;
 			}
 
-			soundClip = null;
+			AudioSource audioSource = Instantiate(basedAudioSource, spawnPosition, Quaternion.identity);
+			
+			audioSource.clip = soundClip.Clip;
+			
+			audioSource.volume = Mathf.Clamp01(volume);
 
-			return false;
-		}
+			audioSource.outputAudioMixerGroup = soundClip.MixerGroup;
 
-		private bool TryGetClipByID(int clipID, out SoundClip soundClip)
-		{
-			foreach (var clip in _soundClips)
-			{
-				if (clip.ClipID == clipID)
-				{
-					soundClip = clip;
+			audioSource.spatialBlend = Mathf.Clamp01(spatialBlend);
 
-					return true;
-				}
-			}
+			audioSource.Play();
 
-			soundClip = null;
+			float clipLength = audioSource.clip.length;
 
-			return false;
-		}
-
-		private bool TryGetAudioSourceByMixer(AudioMixerGroup neededMixerGroup, out AudioSource audioSource)
-		{
-			foreach (var item in _audioSources)
-			{
-				if (item.outputAudioMixerGroup == neededMixerGroup)
-				{
-					audioSource = item;
-
-					return true;
-				}
-			}
-
-			audioSource = null;
-
-			return false;
+			Destroy(audioSource.gameObject, clipLength);
 		}
 	}
 }

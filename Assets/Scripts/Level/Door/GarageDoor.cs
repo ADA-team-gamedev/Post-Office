@@ -1,3 +1,4 @@
+using Audio;
 using UnityEngine;
 
 namespace Level.Doors
@@ -55,6 +56,8 @@ namespace Level.Doors
 
 				_garageDoorPhase = GarageDoorPhase.Opening;
 			}
+
+			AudioManager.Instance.PlaySound("Garage Door Open", transform.position, spatialBlend: 0.8f);
 		}
 
 		private void OpenDoorAutomatically()

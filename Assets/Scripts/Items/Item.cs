@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Items.Icon;
+using Audio;
 
 namespace Items
 {
@@ -81,11 +82,15 @@ namespace Items
 		private void OnItemPicked(Item item)
 		{
 			IsPicked = true;
+
+			AudioManager.Instance.PlaySound("Item Pickup", transform.position);
 		}
 
 		private void OnItemDroped(Item item)
 		{
 			IsPicked = false;
+
+			AudioManager.Instance.PlaySound("Item Drop", transform.position);
 		}		
 
 		#endregion

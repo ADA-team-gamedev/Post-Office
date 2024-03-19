@@ -1,6 +1,7 @@
 using UnityEngine;
 using Items;
 using Player;
+using Audio;
 
 namespace Level.Doors
 {
@@ -89,17 +90,19 @@ namespace Level.Doors
 			{
 				if (key.DoorKeyType == DoorKeyType)
 				{
-					//play door key opening sound
+					AudioManager.Instance.PlaySound("Unlock Door", transform.position);
 
 					IsClosed = false;
+
+					return;
 				}
 				else
 				{
 					Debug.Log("Player doesn't have right key to open this door");
-
-					//play door key closed sound
 				}
 			}
+
+			AudioManager.Instance.PlaySound("Door Closed", transform.position);
 		}
 
 		#endregion
@@ -142,7 +145,7 @@ namespace Level.Doors
 
 			if (transform.rotation.eulerAngles.y == _defaultDoorYRotation)
 			{
-				//play fully closed door sound
+				AudioManager.Instance.PlaySound("Fully Closed Door", transform.position);
 			}
 
 			_isPlayerDragDoor = false;

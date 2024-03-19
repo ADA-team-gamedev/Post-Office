@@ -1,3 +1,4 @@
+using Audio;
 using Player;
 using System;
 using UnityEngine;
@@ -67,6 +68,8 @@ namespace Level.Lights
 				DisableSwitch();
 			else
 				EnableSwitch();
+
+			AudioManager.Instance.PlaySound("Fuse Switch Change", transform.position, spatialBlend: 1);
 		}
 
 		public void StopInteract()

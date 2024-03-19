@@ -1,3 +1,4 @@
+using Audio;
 using System.Collections;
 using UnityEngine;
 
@@ -58,29 +59,6 @@ namespace Level.Lights.Lamp
 			_block = new();
 		}
 
-		public void StartFlashingEvent()
-		{
-			if (_isFlashing)
-				return;
-
-			_isFlashing = true;
-
-			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
-
-			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
-
-			_possibleCountOfCurves--;
-
-			if (_possibleCountOfCurves <= 0)
-				_possibleCountOfCurves = _flashingCurves.Curves.Count;
-
-			AnimationCurve randomCurve = new(_flashingCurves.Curves[randomCurveIndex].keys);
-
-			AnimationCurve scaledCurve = ScaleCurveToMatchDuration(randomCurve, flashingDelay);
-
-			StartCoroutine(LaunchFlashingAnimation(scaledCurve, flashingDelay));
-		}
-
 		protected void TryStartFlashingEvent()
 		{
 			if (_isFlashing || !IsCanStartFlashingEvent())
@@ -113,6 +91,31 @@ namespace Level.Lights.Lamp
 				return;
 
 			base.TryInvokeLamp(other);
+		}
+
+		public void StartFlashingEvent()
+		{
+			if (_isFlashing)
+				return;
+
+			_isFlashing = true;
+
+			AudioManager.Instance.PlaySound("Fuse Flashing", transform.position, spatialBlend: 1);
+
+			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
+
+			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
+
+			_possibleCountOfCurves--;
+
+			if (_possibleCountOfCurves <= 0)
+				_possibleCountOfCurves = _flashingCurves.Curves.Count;
+
+			AnimationCurve randomCurve = new(_flashingCurves.Curves[randomCurveIndex].keys);
+
+			AnimationCurve scaledCurve = ScaleCurveToMatchDuration(randomCurve, flashingDelay);
+
+			StartCoroutine(LaunchFlashingAnimation(scaledCurve, flashingDelay));
 		}
 
 		protected virtual bool IsCanStartFlashingEvent()

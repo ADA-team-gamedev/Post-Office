@@ -2,6 +2,7 @@ using UnityEngine;
 using Items.Icon;
 using TaskSystem;
 using Level.Doors;
+using Audio;
 
 namespace Items
 {
@@ -65,10 +66,12 @@ namespace Items
 
 		public void Use()
 		{
+			AudioManager.Instance.PlaySound("Use Remote Control", transform.position);
+
 			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit))
 			{
 				if (hit.transform.parent && hit.transform.parent.TryGetComponent(out GarageDoor garageDoor)) //transform.parent.TryGetComponent() - because garage door script lying on object without collider
-					garageDoor.InteractRemotely();
+					garageDoor.InteractRemotely();			
 			}
 		}
 	}

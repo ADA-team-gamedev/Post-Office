@@ -1,3 +1,4 @@
+using Audio;
 using UnityEngine;
 
 namespace Items
@@ -24,7 +25,9 @@ namespace Items
                 TurnOn();
             else
                 TurnOff();
-        }
+
+			AudioManager.Instance.PlaySound("Flashlight On", transform.position);
+		}
 
         private void TurnOff()
         {
