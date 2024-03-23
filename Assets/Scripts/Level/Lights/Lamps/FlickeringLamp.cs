@@ -87,6 +87,7 @@ namespace Level.Lights.Lamp
 			base.TryInvokeLamp(other);
 		}
 
+		[ContextMenu(nameof(StartFlashingEvent))]
 		public void StartFlashingEvent()
 		{
 			if (_isFlashing)
@@ -94,9 +95,9 @@ namespace Level.Lights.Lamp
 
 			_isFlashing = true;
 
-			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, spatialBlend: 1);
-
 			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
+
+			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, soundDelay: flashingDelay);
 
 			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
 

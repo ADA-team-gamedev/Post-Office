@@ -72,26 +72,77 @@ namespace Audio
 
 			if (!AudioSources.TryGetValue(soundClip.MixerGroup, out AudioSource basedAudioSource))
 			{
+
 				Debug.LogWarning($"No audio source with {soundClip.MixerGroup}");
 
 				return;
 			}
 
 			AudioSource audioSource = Instantiate(basedAudioSource, spawnPosition, Quaternion.identity);
-			
-			audioSource.clip = soundClip.Clip;
-			
-			audioSource.volume = Mathf.Clamp01(volume);
 
-			audioSource.outputAudioMixerGroup = soundClip.MixerGroup;
-
-			audioSource.spatialBlend = Mathf.Clamp01(spatialBlend);
+			SetValuesInAudioSource(audioSource, new(soundClip.Clip, volume, soundClip.MixerGroup, spatialBlend));
 
 			audioSource.Play();
 
-			float clipLength = audioSource.clip.length;
+			Destroy(audioSource.gameObject, audioSource.clip.length);
+		}
 
-			Destroy(audioSource.gameObject, clipLength);
+		public void PlaySound(string clipName, Vector3 spawnPosition, float soundDelay, float volume = 1, float spatialBlend = 0)
+		{
+			if (!_soundclips.TryGetValue(clipName, out SoundClip soundClip))
+			{
+				Debug.LogWarning($"No clip with name - ({clipName})");
+
+				return;
+			}
+
+			if (!AudioSources.TryGetValue(soundClip.MixerGroup, out AudioSource basedAudioSource))
+			{
+				Debug.LogWarning($"No audio source with {soundClip.MixerGroup}");
+
+				return;
+			}
+			
+			AudioSource audioSource = Instantiate(basedAudioSource, spawnPosition, Quaternion.identity);
+
+			SetValuesInAudioSource(audioSource, new(soundClip.Clip, volume, soundClip.MixerGroup, spatialBlend));
+
+			audioSource.Play();
+
+			Destroy(audioSource.gameObject, soundDelay);
+		}
+
+		private void SetValuesInAudioSource(AudioSource audioSource, AudioSourceParameters audioSourceParameters)
+		{
+			audioSource.clip = audioSourceParameters.AudioClip;
+
+			audioSource.volume = audioSourceParameters.Volume;
+
+			audioSource.outputAudioMixerGroup = audioSourceParameters.MixerGroup;
+
+			audioSource.spatialBlend = audioSourceParameters.SpatialBlend;
+		}
+	}
+
+	public struct AudioSourceParameters
+	{
+		public AudioClip AudioClip { get; private set; }
+
+		public float Volume { get; private set; }
+
+		public AudioMixerGroup MixerGroup { get; private set; }
+
+		public float SpatialBlend { get; private set; }
+
+		public AudioSourceParameters(AudioClip audioClip, float volume, AudioMixerGroup mixerGroup, float spatialBlend)
+		{
+			AudioClip = audioClip;
+
+			Volume = Mathf.Clamp01(volume);
+
+			MixerGroup = mixerGroup;
+
+			SpatialBlend = Mathf.Clamp01(spatialBlend);
 		}
 	}
 }

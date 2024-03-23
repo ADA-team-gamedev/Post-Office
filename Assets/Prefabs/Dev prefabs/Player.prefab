@@ -347,7 +347,6 @@ MonoBehaviour:
   _bobSpeed: 10
   _bobAmount: {x: 0, y: 0.05, z: 0}
   _joint: {fileID: 5532868693925456890}
-  _footstepCooldown: 1
 --- !u!114 &8661361944384926463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -369,6 +368,7 @@ MonoBehaviour:
   _changeItemWhenPickup: 1
   _playerHand: {fileID: 5322286662015815355}
   _playerCamera: {fileID: 4412293600245582168}
+  _noteBook: {fileID: 0}
 --- !u!114 &1035198397113733364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _maxSanityValue: 100
-  _sanityDecreaseSpeed: 1
+  _sanityDecreaseSpeed: 0.1
   _sanityVolume: {fileID: 0}
   _slider: {fileID: 0}
 --- !u!114 &3266096912257546959

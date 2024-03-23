@@ -148,10 +148,6 @@ namespace TaskSystem
 
 		private void CompleteTask(Task completedTask)
 		{
-			TimeSpan addedLimit = new(completedTask.AddedTime.Hours, completedTask.AddedTime.Minutes, completedTask.AddedTime.Seconds);
-
-			_timeClock.IncreaseTimeLimit(addedLimit);
-
 			bool isCompleteTaskIsCurrent = CurrentTask == completedTask;
 
 			if (isCompleteTaskIsCurrent)

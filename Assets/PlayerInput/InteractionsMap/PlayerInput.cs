@@ -438,7 +438,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""id"": ""4432731b-6563-41de-9216-27a44cc242bd"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap"",
                     ""initialStateCheck"": false
                 },
                 {
@@ -467,7 +467,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""a4c9b2e6-3df2-425a-b029-71d8b9162c78"",
                     ""path"": ""<Keyboard>/tab"",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap,Hold(duration=0.2)"",
                     ""processors"": """",
                     ""groups"": ""Keyboard and Mouse"",
                     ""action"": ""NoteBook"",

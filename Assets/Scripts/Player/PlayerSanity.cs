@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TaskSystem;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -12,9 +13,9 @@ namespace Player
 		#region Sanity
 
 		[Header("Sanity")]
-		[SerializeField][Range(1, 100f)] private float _maxSanityValue = 100f;
+		[SerializeField][Range(1, 100)] private float _maxSanityValue = 100;
 
-		[SerializeField] private float _sanityDecreaseSpeed = 1f;
+		[SerializeField][Range(0.01f, 10)] private float _sanityDecreaseSpeed = 1f;
 
 		/// <summary>
 		/// Return percent from 0.01 to 1
@@ -41,7 +42,7 @@ namespace Player
 
 		#endregion
 
-		#region 
+		#region Visual
 
 		[Header("Visualization")]
 
@@ -84,7 +85,9 @@ namespace Player
 		{
 			while (true)
 			{
-				Sanity -= Time.deltaTime * _sanityDecreaseSpeed;
+				int taskAmount = TaskManager.Instance.TaskCount + 1; // + 1 because we must * it with our sanity. if we have 0 task, means default sanity decrease speed
+				
+				Sanity -= Time.deltaTime * _sanityDecreaseSpeed * taskAmount;
 
 				float newValue = -(_sanityValue - _maxSanityValue);
 

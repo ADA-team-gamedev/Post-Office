@@ -17,9 +17,6 @@ namespace TaskSystem.NoteBook
 
 		[SerializeField] private SerializedTime _startedTime;
 
-		[SerializeField, Tooltip("Started time + Limits")] private SerializedTime _addedTimeLimit;
-		private TimeSpan _timeLimit;
-
 		[SerializeField] private SerializedTime _timeToCompleteGame;
 		private TimeSpan _timeToComplete;
 		private bool _isGameCompleted = false;
@@ -35,10 +32,6 @@ namespace TaskSystem.NoteBook
 			_timeToComplete = new(1, _timeToCompleteGame.Hours, _timeToCompleteGame.Minutes, _timeToCompleteGame.Seconds); //1 day because we start at p.m. and must survive to the new day a.m.
 
 			_currentGameTime = new(_startedTime.Hours, _startedTime.Minutes, _startedTime.Seconds);
-
-			TimeSpan timeLimit = new(_addedTimeLimit.Hours, _addedTimeLimit.Minutes, _addedTimeLimit.Seconds);
-
-			_timeLimit = _currentGameTime + timeLimit;
 		}
 
 		private void Update()
@@ -50,7 +43,7 @@ namespace TaskSystem.NoteBook
 
 		private void CalculateTime()
 		{
-			if (_currentGameTime >= _timeLimit)
+			if (_currentGameTime >= _timeToComplete)
 				return;
 
 			float milliSeconds = Time.deltaTime * 1000f * _timeRateSpeed;
@@ -70,11 +63,7 @@ namespace TaskSystem.NoteBook
 			CompleteGame();
 		}
 
-		public void IncreaseTimeLimit(TimeSpan timeSpan)
-		{
-			_timeLimit += timeSpan;
-		}
-
+		[ContextMenu(nameof(CompleteGame))]
 		private void CompleteGame()
 		{
 			if (_isGameCompleted)

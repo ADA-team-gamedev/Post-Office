@@ -38,8 +38,8 @@ namespace Enemy
 				float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
 				bool isHitObstacle = Physics.Raycast(transform.position, directionToTarget, distanceToTarget, _obstacleLayer);
-
-				if (distanceToTarget < InstantDetectionRadius && !isHitObstacle) //instant radius checker
+				
+				if (distanceToTarget <= InstantDetectionRadius && !isHitObstacle) //instant radius checker
 					InstantDetectTarget = true;
 				else
 					InstantDetectTarget = false;

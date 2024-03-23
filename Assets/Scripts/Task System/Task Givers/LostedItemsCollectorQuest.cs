@@ -13,7 +13,8 @@ public class LostedItemsCollectorQuest : MonoBehaviour
 	{
 		foreach (var item in _lostedItems)
 		{
-			item.OnPickUpItem += TryCompleteTask;
+			if (item.gameObject.activeInHierarchy)
+				item.OnPickUpItem += TryCompleteTask;
 		}
 
 		if (_lostedItems.Count > 0)

@@ -38,6 +38,7 @@ namespace TaskSystem.NoteBook
 			_playerInput = new();
 
 			_playerInput.UI.NoteBook.performed += OnNoteBook;
+			_playerInput.UI.NoteBook.canceled += OnNoteBook;
 
 			_playerInput.Player.ScrollWheelY.performed += OnTaskScroll;
 
@@ -70,7 +71,10 @@ namespace TaskSystem.NoteBook
 
 		private void OnNoteBook(InputAction.CallbackContext context)
 		{
-			IsViewing = !IsViewing;
+			if (context.performed)
+				IsViewing = !IsViewing;
+			else if (context.canceled)
+				IsViewing = false;
 		}
 
 		private void OnTaskScroll(InputAction.CallbackContext context)

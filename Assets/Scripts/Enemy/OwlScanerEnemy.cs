@@ -51,16 +51,18 @@ namespace Enemy
 			{
 				_isEnemyCalledOut = true;
 
-				if (!boxEnemy.IsAIActivated)
-					boxEnemy.ActivateEnemyBox();
-
 				StartCoroutine(OrderEnemy(boxEnemy));
 			}
 		}
 
 		private IEnumerator OrderEnemy(BoxEnemy boxEnemy)
 		{
-			yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay + 1);
+			if (!boxEnemy.IsAIActivated)
+			{
+				boxEnemy.ActivateEnemyBox();
+
+				yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay + 1);
+			}		
 
 			boxEnemy.OrderToAttack(_fieldOfView.Target.position);
 

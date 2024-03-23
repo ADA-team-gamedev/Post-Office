@@ -95,7 +95,7 @@ namespace Level.Lights.Lamp
 			if (IsLampDestroyed)
 				return;
 
-			AudioManager.Instance.PlaySound("Lamp Crush", transform.position, spatialBlend: 0.5f);
+			AudioManager.Instance.PlaySound("Lamp Crush", transform.position, spatialBlend: 0.2f);
 
 			IsLampDestroyed = true;
 
