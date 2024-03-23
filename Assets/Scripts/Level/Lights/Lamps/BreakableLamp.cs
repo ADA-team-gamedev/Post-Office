@@ -17,13 +17,18 @@ namespace Level.Lights.Lamp
 
 		private float _lampDelayBeforeBreakingRemaining;
 
-		private void Start()
+		private void Awake()
 		{
+			InitializeLamp();
+		}
+
+		protected override void InitializeLamp()
+		{
+			base.InitializeLamp();
+
 			_electronicalSparkVF.gameObject.SetActive(false);
 
 			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
-
-			InitializeFlickeringLamp();
 		}
 
 		private void Update()

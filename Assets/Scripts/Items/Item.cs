@@ -26,6 +26,11 @@ namespace Items
 
 		public bool IsPicked { get; private set; } = false;
 
+		[Header("Sounds")]
+
+		[SerializeField] private string _dropSound = "Drop Item";
+		[SerializeField] private string _pickupSound = "Pickup Item";
+
 		[field: SerializeField] public ItemIcon ItemIcon { get; private set; }
 
 		public Action<Item> OnPickUpItem { get; set; }
@@ -57,7 +62,7 @@ namespace Items
 				ActivateAutoIconStateChanging();
 
 			if (ItemIcon.EnableOnStart)
-				ItemIcon.ShowIcon();
+				ItemIcon.ShowIcon(this);
 			else
 				ItemIcon.HideIcon();
 
@@ -83,14 +88,14 @@ namespace Items
 		{
 			IsPicked = true;
 
-			AudioManager.Instance.PlaySound("Item Pickup", transform.position);
+			AudioManager.Instance.PlaySound(_pickupSound, transform.position);
 		}
 
 		private void OnItemDroped(Item item)
 		{
 			IsPicked = false;
 
-			AudioManager.Instance.PlaySound("Item Drop", transform.position);
+			AudioManager.Instance.PlaySound(_dropSound, transform.position);
 		}		
 
 		#endregion

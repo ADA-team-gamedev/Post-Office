@@ -73,6 +73,8 @@ namespace Player
 
 					if (door.IsClosed)
 						_crosshairImage.sprite = _crosshairLock;
+					else
+						_crosshairImage.sprite = _defaultCrosshair;
 				}
 				else
 				{

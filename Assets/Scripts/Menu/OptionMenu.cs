@@ -95,6 +95,8 @@ namespace Menu
 
 			_frameRateText.text = $"{_optionData.FrameRates[_optionData.SelectedFrameRatesIndex]}";
 
+			_vSyncToggle.isOn = _optionData.VSyncCountEnable;
+
 			_masterSlider.value = _optionData.MasterVolume;
 			_musicSlider.value = _optionData.MusicVolume;
 			_effectSlider.value = _optionData.EffectVolume;
@@ -140,7 +142,7 @@ namespace Menu
 
 		public void ChangeVSyncState()
 		{
-			_optionData.VSyncCountEnable = !_optionData.VSyncCountEnable;
+			_optionData.VSyncCountEnable = _vSyncToggle.isOn;
 		}
 
 		#endregion

@@ -12,8 +12,28 @@ namespace Level.Lights.Lamp
 
 		[field: SerializeField] protected Light Light { get; private set; }
 
+		[field: SerializeField] protected Renderer LampRenderer { get; private set; }
+
+		protected MaterialPropertyBlock MaterialPropertyBlock { get; set; }
+
+		protected const string EmissionColor = "_EmissionColor";
+
+		protected Color DefaultLampColor { get; private set; } = Color.white;
+
+		protected Color DisabledLampColor { get; private set; } = Color.black;
+
 		[Space(10)]
 		[SerializeField] private UnityEvent OnStay;
+
+		private void Awake()
+		{
+			InitializeLamp();
+		}
+
+		protected virtual void InitializeLamp()
+		{
+			MaterialPropertyBlock = new();
+		}
 
 		private void OnTriggerStay(Collider other)
 		{
@@ -30,15 +50,26 @@ namespace Level.Lights.Lamp
 
 		public void SwitchLampState(bool isEnabled)
 		{
+			if (!gameObject.activeSelf)
+				return;
+
 			IsLampEnabled = isEnabled;
 
 			Light.gameObject.SetActive(IsLampEnabled);
+
+			Color currentEmissionColor = IsLampEnabled ? DefaultLampColor : DisabledLampColor;
+
+			MaterialPropertyBlock.SetColor(EmissionColor, currentEmissionColor);
+
+			LampRenderer.SetPropertyBlock(MaterialPropertyBlock);
 		}
 
 		private void OnValidate()
 		{
-			if (Light)
-				Light.gameObject?.SetActive(IsLampEnabled);
+			MaterialPropertyBlock ??= new();
+
+			if (IsLampEnabled)
+				SwitchLampState(IsLampEnabled);
 		}
 	}
 }

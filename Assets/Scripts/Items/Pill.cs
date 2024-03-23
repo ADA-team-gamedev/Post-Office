@@ -29,7 +29,7 @@ namespace Items
 
                     Debug.Log($"{gameObject.name}s are used");
 
-					AudioManager.Instance.PlaySound("Pill Use", transform.position);
+					AudioManager.Instance.PlaySound("Use Pills", transform.position);
 
 					StartCoroutine(ResoteSanity());
                 }

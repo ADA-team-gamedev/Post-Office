@@ -27,37 +27,31 @@ namespace Level.Lights.Lamp
 
 		private bool _isFlashing = false;
 
-		[field: Space(10)]
-		[field: SerializeField] protected Renderer LampRenderer { get; private set; }
-		private MaterialPropertyBlock _block;
-
 		private float _maxLightRange;
 		private float _maxLightIntensity;
 
 		private int _possibleCountOfCurves;
 
-		private const string _emissionColor = "_EmissionColor";
-
-		private void Start()
+		private void Awake()
 		{
-			InitializeFlickeringLamp();
+			InitializeLamp();
 		}
 
-		private void Update()
+		protected override void InitializeLamp()
 		{
-			TryStartFlashingEvent();
-		}
+			base.InitializeLamp();
 
-		protected virtual void InitializeFlickeringLamp()
-		{
 			_maxLightIntensity = Light.intensity;
 
 			_maxLightRange = Light.range;
 
 			_possibleCountOfCurves = _flashingCurves.Curves.Count;
-
-			_block = new();
 		}
+
+		private void Update()
+		{
+			TryStartFlashingEvent();
+		}	
 
 		protected void TryStartFlashingEvent()
 		{
@@ -154,10 +148,11 @@ namespace Level.Lights.Lamp
 			{
 				float t = curve.Evaluate(elapsedTime);
 
-				Color currentEmissionColor = Color.Lerp(Color.black, Color.white, t);
+				Color currentEmissionColor = Color.Lerp(DisabledLampColor, DefaultLampColor, t);
 
-				_block.SetColor(_emissionColor, currentEmissionColor);
-				LampRenderer.SetPropertyBlock(_block);
+				MaterialPropertyBlock.SetColor(EmissionColor, currentEmissionColor);
+
+				LampRenderer.SetPropertyBlock(MaterialPropertyBlock);
 
 				Light.intensity = Mathf.Lerp(0, _maxLightIntensity, t);
 
@@ -174,7 +169,7 @@ namespace Level.Lights.Lamp
 
 			_flashingCooldownRemaining = Random.Range(_minFlashingCooldownDelay, _maxFlashingCooldownDelay);
 
-			LampRenderer.material.SetColor(_emissionColor, Color.white);
+			LampRenderer.material.SetColor(EmissionColor, DefaultLampColor);
 
 			_isFlashing = false;
 		}
