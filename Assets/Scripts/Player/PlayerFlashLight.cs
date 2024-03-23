@@ -8,12 +8,10 @@ namespace Player
 {
 	public class PlayerFlashLight : MonoBehaviour
 	{
-		[SerializeField][Range(1f, 10f)] private float _rotationSpeed = 1f;
+		[SerializeField][Range(1f, 100f)] private float _rotationSpeed = 1f;
 
 		[SerializeField] private PlayerInventory _playerInventory;
 		[SerializeField] private Camera _playerCamera;
-
-		[SerializeField] private Vector3 _positionOffset;
 
 		private Light _light;
 
@@ -44,7 +42,7 @@ namespace Player
 
 		private void Update()
 		{
-			transform.position = _playerCamera.transform.position + _positionOffset;
+			transform.position = _playerCamera.transform.position;
 
 			RotateLight();
 		}

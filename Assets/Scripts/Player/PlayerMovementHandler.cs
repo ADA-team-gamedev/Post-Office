@@ -89,11 +89,7 @@ namespace Player
 
 		#region Footstep
 
-		[Header("FootStep")]
-
-		[SerializeField] private float _footstepCooldown = 9f;
-
-		private float _footstepRemaining = 0f;
+		private bool _canPlayFootstepSound;
 
 		#endregion
 
@@ -140,8 +136,6 @@ namespace Player
 			_sprintBarCanvasGroup.gameObject.SetActive(true);
 
 			_sprintBarCanvasGroup.alpha = 0;
-
-			_footstepRemaining = _footstepCooldown;
 		}
 
 		private void Update()
@@ -158,7 +152,7 @@ namespace Player
 			if (HeadBobEnabled)
 				HeadBob();
 
-			PlayFootsteps();
+			PlayFootstepSound();
 		}
 
 		private void FixedUpdate()
@@ -295,19 +289,14 @@ namespace Player
 			_joint.localPosition = new Vector3(x, y, z);
 		}
 
-		private void PlayFootsteps()
+		private void PlayFootstepSound()
 		{
-			if (MovementState == MovementState.Idle || MoveDirection == Vector2.zero)
-				return;		
+			var footfall = Mathf.Cos(_timer);
 
-			if (_footstepRemaining < 0)
-			{
-				_footstepRemaining = _footstepCooldown;
-
+			if (footfall < 0 && _canPlayFootstepSound)
 				AudioManager.Instance.PlaySound("Footstep", transform.position);
-			}
 
-			_footstepRemaining -= Time.deltaTime * _playerSpeed;
+			_canPlayFootstepSound = footfall >= 0;
 		}
 
 		#region Chekers

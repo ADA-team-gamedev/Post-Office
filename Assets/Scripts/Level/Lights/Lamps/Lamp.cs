@@ -50,9 +50,9 @@ namespace Level.Lights.Lamp
 
 		public void SwitchLampState(bool isEnabled)
 		{
-			if (!gameObject.activeSelf)
+			if (!gameObject.activeInHierarchy)
 				return;
-
+			
 			IsLampEnabled = isEnabled;
 
 			Light.gameObject.SetActive(IsLampEnabled);

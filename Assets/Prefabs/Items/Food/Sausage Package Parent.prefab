@@ -95,9 +95,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55cc98fb9d8fb114b9dd663b9b72c443, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CanBePicked>k__BackingField: 1
+  _canBePicked: 1
+  _dropSound: Drop Item
+  _pickupSound: Pickup Item
   <ItemIcon>k__BackingField:
-    _isIconNeeded: 1
+    <IsIconNeeded>k__BackingField: 1
     <ItemIcon>k__BackingField: {fileID: 0}
     <IconTargetToLook>k__BackingField: {fileID: 0}
     <EnableOnStart>k__BackingField: 0

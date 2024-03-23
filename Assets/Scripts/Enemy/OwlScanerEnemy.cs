@@ -1,3 +1,4 @@
+using Audio;
 using Player;
 using System.Collections;
 using UnityEngine;
@@ -15,6 +16,9 @@ namespace Enemy
 		[Header("Values")]
 		[SerializeField][Range(0.01f, 1f)] private float _sanityPercentToStartScanning = 0.6f;
 		[SerializeField][Range(10, 300)] private float _breakDelayInSeconds = 60f;
+
+		[Header("Sounds")]
+		[SerializeField] private string _targetDetectedSound = "Owl Detect Target";
 
 		[SerializeField] private BoxEnemy[] _boxEnemies;
 
@@ -41,6 +45,8 @@ namespace Enemy
 			if (_boxEnemies.Length < 0 || _isEnemyCalledOut)
 				return;
 
+			AudioManager.Instance.PlaySound(_targetDetectedSound, transform.position);
+
 			if (TryTakeBoxForOrder(out BoxEnemy boxEnemy))
 			{
 				_isEnemyCalledOut = true;
@@ -54,7 +60,7 @@ namespace Enemy
 
 		private IEnumerator OrderEnemy(BoxEnemy boxEnemy)
 		{
-			yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay);
+			yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay + 1);
 
 			boxEnemy.OrderToAttack(_fieldOfView.Target.position);
 

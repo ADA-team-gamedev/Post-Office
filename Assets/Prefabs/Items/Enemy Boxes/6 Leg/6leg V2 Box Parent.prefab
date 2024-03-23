@@ -98,7 +98,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d12371ec5987544814dbd200d72d7e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CanBePicked>k__BackingField: 1
+  _canBePicked: 1
+  _dropSound: Drop Item
+  _pickupSound: Pickup Item
   <ItemIcon>k__BackingField:
     <IsIconNeeded>k__BackingField: 0
     <ItemIcon>k__BackingField: {fileID: 0}
@@ -162,6 +164,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd56985dd497ca849b14b0eb489b778e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isAliveBox: 1
   _playerSanity: {fileID: 0}
   _groundLayer:
     serializedVersion: 2

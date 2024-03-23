@@ -94,7 +94,7 @@ namespace Level.Lights.Lamp
 
 			_isFlashing = true;
 
-			AudioManager.Instance.PlaySound("Fuse Flashing", transform.position, spatialBlend: 1);
+			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, spatialBlend: 1);
 
 			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
 

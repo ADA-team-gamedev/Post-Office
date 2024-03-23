@@ -19,7 +19,7 @@ namespace TaskSystem.NoteBook
 		[Header("Player Death")]
 		[SerializeField] private PlayerDeathController _playerDeathController;
 
-		private bool _isViewing = false;
+		public bool IsViewing { get; private set; } = false;
 
 		private Vector3 _defaultPosition;
 
@@ -38,7 +38,6 @@ namespace TaskSystem.NoteBook
 			_playerInput = new();
 
 			_playerInput.UI.NoteBook.performed += OnNoteBook;
-			_playerInput.UI.NoteBook.canceled += OnNoteBook;
 
 			_playerInput.Player.ScrollWheelY.performed += OnTaskScroll;
 
@@ -61,7 +60,7 @@ namespace TaskSystem.NoteBook
 
 		private void Update()
 		{
-			if (_playerInput.UI.NoteBook.IsPressed())
+			if (IsViewing)
 				OpenNoteBook();
 			else
 				CloseNoteBook();
@@ -71,15 +70,12 @@ namespace TaskSystem.NoteBook
 
 		private void OnNoteBook(InputAction.CallbackContext context)
 		{
-			if (context.performed)
-				_isViewing = true;
-			else if (context.canceled)
-				_isViewing = false;
+			IsViewing = !IsViewing;
 		}
 
 		private void OnTaskScroll(InputAction.CallbackContext context)
 		{
-			if (!_playerInput.UI.NoteBook.IsPressed())
+			if (!IsViewing)
 				return;
 
 			float scrollWheelValue = context.ReadValue<float>();
@@ -106,7 +102,7 @@ namespace TaskSystem.NoteBook
 		{
 			Vector3 newPosition = _defaultPosition + _openedPositionOffset;
 
-			if (!_isViewing || transform.position == newPosition)
+			if (!IsViewing || transform.position == newPosition)
 				return;
 
 			transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * _animationSpeed);
@@ -114,7 +110,7 @@ namespace TaskSystem.NoteBook
 
 		private void CloseNoteBook()
 		{
-			if (_isViewing || transform.position == _defaultPosition)
+			if (IsViewing || transform.position == _defaultPosition)
 				return;
 
 			transform.position = Vector3.Lerp(transform.position, _defaultPosition, Time.deltaTime * _animationSpeed);

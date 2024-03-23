@@ -139,6 +139,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Hotbar 4",
+                    "type": "Button",
+                    "id": "62a5ebb4-3efd-4871-a0b9-49ce8180167d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -381,6 +390,17 @@
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "AnyKey",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "14cfde13-b98f-401f-825c-71ae29160eb8",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Hotbar 4",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

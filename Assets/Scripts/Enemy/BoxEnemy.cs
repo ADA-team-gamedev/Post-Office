@@ -310,7 +310,7 @@ namespace Enemy
 		{
 			if (!IsAIActivated)
 				return;
-
+			
 			StopAllCoroutines();
 
 			_enemyState = EnemyState.Attacking;
@@ -447,7 +447,7 @@ namespace Enemy
 			_enemyState = EnemyState.Patroling;
 
 			_rigidbody.isKinematic = true;
-
+			
 			IsAIActivated = true;
 		}
 
@@ -464,9 +464,9 @@ namespace Enemy
 
 		public void ActivateEnemyBox()
 		{
-			if (!gameObject.activeSelf || !IsCanActivateEnemy())
+			if (!gameObject.activeInHierarchy || !IsCanActivateEnemy())
 				return;
-
+			
 			_isPicked = false;
 
 			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));

@@ -27,7 +27,8 @@ namespace Level.Doors
 
 		[SerializeField] private Transform _doorModel;
 
-		[SerializeField] private Interactor _playerInteractor;
+		[SerializeField] private Interactor _playerInteractor;	
+
 		private Transform _interactorCameraTransform => _playerInteractor.PlayerCamera.transform;
 
 		private HingeJoint _hingeJoint;
@@ -51,6 +52,13 @@ namespace Level.Doors
 
 		#endregion
 
+		[Header("Sounds")]
+
+		[SerializeField] private string _unlockDoorSound = "Unlock Door";
+		[SerializeField] private string _closedDoor = "Door Closed";
+		[SerializeField] private string _fullyClosedDoor = "Fully Closed Door";
+		[SerializeField] private string _doorRotationSound = "Door Rotation";
+
 		private PlayerInput _playerInput;
 
 		private bool _isPlayerDragDoor = false;
@@ -71,7 +79,6 @@ namespace Level.Doors
 			_doorRotation = _isDoorMustBeClosedOnStart ? _hingeJoint.limits.max : _hingeJoint.limits.min;
 			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
-			//transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, _doorRotation, transform.rotation.eulerAngles.z);
 		}
 
 		private void Update()
@@ -90,7 +97,7 @@ namespace Level.Doors
 			{
 				if (key.DoorKeyType == DoorKeyType)
 				{
-					AudioManager.Instance.PlaySound("Unlock Door", transform.position);
+					AudioManager.Instance.PlaySound(_unlockDoorSound, transform.position);
 
 					IsClosed = false;
 
@@ -102,7 +109,7 @@ namespace Level.Doors
 				}
 			}
 
-			AudioManager.Instance.PlaySound("Door Closed", transform.position);
+			AudioManager.Instance.PlaySound(_closedDoor, transform.position);
 		}
 
 		#endregion
@@ -125,7 +132,6 @@ namespace Level.Doors
 			_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
 
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
-			//transform.rotation = Quaternion.Euler(transform.rotation.eulerAngles.x, _doorRotation, transform.rotation.eulerAngles.z);
 		}
 
 		private void StartRotateDoor()
@@ -145,7 +151,7 @@ namespace Level.Doors
 
 			if (transform.rotation.eulerAngles.y == _defaultDoorYRotation)
 			{
-				AudioManager.Instance.PlaySound("Fully Closed Door", transform.position);
+				AudioManager.Instance.PlaySound(_fullyClosedDoor, transform.position);
 			}
 
 			_isPlayerDragDoor = false;

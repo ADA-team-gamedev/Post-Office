@@ -176,6 +176,10 @@ MonoBehaviour:
   _playerInteractor: {fileID: 0}
   <IsClosed>k__BackingField: 1
   <DoorKeyType>k__BackingField: 1
+  _unlockDoorSound: Unlock Door
+  _closedDoor: Door Closed
+  _fullyClosedDoor: Fully Closed Door
+  _doorRotationSound: Door Rotation
 --- !u!208 &4030639324954123526
 NavMeshObstacle:
   m_ObjectHideFlags: 0

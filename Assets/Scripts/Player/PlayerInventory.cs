@@ -1,8 +1,7 @@
-using Enemy;
 using Items;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using TaskSystem.NoteBook;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -40,7 +39,7 @@ namespace Player
 
 		#region Inventory fields
 
-		private const byte _inventorySlotsAmount = 3;
+		private const byte _inventorySlotsAmount = 4;
 
 		private int _currentSlotIndex = -1;
 
@@ -51,6 +50,8 @@ namespace Player
 		private PlayerInput _playerInput;
 
 		private PlayerDeathController _playerDeathController;
+
+		[SerializeField] private NoteBook _noteBook;
 
 		private void Awake()
 		{
@@ -79,6 +80,7 @@ namespace Player
 			_playerInput.Player.Hotbar1.performed += Hotbar1;
 			_playerInput.Player.Hotbar2.performed += Hotbar2;
 			_playerInput.Player.Hotbar3.performed += Hotbar3;
+			_playerInput.Player.Hotbar4.performed += Hotbar4;
 		}
 
 		#region Pickup system
@@ -286,9 +288,9 @@ namespace Player
 
 		private void OnScrollWheelYChanged(InputAction.CallbackContext context)
 		{
-			if (_inventory.Count <= 0 || _playerInput.UI.NoteBook.IsPressed())
+			if (_inventory.Count <= 0 || _noteBook.IsViewing)
 				return;
-
+			
 			float scrollWheelValue = context.ReadValue<float>();
 
 			if (scrollWheelValue != 0)
@@ -320,6 +322,11 @@ namespace Player
 		private void Hotbar3(InputAction.CallbackContext context)
 		{
 			HotbarSlotChange(3);
+		}
+
+		private void Hotbar4(InputAction.CallbackContext context)
+		{
+			HotbarSlotChange(4);
 		}
 
 		#endregion

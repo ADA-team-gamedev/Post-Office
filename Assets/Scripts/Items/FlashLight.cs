@@ -12,14 +12,23 @@ namespace Items
 
         public bool IsWorking { get; private set; } = false;
 
-        private void Awake()
+        private void Start()
         {
-            IsWorking = !_disableOnStart;
+            InitializeItem();
+		}
 
-            _flashlight.enabled = IsWorking;
-        }
+		protected override void InitializeItem()
+		{
+			base.InitializeItem();
 
-        public void Use()
+			IsWorking = !_disableOnStart;
+
+			_flashlight.enabled = IsWorking;
+
+            OnDropItem += EnableOnDrop;
+		}
+
+		public void Use()
         {
             if (!IsWorking)
                 TurnOn();
@@ -35,11 +44,17 @@ namespace Items
 
             IsWorking = false;
         }
+
         private void TurnOn()
         {
             _flashlight.enabled = true;
 
             IsWorking = true;
         }
+
+        private void EnableOnDrop(Item item)
+        {
+            TurnOn();
+		}
     }
 }

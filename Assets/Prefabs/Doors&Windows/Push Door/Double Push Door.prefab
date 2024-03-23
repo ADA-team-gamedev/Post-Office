@@ -121,6 +121,10 @@ MonoBehaviour:
   _playerInteractor: {fileID: 0}
   <IsClosed>k__BackingField: 1
   <DoorKeyType>k__BackingField: 4
+  _unlockDoorSound: Unlock Door
+  _closedDoor: Door Closed
+  _fullyClosedDoor: Fully Closed Door
+  _doorRotationSound: Door Rotation
 --- !u!1 &1233221495324690600
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,6 +280,10 @@ MonoBehaviour:
   _playerInteractor: {fileID: 0}
   <IsClosed>k__BackingField: 1
   <DoorKeyType>k__BackingField: 4
+  _unlockDoorSound: Unlock Door
+  _closedDoor: Door Closed
+  _fullyClosedDoor: Fully Closed Door
+  _doorRotationSound: Door Rotation
 --- !u!1 &6260693930823573584
 GameObject:
   m_ObjectHideFlags: 0

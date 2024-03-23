@@ -182,6 +182,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d5abf48fdd2b704fb4470481696d245, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _canBePicked: 1
+  _dropSound: Drop Item
+  _pickupSound: Pickup Item
+  <ItemIcon>k__BackingField:
+    <IsIconNeeded>k__BackingField: 1
+    <ItemIcon>k__BackingField: {fileID: 0}
+    <IconTargetToLook>k__BackingField: {fileID: 0}
+    <EnableOnStart>k__BackingField: 0
+    <ChangeIconStateAutomatically>k__BackingField: 0
   _flashlight: {fileID: 68369502167925515}
   _disableOnStart: 1
 --- !u!1 &7498435472507371652
