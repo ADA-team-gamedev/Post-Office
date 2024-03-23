@@ -140,7 +140,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3565f217116f54c4c9cecc3f5a9df3d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraSensitivity: 12
+  _cameraSensitivity: 3
   _deffaultFOV: 60
   _minCameraLookAngle: 90
   _maxCameraLookAngle: 81.4
@@ -347,6 +347,7 @@ MonoBehaviour:
   _bobSpeed: 10
   _bobAmount: {x: 0, y: 0.05, z: 0}
   _joint: {fileID: 5532868693925456890}
+  _footstepCooldown: 1
 --- !u!114 &8661361944384926463
 MonoBehaviour:
   m_ObjectHideFlags: 0

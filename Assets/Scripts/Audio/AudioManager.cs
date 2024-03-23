@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using AYellowpaper.SerializedCollections;
-using System;
+using System.Collections.Generic;
 
 namespace Audio
 {
@@ -9,8 +9,9 @@ namespace Audio
     {
         public static AudioManager Instance { get; private set; }
 
-		[SerializedDictionary(nameof(String), nameof(SoundClipData))]
-		public SerializedDictionary<string, SoundClipData> SoundClips;
+		[SerializeField] private List<SoundClipData> SoundClipDatas;
+
+		private Dictionary<string, SoundClip> _soundclips = new();
 
 		[SerializedDictionary(nameof(AudioMixerGroup), nameof(AudioSource))]
         public SerializedDictionary<AudioMixerGroup, AudioSource> AudioSources;
@@ -25,29 +26,49 @@ namespace Audio
 
 		private void Start()
 		{
+			FillSoundClips();
+			
 			FillAudioSources();
+		}
+
+		private void FillSoundClips()
+		{
+			foreach (var clipData in SoundClipDatas)
+			{
+				SoundClip clip = clipData.SoundClip;
+
+				if (_soundclips.ContainsValue(clip))
+				{
+					Debug.LogError($"{clip.Name} already exists in sound collection!");
+
+					continue;
+				}
+				
+				_soundclips.Add(clip.Name, clip);
+			}
 		}
 
 		private void FillAudioSources()
 		{
-			//AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+			if (AudioSources.Count > 0)
+				return;
 
-			//foreach (var source in audioSources)
-			//{
-			//	AudioSources.Add(source.outputAudioMixerGroup, source);
-			//}
+			AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+
+			foreach (var source in audioSources)
+			{
+				AudioSources.Add(source.outputAudioMixerGroup, source);
+			}
 		}
 
 		public void PlaySound(string clipName, Vector3 spawnPosition, float volume = 1f, float spatialBlend = 0)
 		{
-			if (!SoundClips.TryGetValue(clipName, out SoundClipData soundClipData))
+			if (!_soundclips.TryGetValue(clipName, out SoundClip soundClip))
 			{
 				Debug.LogWarning($"No clip with name {clipName}");
 
 				return;
 			}
-
-			SoundClip soundClip = soundClipData.SoundClip;
 
 			if (!AudioSources.TryGetValue(soundClip.MixerGroup, out AudioSource basedAudioSource))
 			{
