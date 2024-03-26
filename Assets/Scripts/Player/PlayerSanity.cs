@@ -30,12 +30,7 @@ namespace Player
 			}
 			set
 			{
-				if (value > 0 && value <= _maxSanityValue)
-					_sanityValue = value;
-				else if (value > _maxSanityValue)
-					_sanityValue = _maxSanityValue;
-				else
-					_sanityValue = 0;
+				_sanityValue = Mathf.Clamp(value, 0, _maxSanityValue);
 			}
 		}
 		private float _sanityValue;
@@ -56,6 +51,8 @@ namespace Player
 
 		private PlayerDeathController _playerDeathController;
 
+		private int _taskAmount => TaskManager.Instance.TaskCount + 1; // + 1 because we must * it with our sanity. if we have 0 task, means default sanity decrease speed
+
 		private void Start()
 		{
 			_sanityValue = _maxSanityValue;
@@ -75,7 +72,7 @@ namespace Player
 
 		public void IncreaseSanity(float value)
 		{
-			if (_sanityDecreaseSpeed >= value)
+			if (_sanityDecreaseSpeed * _taskAmount >= value)
 				Debug.LogWarning("Sanity increase value simillar or less then sanity decreas speed");
 
 			Sanity += Time.deltaTime * value;
@@ -85,9 +82,7 @@ namespace Player
 		{
 			while (true)
 			{
-				int taskAmount = TaskManager.Instance.TaskCount + 1; // + 1 because we must * it with our sanity. if we have 0 task, means default sanity decrease speed
-				
-				Sanity -= Time.deltaTime * _sanityDecreaseSpeed * taskAmount;
+				Sanity -= Time.deltaTime * _sanityDecreaseSpeed * _taskAmount;
 
 				float newValue = -(_sanityValue - _maxSanityValue);
 

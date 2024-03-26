@@ -97,7 +97,7 @@ namespace Level.Lights.Lamp
 
 			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
 
-			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, soundDelay: flashingDelay);
+			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, soundDelay: flashingDelay, spatialBlend: 1f);
 
 			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
 

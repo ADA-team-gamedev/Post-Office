@@ -5,8 +5,6 @@ namespace Effects
 {
     public class DissolveEffect : MonoBehaviour
     {
-		[SerializeField, Range(0, 1)] private float _dissolveEffectStrength = 0;
-
 		[SerializeField] private Texture2D _dissolveTexture;
 
 		private CanvasRenderer _canvasRenderer;
@@ -16,6 +14,9 @@ namespace Effects
 		private const string DissolveEffectTexture = "_Texture2D";
 
 		private Image _image;
+
+		public const float MaxDissolveEffectStrength = 1;
+		public const float MinDissolveEffectStrength = 0;
 
 		private void Awake()
 		{
@@ -31,7 +32,7 @@ namespace Effects
 
 			_image.material.SetTexture(DissolveEffectTexture, _dissolveTexture);
 
-			_image.material.SetFloat(DissolveEffectStrengthName, 1);
+			_image.material.SetFloat(DissolveEffectStrengthName, MinDissolveEffectStrength);
 		}
 
 		private void OnValidate()
@@ -41,8 +42,10 @@ namespace Effects
 			_canvasRenderer ??= GetComponent<CanvasRenderer>();
 		}
 
-		public void ApplyDissolveEffectChanges(float dissolveStrength)
+		public void ChangeEffectStrength(float dissolveStrength)
 		{
+			dissolveStrength = Mathf.Clamp(dissolveStrength, MinDissolveEffectStrength, MaxDissolveEffectStrength);
+			
 			_image.material.SetFloat(DissolveEffectStrengthName, dissolveStrength);
 		}
 	}

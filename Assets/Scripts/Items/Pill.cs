@@ -51,7 +51,7 @@ namespace Items
 
             float timer = _sanityAddingDelay;
 
-            while (timer > 0)
+			while (timer > 0)
             {
                 timer -= Time.deltaTime;
 

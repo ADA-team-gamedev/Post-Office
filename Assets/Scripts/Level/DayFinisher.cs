@@ -11,17 +11,12 @@ namespace Level
 		[SerializeField] private string _menuSceneName = "Menu";
 		[SerializeField] private TimeClock _timeClock;
 
-		[Header("Effect")]
-		[SerializeField, Range(0, 10)] private float _dissolveEffectDelay = 1f;
-
-		[SerializeField] private DissolveEffect _effect;
-
-		private float dissolveEffectStrength = 1;
+		[SerializeField] private DissolveEffect _dissolveEffect;
 
 		private void Start()
 		{
-			_effect.gameObject.SetActive(false);
-
+			_dissolveEffect.gameObject.SetActive(false);
+			
 			_timeClock.OnGameCompleted += FinishDayWork;
 		}
 
@@ -30,18 +25,20 @@ namespace Level
 		{
 			_timeClock.OnGameCompleted -= FinishDayWork;
 
-			_effect.gameObject.SetActive(true);
+			_dissolveEffect.gameObject.SetActive(true);
 
 			StartCoroutine(PlayDissolveEffect());
 		}
 
 		private IEnumerator PlayDissolveEffect()
 		{
-			while (dissolveEffectStrength > 0)
-			{
-				_effect.ApplyDissolveEffectChanges(dissolveEffectStrength);
+			float dissolveEffectStrength = DissolveEffect.MinDissolveEffectStrength;
 
-				dissolveEffectStrength -= Time.deltaTime;
+			while (dissolveEffectStrength < DissolveEffect.MaxDissolveEffectStrength)
+			{
+				_dissolveEffect.ChangeEffectStrength(dissolveEffectStrength);
+
+				dissolveEffectStrength += Time.deltaTime;
 
 				yield return null;
 			}
