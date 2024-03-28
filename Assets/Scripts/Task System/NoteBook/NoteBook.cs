@@ -1,3 +1,4 @@
+using Audio;
 using Player;
 using TMPro;
 using UnityEngine;
@@ -10,6 +11,13 @@ namespace TaskSystem.NoteBook
 		[Header("Text UI")]
 		[SerializeField] private TextMeshProUGUI _taskName;
 		[SerializeField] private TextMeshProUGUI _taskDescription;
+
+		[Header("Tablet Screen Info")]
+		[SerializeField] private Transform _tabletScreenInfo;
+
+		[SerializeField, Range(10f, 50f)] private float _screenInfoAnimationSpeed = 40f;
+		private float _deffaultScreenInfoScale;
+		private const float _minScreenInfoScale = 0;
 
 		[Header("Values")]
 		[SerializeField] private float _animationSpeed = 2f;
@@ -45,6 +53,8 @@ namespace TaskSystem.NoteBook
 			ClearNotebook();
 
 			_defaultFontStyle = _taskName.fontStyle;
+
+			_deffaultScreenInfoScale = _tabletScreenInfo.transform.localScale.x;
 		}
 
 		private void Start()
@@ -72,9 +82,11 @@ namespace TaskSystem.NoteBook
 		private void OnNoteBook(InputAction.CallbackContext context)
 		{
 			if (context.performed)
-				IsViewing = !IsViewing;
+				IsViewing = !IsViewing;					
 			else if (context.canceled)
 				IsViewing = false;
+
+			AudioManager.Instance.PlaySound("On Tablet", transform.position);
 		}
 
 		private void OnTaskScroll(InputAction.CallbackContext context)
@@ -110,6 +122,12 @@ namespace TaskSystem.NoteBook
 				return;
 
 			transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * _animationSpeed);
+
+			float newScreenInfoXScale = Mathf.Lerp(_tabletScreenInfo.localScale.x, _deffaultScreenInfoScale, Time.deltaTime * _screenInfoAnimationSpeed);
+
+			Vector3 newScreenInfoScale = new(newScreenInfoXScale, _tabletScreenInfo.localScale.y, _tabletScreenInfo.localScale.z);
+
+			_tabletScreenInfo.localScale = newScreenInfoScale;
 		}
 
 		private void CloseNoteBook()
@@ -118,6 +136,12 @@ namespace TaskSystem.NoteBook
 				return;
 
 			transform.position = Vector3.Lerp(transform.position, _defaultPosition, Time.deltaTime * _animationSpeed);
+
+			float newScreenInfoXScale = Mathf.Lerp(_tabletScreenInfo.localScale.x, _minScreenInfoScale, Time.deltaTime * _screenInfoAnimationSpeed);
+
+			Vector3 newScreenInfoScale = new (newScreenInfoXScale, _tabletScreenInfo.localScale.y, _tabletScreenInfo.localScale.z);
+
+			_tabletScreenInfo.localScale = newScreenInfoScale;
 		}
 
 		#region Text Methods

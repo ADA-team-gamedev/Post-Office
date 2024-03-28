@@ -24,6 +24,8 @@ namespace Enemy
 
 		private bool _isEnemyCalledOut = false;
 
+		private Vector3 _targetPosition;
+
 		private void Start()
 		{
 			_fieldOfView ??= GetComponent<FieldOfView>();
@@ -45,11 +47,13 @@ namespace Enemy
 			if (_boxEnemies.Length < 0 || _isEnemyCalledOut)
 				return;
 
-			AudioManager.Instance.PlaySound(_targetDetectedSound, transform.position);
-
 			if (TryTakeBoxForOrder(out BoxEnemy boxEnemy))
 			{
 				_isEnemyCalledOut = true;
+
+				_targetPosition = _fieldOfView.Target.position;
+
+				AudioManager.Instance.PlaySound(_targetDetectedSound, transform.position);
 
 				StartCoroutine(OrderEnemy(boxEnemy));
 			}
@@ -64,7 +68,7 @@ namespace Enemy
 				yield return new WaitForSeconds(boxEnemy.TranfromToEnemyDelay + 1);
 			}		
 
-			boxEnemy.OrderToAttack(_fieldOfView.Target.position);
+			boxEnemy.OrderToAttack(_targetPosition);
 
 			StartCoroutine(TakeBreak());
 		}
