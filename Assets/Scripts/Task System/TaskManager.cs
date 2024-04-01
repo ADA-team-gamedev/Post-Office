@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using TaskSystem.NoteBook;
 using UnityEngine;
 
@@ -24,9 +26,11 @@ namespace TaskSystem
 
 		[SerializeField] private List<TaskData> _taskDatas = new();
 
-		private List<Task> _tasks = new();
+		private Dictionary<int, Task> _tasks = new();
 
 		[SerializeField] private TimeClock _timeClock;
+
+		private OrderedDictionary orderedDictionary = new();
 
 		private void Awake()
 		{
@@ -42,32 +46,18 @@ namespace TaskSystem
 
 			foreach (var task in _tasks)
 			{
-				task.OnCompleted += CompleteTask;
+				task.Value.OnCompleted += CompleteTask;
 			}
 		}
 
 		private void Start()
 		{
 			if (_tasks.Count > 0)
-				SetNewCurrentTask(_tasks[0]);
+				SetNewCurrentTask(_tasks.Keys.ElementAt(0));
 		}
 
 		public bool TryGetTask(int id, out Task task)
-		{
-			foreach (var item in _tasks)
-			{
-				if (item.ID == id)
-				{
-					task = item;
-
-					return true;
-				}
-			}
-
-			task = null;
-
-			return false;
-		}
+			=> _tasks.TryGetValue(id, out task);
 
 		public void SetNewCurrentTask(int index)
 		{
@@ -78,7 +68,7 @@ namespace TaskSystem
 				return;
 			}
 
-			Task task = _tasks[index];
+			Task task = _tasks.Values.ElementAt(index);
 
 			CurrentTask = task;
 
@@ -116,14 +106,14 @@ namespace TaskSystem
 
 		public bool TryAddNewTask(Task task)
 		{
-			if (IsContainTask(task.ID))
+			if (IsContainsTask(task.ID))
 			{
 				Debug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
 
 				return false;
 			}
 
-			_tasks.Add(task);
+			_tasks.Add(task.ID, task);
 
 			task.OnCompleted += CompleteTask;
 
@@ -135,16 +125,8 @@ namespace TaskSystem
 			return true;
 		}
 
-		private bool IsContainTask(int taskId)
-		{
-			foreach (var task in _tasks)
-			{
-				if (task.ID == taskId)
-					return true;
-			}
-
-			return false;
-		}
+		private bool IsContainsTask(int taskId)
+			=> _tasks.ContainsKey(taskId);	
 
 		private void CompleteTask(Task completedTask)
 		{
@@ -153,7 +135,7 @@ namespace TaskSystem
 			if (isCompleteTaskIsCurrent)
 				CurrentTaskCompleted?.Invoke();
 
-			_tasks.Remove(completedTask);
+			_tasks.Remove(completedTask.ID);
 
 			if (TaskCount > 0 && isCompleteTaskIsCurrent)
 				SetNewCurrentTask(0);

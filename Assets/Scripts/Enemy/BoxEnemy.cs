@@ -38,6 +38,7 @@ namespace Enemy
 		[SerializeField][Range(0.01f, 1f)] private float _attackPhaseStartSanityPercent = 0.1f;
 
 		[field: SerializeField, Space(10)] public float TranfromToEnemyDelay { get; private set; } = 5f;
+		[field: SerializeField, Space(10)] public float TranfromToBoxDelay { get; private set; } = 1.5f;
 
 		#endregion
 
@@ -85,7 +86,7 @@ namespace Enemy
 		private bool _isPatroling = false;
 		private bool _isWaiting = false;
 
-		private bool _isPicked = false;
+		public bool IsPicked { get; private set; } = false;
 
 		private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
 
@@ -117,7 +118,7 @@ namespace Enemy
 
 		private void Update()
 		{
-			if (_isPicked)
+			if (IsPicked)
 				return;
 
 			if (!_isEnemyPhasesStarts && IsCanStartEnemyLogic()) //AI first start check
@@ -141,10 +142,10 @@ namespace Enemy
 		#region Checker
 
 		public bool IsCanActivateEnemy()
-			=> !_isPicked && IsOnGround();
+			=> !IsPicked && IsOnGround();
 
 		private bool IsCanStartEnemyLogic()
-			=> !_isPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround() && _isAliveBox;
+			=> !IsPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround() && _isAliveBox;
 
 		private bool IsOnGround()
 			=> Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);		
@@ -440,11 +441,18 @@ namespace Enemy
 
 		private void PickUpItem(Item item)
 		{
-			_isPicked = true;
-
 			DisableAI();
 
-			_animator.SetTrigger(BecomeBoxTrigger);		
+			_animator.SetTrigger(BecomeBoxTrigger);
+			
+			StartCoroutine(TransformFromInsectToBox(TranfromToBoxDelay));	
+		}
+
+		private IEnumerator TransformFromInsectToBox(float delay)
+		{
+			yield return new WaitForSeconds(delay);
+
+			IsPicked = true;
 		}
 
 		private void DisableAI()
@@ -474,8 +482,8 @@ namespace Enemy
 
 		private void DropItem(Item item)
 		{
-			_isPicked = false;
-
+			IsPicked = false;
+			
 			if (IsCanStartEnemyLogic())
 				StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
 		}
@@ -525,7 +533,7 @@ namespace Enemy
 			if (!gameObject.activeInHierarchy || !IsCanActivateEnemy())
 				return;
 			
-			_isPicked = false;
+			IsPicked = false;
 
 			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
 		}

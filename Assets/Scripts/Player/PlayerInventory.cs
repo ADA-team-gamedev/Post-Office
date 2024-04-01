@@ -1,3 +1,4 @@
+using Enemy;
 using Items;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,6 @@ namespace Player
 		[SerializeField] private float _pickupRange = 3f;
 		[SerializeField] private float _dropUpForce = 2f;
 		[SerializeField] private float _dropForce = 1f;
-
-		[SerializeField] private bool _changeItemWhenPickup = false;
 
 		[Header("Objects")]
 		[SerializeField] private Transform _playerHand;
@@ -88,6 +87,9 @@ namespace Player
 		public void TryPickupObject()
 		{
 			if (_inventory.Count >= _inventorySlotsAmount)
+				return;
+
+			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked)
 				return;
 
 			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange, _itemLayer))
@@ -199,6 +201,9 @@ namespace Player
 			if (_inventory.Count <= keyCodeNumber)
 				return;
 
+			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked)
+				return;
+
 			_currentSlotIndex = keyCodeNumber;
 
 			ChangeSelectedSlot();
@@ -208,10 +213,10 @@ namespace Player
 		{
 			_inventory.Add(item);
 
-			_currentSlotIndex++;
+			_currentSlotIndex = _inventory.Count - 1;
 
-			if (_inventory.Count != 1 && !_changeItemWhenPickup)
-				_currentSlotIndex--;
+			//if (_inventory.Count != 1 && !_changeItemWhenPickup)
+			//	_currentSlotIndex--;
 
 			ChangeSelectedSlot();
 		}
@@ -292,6 +297,9 @@ namespace Player
 				return;
 			
 			float scrollWheelValue = context.ReadValue<float>();
+
+			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked)
+				return;
 
 			if (scrollWheelValue != 0)
 			{

@@ -177,11 +177,14 @@ MonoBehaviour:
   _patrolPhaseStartSanityPercent: 0.954
   _attackPhaseStartSanityPercent: 0.1
   <TranfromToEnemyDelay>k__BackingField: 5
+  <TranfromToBoxDelay>k__BackingField: 1.5
   _animator: {fileID: 9024647403606892343}
   BecomeInsectTrigger: BecomeInsect
   BecomeBoxTrigger: BecomeBox
   IsMoving: IsMoving
   _killerBoxJumpScare: {fileID: 0}
+  _patrolingAnimationSpeed: 1
+  _fleeingAnimationSpeed: 1
   _patrolPoints: []
   _hiddenPoints: []
 --- !u!1001 &6089884312271821360
