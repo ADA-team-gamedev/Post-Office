@@ -65,7 +65,7 @@ namespace Player
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += DisableSanity;
+			_playerDeathController.OnDied += DisableSanity;
 
 			StartCoroutine(LoseSanity());
 		}

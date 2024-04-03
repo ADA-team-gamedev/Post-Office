@@ -1,3 +1,4 @@
+using InputSystem;
 using Items;
 using Level.Doors;
 using Level.Lights.Lamp;
@@ -24,8 +25,6 @@ namespace Player
 		[SerializeField] private Color _defaultCrosshairColor = new(108, 108, 108, 255);
 		[SerializeField] private Color _interactableCrosshairColor = new(152, 152, 152, 255);
 
-		private PlayerInput _playerInput;
-
 		private PlayerDeathController _playerDeathController;
 
 		private IInteractable _interactableObject;
@@ -34,12 +33,10 @@ namespace Player
 
 		private bool _isHitInteractableObject = false;
 
-		private void Awake()
+		private void Start()
 		{
-			_playerInput = new();
-
-			_playerInput.Player.Interact.performed += OnStartInteract;
-			_playerInput.Player.Interact.canceled += OnStopInteract;
+			InputManager.Instance.PlayerInput.Player.Interact.performed += OnStartInteract;
+			InputManager.Instance.PlayerInput.Player.Interact.canceled += OnStopInteract;
 
 			_crosshairImage.sprite = _defaultCrosshair;
 
@@ -47,7 +44,7 @@ namespace Player
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += DisableInteractor;
+			_playerDeathController.OnDied += DisableInteractor;
 		}
 
 		private void Update()
@@ -134,16 +131,6 @@ namespace Player
 		private void DisableInteractor()
 		{
 			Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 
 		private void OnDrawGizmosSelected()

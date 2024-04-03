@@ -1,4 +1,5 @@
 using Enemy;
+using InputSystem;
 using Items;
 using System;
 using System.Collections.Generic;
@@ -46,16 +47,12 @@ namespace Player
 
 		#endregion
 
-		private PlayerInput _playerInput;
-
 		private PlayerDeathController _playerDeathController;
 
-		[SerializeField] private NoteBook _noteBook;
+		[SerializeField] private Tablet _noteBook;
 
 		private void Awake()
 		{
-			_playerInput = new();
-
 			if (Instance == null)
 				Instance = this;
 		}
@@ -64,22 +61,37 @@ namespace Player
 		{
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += ClearInventory;
+			_playerDeathController.OnDied += ClearInventory;
 
 			_inventory = new(_inventorySlotsAmount);
 
-			_playerInput.Player.PickUpItem.performed += OnPickUpItem;
+			InputManager.Instance.PlayerInput.Player.PickUpItem.performed += OnPickUpItem;
 
-			_playerInput.Player.DropItem.performed += OnDropItem;
+			InputManager.Instance.PlayerInput.Player.DropItem.performed += OnDropItem;
 
-			_playerInput.Player.UseItem.performed += OnUseItem;
+			InputManager.Instance.PlayerInput.Player.UseItem.performed += OnUseItem;
 
-			_playerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
+			InputManager.Instance.PlayerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
 
-			_playerInput.Player.Hotbar1.performed += Hotbar1;
-			_playerInput.Player.Hotbar2.performed += Hotbar2;
-			_playerInput.Player.Hotbar3.performed += Hotbar3;
-			_playerInput.Player.Hotbar4.performed += Hotbar4;
+			InputManager.Instance.PlayerInput.Player.Hotbar1.performed += (context) =>
+			{
+				HotbarSlotChange(1);
+			};
+
+			InputManager.Instance.PlayerInput.Player.Hotbar2.performed += (context) =>
+			{
+				HotbarSlotChange(2);
+			};
+
+			InputManager.Instance.PlayerInput.Player.Hotbar3.performed += (context) =>
+			{
+				HotbarSlotChange(3);
+			};
+
+			InputManager.Instance.PlayerInput.Player.Hotbar4.performed += (context) =>
+			{
+				HotbarSlotChange(4);
+			};
 		}
 
 		#region Pickup system
@@ -317,26 +329,6 @@ namespace Player
 			}
 		}
 
-		private void Hotbar1(InputAction.CallbackContext context)
-		{
-			HotbarSlotChange(1);
-		}
-
-		private void Hotbar2(InputAction.CallbackContext context)
-		{
-			HotbarSlotChange(2);
-		}
-
-		private void Hotbar3(InputAction.CallbackContext context)
-		{
-			HotbarSlotChange(3);
-		}
-
-		private void Hotbar4(InputAction.CallbackContext context)
-		{
-			HotbarSlotChange(4);
-		}
-
 		#endregion
 
 		#endregion
@@ -349,16 +341,6 @@ namespace Player
 			}
 
 			Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 	}
 }

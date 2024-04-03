@@ -13,7 +13,7 @@ namespace Player
 
         public bool IsAlive { get; private set; } = true;
 
-        public event Action OnDeath;
+        public event Action OnDied;
 
         public void Die()
         {
@@ -24,7 +24,7 @@ namespace Player
 
             IsAlive = false;
 
-            OnDeath?.Invoke();
+            OnDied?.Invoke();
 
             StartCoroutine(FinishDay());
 		}

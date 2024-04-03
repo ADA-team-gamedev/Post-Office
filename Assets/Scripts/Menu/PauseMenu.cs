@@ -1,3 +1,4 @@
+using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -15,16 +16,10 @@ namespace Menu
 		[SerializeField] private GameObject _playerCrosshair;
 		[SerializeField] private GameObject _playerStaminaBar;
 
-		private PlayerInput _playerInput;
-
 		private bool _isPaused = false;
 
 		private void Awake()
 		{
-			_playerInput = new();
-
-			_playerInput.UI.PauseMenu.performed += OnPauseMenu;
-
 			_exitWindow.SetActive(false);
 
 			_settingsWindow.SetActive(false);
@@ -32,6 +27,8 @@ namespace Menu
 
 		private void Start()
 		{
+			InputManager.Instance.PlayerInput.UI.PauseMenu.performed += OnPauseMenu;
+
 			OnResumeButton();
 		}
 
@@ -40,7 +37,7 @@ namespace Menu
 		private void OnPauseMenu(InputAction.CallbackContext context)
 		{
 			_isPaused = !_isPaused;
-
+			
 			if (_isPaused)
 			{
 				Time.timeScale = 0;
@@ -61,6 +58,11 @@ namespace Menu
 			_playerCrosshair.SetActive(!_isPaused);
 
 			_playerStaminaBar.SetActive(!_isPaused);
+			
+			if (_isPaused)
+				InputManager.Instance.PlayerInput.Player.Disable();	
+			else
+				InputManager.Instance.PlayerInput.Player.Enable();	
 		}
 
 		public void OnResumeButton()
@@ -70,6 +72,8 @@ namespace Menu
 			Cursor.lockState = CursorLockMode.Locked;
 
 			_isPaused = false;
+
+			InputManager.Instance.PlayerInput.Player.Enable();
 
 			_exitWindow.SetActive(false);
 
@@ -116,15 +120,5 @@ namespace Menu
 		}
 
 		#endregion
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
-		}
 	}
 }

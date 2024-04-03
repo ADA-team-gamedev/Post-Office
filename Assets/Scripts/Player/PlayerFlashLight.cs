@@ -1,4 +1,5 @@
 using Audio;
+using InputSystem;
 using Items;
 using System;
 using UnityEngine;
@@ -17,17 +18,10 @@ namespace Player
 
 		private bool _isFlashLightPickedUp = false;
 
-		private PlayerInput _playerInput;
-
-		private void Awake()
-		{
-			_playerInput = new();
-
-			_playerInput.Player.FlahsLight.performed += UseFlashLight;
-		}
-
 		private void Start()
 		{
+			InputManager.Instance.PlayerInput.Player.FlahsLight.performed += UseFlashLight;
+
 			_light = GetComponent<Light>();
 
 			_light.enabled = false;
@@ -112,15 +106,5 @@ namespace Player
 		}
 
 		#endregion
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
-		}
 	}
 }
