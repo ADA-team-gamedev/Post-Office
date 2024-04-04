@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using TaskSystem.NoteBook;
 using UnityEngine;
 
@@ -9,6 +8,10 @@ namespace TaskSystem
 {
 	public class TaskManager : MonoBehaviour
 	{
+		#region Task System
+
+		[field: Header("Tassk System")]
+
 		public static TaskManager Instance { get; private set; }
 
 		public Task CurrentTask { get; private set; } = null;
@@ -19,8 +22,10 @@ namespace TaskSystem
 
 		public event Action OnAddedNewTask;
 
+		public event Action OnTaskCompleted;
+
 		public event Action<Task> OnNewCurrentTaskSet;
-		public event Action CurrentTaskCompleted;
+		public event Action OnCurrentTaskCompleted;
 
 		#endregion
 
@@ -28,16 +33,18 @@ namespace TaskSystem
 
 		private Dictionary<int, Task> _tasks = new();
 
-		[SerializeField] private TimeClock _timeClock;
+		#endregion
 
-		private OrderedDictionary orderedDictionary = new();
+		[SerializeField] private Tablet _tablet;
 
 		private void Awake()
 		{
 			if (Instance == null)
 				Instance = this;
 			else
-				Debug.LogWarning("TaskManager Instance already exists!");
+				Debug.LogWarning($"{this} Instance already exists!");
+
+			_tablet.SubcribeOnTaskManager();
 
 			foreach (var taskData in _taskDatas)
 			{
@@ -89,7 +96,11 @@ namespace TaskSystem
 				Debug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we try to add task automatically");
 
 				if (!TryAddNewTask(task))
+				{
+					Debug.LogWarning($"Couldn't add this task({task.Name}!)");
+
 					return;
+				}
 			}
 
 			CurrentTask = task;
@@ -116,7 +127,7 @@ namespace TaskSystem
 			_tasks.Add(task.ID, task);
 
 			task.OnCompleted += CompleteTask;
-
+			
 			OnAddedNewTask?.Invoke();
 
 			if (CurrentTask == null)
@@ -130,12 +141,14 @@ namespace TaskSystem
 
 		private void CompleteTask(Task completedTask)
 		{
-			bool isCompleteTaskIsCurrent = CurrentTask == completedTask;
+			_tasks.Remove(completedTask.ID);
+
+			bool isCompleteTaskIsCurrent = CurrentTask.ID == completedTask.ID;
 
 			if (isCompleteTaskIsCurrent)
-				CurrentTaskCompleted?.Invoke();
+				OnCurrentTaskCompleted?.Invoke();
 
-			_tasks.Remove(completedTask.ID);
+			OnTaskCompleted?.Invoke();
 
 			if (TaskCount > 0 && isCompleteTaskIsCurrent)
 				SetNewCurrentTask(0);

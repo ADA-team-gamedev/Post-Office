@@ -1,6 +1,7 @@
 using Items;
 using Items.Icon;
 using System.Collections.Generic;
+using TaskSystem.NoteBook;
 using UnityEngine;
 
 namespace TaskSystem.TaskGivers
@@ -13,6 +14,8 @@ namespace TaskSystem.TaskGivers
 
 		[SerializeField] private bool _giveTaskOnStart = false;
 		[SerializeField] private bool _canPlayerPickUpItemAfterQuestFinishing = false;
+
+		[SerializeField] private Tablet _noteBook;
 
 		[Header("Zone Icon")]
 		[SerializeField] private Icon _questZoneIcon;
@@ -48,6 +51,8 @@ namespace TaskSystem.TaskGivers
 			{
 				_addedItem.Add(item);
 
+				_noteBook.WriteHintText("Added Box", _neededItems.Contains(item) ? Color.green : Color.red);
+
 				item.OnPickUpItem += RemoveBoxFromCollection;
 
 				TryCompleteTask();
@@ -58,6 +63,8 @@ namespace TaskSystem.TaskGivers
 		{
 			if (other.TryGetComponent(out Item item))
 			{
+				_noteBook.WriteHintText("Removed Box", _neededItems.Contains(item) ? Color.red : Color.green);
+
 				if (_addedItem.Contains(item))
 					_addedItem.Remove(item);
 
@@ -115,7 +122,7 @@ namespace TaskSystem.TaskGivers
 
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeQuestIconsState;
 
-			TaskManager.Instance.SetNewCurrentTask(_addedTask);
+			TaskManager.Instance.TryAddNewTask(_addedTask);
 
 			_isTaskAdded = true;
 
@@ -164,6 +171,8 @@ namespace TaskSystem.TaskGivers
 
 		private void RemoveBoxFromCollection(Item item)
 		{
+			_noteBook.WriteHintText("Removed Box", _neededItems.Contains(item) ? Color.red : Color.green);
+
 			_addedItem.Remove(item);
 
 			item.OnPickUpItem -= RemoveBoxFromCollection;

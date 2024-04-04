@@ -26,9 +26,9 @@ namespace Items
 
 			OnPickUpItem += Completetask;
 
-			TaskManager.Instance.TryAddNewTask(_findRemoteControlTask);
-
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeItemIconState;
+
+			TaskManager.Instance.TryAddNewTask(_findRemoteControlTask);
 		}
 
 		private void Update()
@@ -41,10 +41,10 @@ namespace Items
 			if (currentTask.ID != _findRemoteControlTask.Task.ID)
 			{
 				ItemIcon.HideIcon();
-
+				
 				return;
 			}
-
+			
 			ItemIcon.ShowIcon(this);
 		}
 

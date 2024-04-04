@@ -1,16 +1,36 @@
 using Audio;
+using InputSystem;
 using Player;
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace TaskSystem.NoteBook
 {
-	public class NoteBook : MonoBehaviour
+	public class Tablet : MonoBehaviour
 	{
+		#region Text
+
 		[Header("Text UI")]
 		[SerializeField] private TextMeshProUGUI _taskName;
 		[SerializeField] private TextMeshProUGUI _taskDescription;
+
+		[Header("Hint Text")]
+		[SerializeField] private TextMeshProUGUI _hintText;
+		[SerializeField] private float _hintTextDisplaingDelay = 5f;
+
+		[SerializeField] private GameObject _taskHintArrows;
+
+		private string _emptyTextField => string.Empty;
+
+		private const string _addedTaskHint = "Added new tak";
+		private const string _selectedNewTaskHint = "Selected new task";
+		private const string _completedTaskHint = "Task is completed";
+
+		private FontStyles _defaultFontStyle;
+
+		#endregion
 
 		[Header("Tablet Screen Info")]
 		[SerializeField] private Transform _tabletScreenInfo;
@@ -29,11 +49,7 @@ namespace TaskSystem.NoteBook
 
 		public bool IsViewing { get; private set; } = false;
 
-		private Vector3 _defaultPosition;
-
-		private PlayerInput _playerInput;
-
-		private FontStyles _defaultFontStyle;
+		private Vector3 _defaultPosition;	
 
 		private int _taskIndex = -1;
 
@@ -41,16 +57,11 @@ namespace TaskSystem.NoteBook
 		{
 			_defaultPosition = transform.position;
 
-			_playerDeathController.OnDeath += DisableNoteBook;
+			_playerDeathController.OnDied += DisableNoteBook;
 
-			_playerInput = new();
+			ClearNotebookTaskInfo();
 
-			_playerInput.UI.NoteBook.performed += OnNoteBook;
-			_playerInput.UI.NoteBook.canceled += OnNoteBook;
-
-			_playerInput.Player.ScrollWheelY.performed += OnTaskScroll;
-
-			ClearNotebook();
+			StartCoroutine(ClearHintTextField(0));
 
 			_defaultFontStyle = _taskName.fontStyle;
 
@@ -59,14 +70,10 @@ namespace TaskSystem.NoteBook
 
 		private void Start()
 		{
-			TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
+			InputManager.Instance.PlayerInput.Player.NoteBook.performed += OnNoteBook;
+			InputManager.Instance.PlayerInput.Player.NoteBook.canceled += OnNoteBook;
 
-			TaskManager.Instance.CurrentTaskCompleted += ClearNotebook;
-
-			_taskIndex = TaskManager.Instance.TaskCount - 1;
-
-			if (TaskManager.Instance.CurrentTask != null) //For cases when we add a task at start but we still haven't subscribed to the TaskManager
-				WriteTextInNoteBook(TaskManager.Instance.CurrentTask);
+			InputManager.Instance.PlayerInput.Player.ScrollWheelY.performed += OnTaskScroll;
 		}
 
 		private void Update()
@@ -75,6 +82,39 @@ namespace TaskSystem.NoteBook
 				OpenNoteBook();
 			else
 				CloseNoteBook();
+		}
+
+		public void SubcribeOnTaskManager()
+		{
+			ChangeArrowState();
+
+			TaskManager.Instance.OnAddedNewTask += () =>
+			{
+				WriteHintText(_addedTaskHint, Color.green);
+			};
+
+			TaskManager.Instance.OnAddedNewTask += ChangeArrowState;
+
+			TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
+
+			TaskManager.Instance.OnNewCurrentTaskSet += (Task Task) =>
+			{
+				WriteHintText(_selectedNewTaskHint, Color.green);
+			};
+
+			TaskManager.Instance.OnCurrentTaskCompleted += ClearNotebookTaskInfo;
+
+			TaskManager.Instance.OnCurrentTaskCompleted += () =>
+			{
+				WriteHintText(_completedTaskHint, Color.green);
+			};
+
+			TaskManager.Instance.OnTaskCompleted += ChangeArrowState;
+
+			_taskIndex = TaskManager.Instance.TaskCount - 1;
+
+			if (TaskManager.Instance.CurrentTask != null) //For cases when we add a task at start but we still haven't subscribed to the TaskManager
+				WriteTextInNoteBook(TaskManager.Instance.CurrentTask);
 		}
 
 		#region Input
@@ -93,7 +133,7 @@ namespace TaskSystem.NoteBook
 		{
 			if (!IsViewing)
 				return;
-
+			
 			float scrollWheelValue = context.ReadValue<float>();
 
 			if (scrollWheelValue != 0)
@@ -113,6 +153,8 @@ namespace TaskSystem.NoteBook
 		}
 
 		#endregion
+
+		#region NoteBook Animations
 
 		private void OpenNoteBook()
 		{
@@ -144,24 +186,39 @@ namespace TaskSystem.NoteBook
 			_tabletScreenInfo.localScale = newScreenInfoScale;
 		}
 
+		#endregion
+
 		#region Text Methods
 
-		public void RewriteText(string text)
+		#region Hint
+
+		private void ChangeArrowState()
 		{
-			_taskDescription.text = text;
+			_taskHintArrows.SetActive(TaskManager.Instance.TaskCount > 1);
 		}
 
-		public void AddExtraText(string extraText)
+		public void WriteHintText(string hintText, Color textColor)
 		{
-			string currentText = _taskDescription.text;
+			StopAllCoroutines();
 
-			_taskDescription.text = $"{currentText}\n{extraText}";
+			_hintText.color = textColor;
+
+			_hintText.text = hintText;
+
+			StartCoroutine(ClearHintTextField(_hintTextDisplaingDelay));
 		}
+
+		private IEnumerator ClearHintTextField(float delay)
+		{
+			yield return new WaitForSeconds(delay);
+
+			_hintText.text = _emptyTextField;
+		}
+
+		#endregion
 
 		private void WriteTextInNoteBook(Task task)
 		{
-			//Play writing text sound
-
 			FontStyles fontStyle = _defaultFontStyle;
 
 			if (task.IsCompleted)
@@ -176,7 +233,7 @@ namespace TaskSystem.NoteBook
 			_taskDescription.text = task.Description;
 		}
 
-		private void ClearNotebook()
+		private void ClearNotebookTaskInfo()
 		{
 			_taskName.text = "";
 
@@ -192,24 +249,23 @@ namespace TaskSystem.NoteBook
 
 		private void DisableNoteBook()
 		{
+			_playerDeathController.OnDied -= DisableNoteBook;
+
+			InputManager.Instance.PlayerInput.Player.NoteBook.performed -= OnNoteBook;
+			InputManager.Instance.PlayerInput.Player.NoteBook.canceled -= OnNoteBook;
+
+			InputManager.Instance.PlayerInput.Player.ScrollWheelY.performed -= OnTaskScroll;
+
 			Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.green;
 
-			Gizmos.DrawWireSphere(_defaultPosition + _openedPositionOffset, 0.01f);
+			Vector3 tabletPosition = Application.isPlaying ? _defaultPosition : transform.position;
+
+			Gizmos.DrawWireSphere(tabletPosition + _openedPositionOffset, 0.01f);
 		}
 	}
 }
