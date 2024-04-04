@@ -96,7 +96,7 @@ namespace Player
 
 		#region Pickup system
 
-		public void TryPickupObject()
+		private void TryPickupObject()
 		{
 			if (_inventory.Count >= _inventorySlotsAmount)
 				return;
@@ -116,9 +116,9 @@ namespace Player
 
 					item.OnPickUpItem?.Invoke(item);
 
-					OnItemPicked?.Invoke(item);
-
 					AddItem(_currentObjectTransform.gameObject);
+
+					OnItemPicked?.Invoke(item);
 				}
 			}
 		}
@@ -204,6 +204,23 @@ namespace Player
 			item = default;
 
 			return false;
+		}
+
+		public bool TryRemoveItem<T>(T item) where T : Item
+		{
+			if (!TryGetItem(out item))
+				return false;
+
+			_inventory.Remove(item.gameObject);
+
+			if (_currentSlotIndex == 0)
+				_currentSlotIndex = _inventory.Count - 1;
+			else if (_currentSlotIndex > 0)
+				_currentSlotIndex--;
+
+			ChangeSelectedSlot();
+
+			return true;
 		}
 
 		private void HotbarSlotChange(int keyCodeNumber)

@@ -1,6 +1,7 @@
+using Player;
 using UnityEngine;
 
-namespace Items
+namespace Items.Keys
 {
 	public enum DoorKeyTypes
 	{
@@ -21,6 +22,11 @@ namespace Items
 	public class Key : Item
 	{
 		[field: Header("Key")]
-		[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
+		[field: SerializeField] public DoorKeyTypes KeyType { get; private set; }
+
+		private void Start()
+		{
+			
+		}
 	}
 }

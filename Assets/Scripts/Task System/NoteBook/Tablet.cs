@@ -97,6 +97,9 @@ namespace TaskSystem.NoteBook
 
 			TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
 
+			if (TaskManager.Instance.CurrentTask != null)
+				WriteTextInNoteBook(TaskManager.Instance.CurrentTask);
+
 			TaskManager.Instance.OnNewCurrentTaskSet += (Task Task) =>
 			{
 				WriteHintText(_selectedNewTaskHint, Color.green);
@@ -112,9 +115,6 @@ namespace TaskSystem.NoteBook
 			TaskManager.Instance.OnTaskCompleted += ChangeArrowState;
 
 			_taskIndex = TaskManager.Instance.TaskCount - 1;
-
-			if (TaskManager.Instance.CurrentTask != null) //For cases when we add a task at start but we still haven't subscribed to the TaskManager
-				WriteTextInNoteBook(TaskManager.Instance.CurrentTask);
 		}
 
 		#region Input
@@ -199,12 +199,12 @@ namespace TaskSystem.NoteBook
 
 		public void WriteHintText(string hintText, Color textColor)
 		{
-			StopAllCoroutines();
-
+			StopCoroutine(ClearHintTextField(_hintTextDisplaingDelay));
+			
 			_hintText.color = textColor;
 
 			_hintText.text = hintText;
-
+			
 			StartCoroutine(ClearHintTextField(_hintTextDisplaingDelay));
 		}
 
