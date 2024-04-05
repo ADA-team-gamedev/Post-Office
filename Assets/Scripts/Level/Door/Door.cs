@@ -61,10 +61,6 @@ namespace Level.Doors
 
 		private bool _isPlayerDragDoor = false;
 
-		private float _previousDoorRotationYAfterSoundPlayed;
-
-		private bool _isRotationSoundPlayed = false;
-
 		private void Start()
 		{
 			_hingeJoint ??= GetComponent<HingeJoint>();
@@ -76,8 +72,6 @@ namespace Level.Doors
 			_doorRotation = _isDoorMustBeClosedOnStart ? _hingeJoint.limits.max : _hingeJoint.limits.min;
 			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
-
-			_previousDoorRotationYAfterSoundPlayed = (int)transform.rotation.eulerAngles.y;
 		}
 
 		private void Update()
@@ -98,7 +92,7 @@ namespace Level.Doors
 
 			if (hasRightKeyInInventory || hasRightKeyInKeyBunch)
 			{
-				AudioManager.Instance.PlaySound(_unlockDoorSound, transform.position, spatialBlend: 1f);
+				AudioManager.Instance.PlaySound(_unlockDoorSound, transform.position, spatialBlend: 0.8f);
 
 				IsClosed = false;
 
@@ -109,7 +103,7 @@ namespace Level.Doors
 				Debug.Log("Player doesn't have right key to open this door");
 			}
 
-			AudioManager.Instance.PlaySound(_closedDoor, transform.position, spatialBlend: 1f);
+			AudioManager.Instance.PlaySound(_closedDoor, transform.position, spatialBlend: 0.8f);
 		}
 
 		#endregion
@@ -125,15 +119,6 @@ namespace Level.Doors
 				return;
 			}
 
-			if (!_isRotationSoundPlayed && !Mathf.Approximately(transform.rotation.eulerAngles.y, _previousDoorRotationYAfterSoundPlayed))
-			{
-				AudioManager.Instance.PlaySound(_doorRotationSound, transform.position, spatialBlend: 1f);
-
-				_isRotationSoundPlayed = true;
-
-				_previousDoorRotationYAfterSoundPlayed = transform.rotation.eulerAngles.y;
-			}
-
 			_playerClickedViewPoint = _interactorCameraTransform.position + _interactorCameraTransform.forward * _doorDragingDistance;
 
 			_doorRotation += Mathf.Clamp(-GetDoorRotation() * _doorRotationSpeed * Time.deltaTime, -_doorOpeningForce, _doorOpeningForce);
@@ -141,9 +126,6 @@ namespace Level.Doors
 			_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
 			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
-
-			if (Mathf.Approximately(_doorRotation, transform.rotation.eulerAngles.y))
-				_isRotationSoundPlayed = false;
 		}
 
 		private void StartRotateDoor()
@@ -153,7 +135,9 @@ namespace Level.Doors
 
 			_isPlayerDragDoor = true;
 
-			_isDoorMoving = true;		
+			_isDoorMoving = true;
+
+			AudioManager.Instance.PlaySound(_doorRotationSound, transform.position, spatialBlend: 0.8f);
 		}
 
 		private void StopRotateDoor()
@@ -162,13 +146,11 @@ namespace Level.Doors
 				return;
 			
 			if (Mathf.Approximately(transform.rotation.eulerAngles.y, _defaultDoorYRotation))
-				AudioManager.Instance.PlaySound(_fullyClosedDoor, transform.position, spatialBlend: 1f);		
+				AudioManager.Instance.PlaySound(_fullyClosedDoor, transform.position, spatialBlend: 0.8f);		
 
 			_isPlayerDragDoor = false;
 
 			_isDoorMoving = false;
-
-			_isRotationSoundPlayed = false;
 
 			_playerClickedViewPoint = transform.position;
 		}
