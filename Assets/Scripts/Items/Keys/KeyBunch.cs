@@ -26,7 +26,7 @@ namespace Items.Keys
 
 			FillBunchOnStart();
 
-			OnPickUpItem += OnPlayerPickUpItem;
+			OnPickUpItem += OnPlayerPickupBunch;
 
 			OnPickUpItem += (item) =>
 			{
@@ -41,7 +41,7 @@ namespace Items.Keys
 
 		public bool TryAddKey(Key key)
 		{
-			if (_keyModels.Length <= 0)
+			if (_keyModels.Length <= 0 || _keyTypes.Count >= _keyModels.Length)
 				return false;
 
 			if (IsContainsKey(key.KeyType))
@@ -58,6 +58,27 @@ namespace Items.Keys
 			_keyModels[keyIndex].SetActive(true);
 
 			return true;
+		}
+
+		private void OnPlayerPickupBunch(Item item)
+		{
+			bool addedKey = false;
+
+			for (int i = 0; i < PlayerInventory.InventorySlotsAmount; i++)
+			{
+				if (!PlayerInventory.Instance.TryGetItem(out Key key))
+					break;		
+
+				if (TryAddKey(key) && PlayerInventory.Instance.TryRemoveItem(key))
+				{
+					addedKey = true;
+
+					Destroy(key.gameObject);
+				}
+			}
+
+			if (addedKey)
+				AudioManager.Instance.PlaySound("Pickup Key", transform.position);
 		}
 
 		private void OnPlayerPickUpItem(Item item)
