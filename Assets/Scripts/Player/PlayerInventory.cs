@@ -1,11 +1,11 @@
 using Enemy;
-using InputSystem;
 using Items;
 using System;
 using System.Collections.Generic;
 using TaskSystem.NoteBook;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Player
 {
@@ -51,6 +51,42 @@ namespace Player
 
 		[SerializeField] private Tablet _noteBook;
 
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.Player.PickUpItem.performed += OnPickUpItem;
+
+			_playerInput.Player.DropItem.performed += OnDropItem;
+
+			_playerInput.Player.UseItem.performed += OnUseItem;
+
+			_playerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
+
+			_playerInput.Player.Hotbar1.performed += (context) =>
+			{
+				HotbarSlotChange(1);
+			};
+
+			_playerInput.Player.Hotbar2.performed += (context) =>
+			{
+				HotbarSlotChange(2);
+			};
+
+			_playerInput.Player.Hotbar3.performed += (context) =>
+			{
+				HotbarSlotChange(3);
+			};
+
+			_playerInput.Player.Hotbar4.performed += (context) =>
+			{
+				HotbarSlotChange(4);
+			};
+		}
+
 		private void Awake()
 		{
 			if (Instance == null)
@@ -63,35 +99,7 @@ namespace Player
 
 			_playerDeathController.OnDied += ClearInventory;
 
-			_inventory = new(InventorySlotsAmount);
-
-			InputManager.Instance.PlayerInput.Player.PickUpItem.performed += OnPickUpItem;
-
-			InputManager.Instance.PlayerInput.Player.DropItem.performed += OnDropItem;
-
-			InputManager.Instance.PlayerInput.Player.UseItem.performed += OnUseItem;
-
-			InputManager.Instance.PlayerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
-
-			InputManager.Instance.PlayerInput.Player.Hotbar1.performed += (context) =>
-			{
-				HotbarSlotChange(1);
-			};
-
-			InputManager.Instance.PlayerInput.Player.Hotbar2.performed += (context) =>
-			{
-				HotbarSlotChange(2);
-			};
-
-			InputManager.Instance.PlayerInput.Player.Hotbar3.performed += (context) =>
-			{
-				HotbarSlotChange(3);
-			};
-
-			InputManager.Instance.PlayerInput.Player.Hotbar4.performed += (context) =>
-			{
-				HotbarSlotChange(4);
-			};
+			_inventory = new(InventorySlotsAmount);		
 		}
 
 		#region Pickup system

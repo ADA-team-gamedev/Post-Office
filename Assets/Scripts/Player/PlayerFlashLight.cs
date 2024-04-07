@@ -1,9 +1,9 @@
 using Audio;
-using InputSystem;
 using Items;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Player
 {
@@ -18,10 +18,18 @@ namespace Player
 
 		private bool _isFlashLightPickedUp = false;
 
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.Player.FlahsLight.performed += UseFlashLight;
+		}
+
 		private void Start()
 		{
-			InputManager.Instance.PlayerInput.Player.FlahsLight.performed += UseFlashLight;
-
 			_light = GetComponent<Light>();
 
 			_light.enabled = false;

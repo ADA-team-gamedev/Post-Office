@@ -1,6 +1,6 @@
-using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Player
 {
@@ -39,11 +39,19 @@ namespace Player
 
 		private Vector2 _lookDirection;
 
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.Player.Look.performed += OnLook;
+			_playerInput.Player.Look.canceled += OnLook;
+		}
+
 		private void Start()
 		{
-			InputManager.Instance.PlayerInput.Player.Look.performed += OnLook;
-			InputManager.Instance.PlayerInput.Player.Look.canceled += OnLook;
-
 			_playerCamera ??= GetComponent<Camera>();
 
 			Cursor.lockState = CursorLockMode.Locked;
@@ -82,7 +90,7 @@ namespace Player
 
 		private void OnLook(InputAction.CallbackContext context)
 		{
-			_lookDirection = InputManager.Instance.PlayerInput.Player.Look.ReadValue<Vector2>();
+			_lookDirection = _playerInput.Player.Look.ReadValue<Vector2>();
 		}
 
 		private void ChangeFOV()

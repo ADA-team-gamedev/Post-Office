@@ -1,10 +1,10 @@
-using InputSystem;
 using Items;
 using Level.Doors;
 using Level.Lights.Lamp;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Player
 {
@@ -33,11 +33,19 @@ namespace Player
 
 		private bool _isHitInteractableObject = false;
 
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.Player.Interact.performed += OnStartInteract;
+			_playerInput.Player.Interact.canceled += OnStopInteract;
+		}
+
 		private void Start()
 		{
-			InputManager.Instance.PlayerInput.Player.Interact.performed += OnStartInteract;
-			InputManager.Instance.PlayerInput.Player.Interact.canceled += OnStopInteract;
-
 			_crosshairImage.sprite = _defaultCrosshair;
 
 			_crosshairImage.color = _defaultCrosshairColor;

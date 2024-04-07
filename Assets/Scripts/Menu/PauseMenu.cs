@@ -1,7 +1,7 @@
-using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using Zenject;
 
 namespace Menu
 {
@@ -18,17 +18,25 @@ namespace Menu
 
 		private bool _isPaused = false;
 
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.UI.PauseMenu.performed += OnPauseMenu;
+		}
+
 		private void Awake()
 		{
 			_exitWindow.SetActive(false);
 
 			_settingsWindow.SetActive(false);
-		}
+		}	
 
 		private void Start()
 		{
-			InputManager.Instance.PlayerInput.UI.PauseMenu.performed += OnPauseMenu;
-
 			OnResumeButton();
 		}
 
@@ -60,9 +68,9 @@ namespace Menu
 			_playerStaminaBar.SetActive(!_isPaused);
 			
 			if (_isPaused)
-				InputManager.Instance.PlayerInput.Player.Disable();	
+				_playerInput.Player.Disable();	
 			else
-				InputManager.Instance.PlayerInput.Player.Enable();	
+				_playerInput.Player.Enable();	
 		}
 
 		public void OnResumeButton()
@@ -73,7 +81,7 @@ namespace Menu
 
 			_isPaused = false;
 
-			InputManager.Instance.PlayerInput.Player.Enable();
+			_playerInput.Player.Enable();
 
 			_exitWindow.SetActive(false);
 

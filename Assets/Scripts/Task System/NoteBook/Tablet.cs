@@ -1,10 +1,10 @@
 using Audio;
-using InputSystem;
 using Player;
 using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace TaskSystem.NoteBook
 {
@@ -53,6 +53,19 @@ namespace TaskSystem.NoteBook
 
 		private int _taskIndex = -1;
 
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.Player.NoteBook.performed += OnNoteBook;
+			_playerInput.Player.NoteBook.canceled += OnNoteBook;
+
+			_playerInput.Player.ScrollWheelY.performed += OnTaskScroll;
+		}
+
 		private void Awake()
 		{
 			_defaultPosition = transform.position;
@@ -66,14 +79,6 @@ namespace TaskSystem.NoteBook
 			_defaultFontStyle = _taskName.fontStyle;
 
 			_deffaultScreenInfoScale = _tabletScreenInfo.transform.localScale.x;
-		}
-
-		private void Start()
-		{
-			InputManager.Instance.PlayerInput.Player.NoteBook.performed += OnNoteBook;
-			InputManager.Instance.PlayerInput.Player.NoteBook.canceled += OnNoteBook;
-
-			InputManager.Instance.PlayerInput.Player.ScrollWheelY.performed += OnTaskScroll;
 		}
 
 		private void Update()
@@ -251,10 +256,10 @@ namespace TaskSystem.NoteBook
 		{
 			_playerDeathController.OnDied -= DisableNoteBook;
 
-			InputManager.Instance.PlayerInput.Player.NoteBook.performed -= OnNoteBook;
-			InputManager.Instance.PlayerInput.Player.NoteBook.canceled -= OnNoteBook;
+			_playerInput.Player.NoteBook.performed -= OnNoteBook;
+			_playerInput.Player.NoteBook.canceled -= OnNoteBook;
 
-			InputManager.Instance.PlayerInput.Player.ScrollWheelY.performed -= OnTaskScroll;
+			_playerInput.Player.ScrollWheelY.performed -= OnTaskScroll;
 
 			Destroy(this);
 		}
