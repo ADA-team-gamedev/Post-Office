@@ -1,3 +1,4 @@
+using Audio;
 using System.Collections;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace Level.Lights.Lamp
 		[SerializeField] private bool _isFlashableLamp = true;
 
 		[SerializeField] private float _timeSinceGameStartToStartFlashing = 60f;
-		[SerializeField, Range(1, 100)] private int _flashingStartChance = 10;
+		[SerializeField, Range(1, 100)] private int _flashingStartChance = 50;
 
 		[Space(10)]
 		[SerializeField] private float _minFlashingCooldownDelay = 30;
@@ -26,60 +27,31 @@ namespace Level.Lights.Lamp
 
 		private bool _isFlashing = false;
 
-		[field: Space(10)]
-		[field: SerializeField] protected Renderer LampRenderer { get; private set; }
-		private MaterialPropertyBlock _block;
-
 		private float _maxLightRange;
 		private float _maxLightIntensity;
 
 		private int _possibleCountOfCurves;
 
-		private const string _emissionColor = "_EmissionColor";
-
-		private void Start()
+		private void Awake()
 		{
-			InitializeFlickeringLamp();
+			InitializeLamp();
 		}
 
-		private void Update()
+		protected override void InitializeLamp()
 		{
-			TryStartFlashingEvent();
-		}
+			base.InitializeLamp();
 
-		protected virtual void InitializeFlickeringLamp()
-		{
 			_maxLightIntensity = Light.intensity;
 
 			_maxLightRange = Light.range;
 
 			_possibleCountOfCurves = _flashingCurves.Curves.Count;
-
-			_block = new();
 		}
 
-		public void StartFlashingEvent()
+		private void Update()
 		{
-			if (_isFlashing)
-				return;
-
-			_isFlashing = true;
-
-			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
-
-			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
-
-			_possibleCountOfCurves--;
-
-			if (_possibleCountOfCurves <= 0)
-				_possibleCountOfCurves = _flashingCurves.Curves.Count;
-
-			AnimationCurve randomCurve = new(_flashingCurves.Curves[randomCurveIndex].keys);
-
-			AnimationCurve scaledCurve = ScaleCurveToMatchDuration(randomCurve, flashingDelay);
-
-			StartCoroutine(LaunchFlashingAnimation(scaledCurve, flashingDelay));
-		}
+			TryStartFlashingEvent();
+		}	
 
 		protected void TryStartFlashingEvent()
 		{
@@ -91,7 +63,13 @@ namespace Level.Lights.Lamp
 				int randomNumber = Random.Range(1, 100);
 
 				if (_flashingStartChance > randomNumber)
+				{
 					StartFlashingEvent();
+				}
+				else
+				{
+					_flashingCooldownRemaining = Random.Range(_minFlashingCooldownDelay, _maxFlashingCooldownDelay);
+				}
 			}
 			else
 			{
@@ -109,9 +87,35 @@ namespace Level.Lights.Lamp
 			base.TryInvokeLamp(other);
 		}
 
+		[ContextMenu(nameof(StartFlashingEvent))]
+		public void StartFlashingEvent()
+		{
+			if (_isFlashing)
+				return;
+
+			_isFlashing = true;
+
+			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
+
+			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, soundDelay: flashingDelay, spatialBlend: 1f);
+
+			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
+
+			_possibleCountOfCurves--;
+
+			if (_possibleCountOfCurves <= 0)
+				_possibleCountOfCurves = _flashingCurves.Curves.Count;
+
+			AnimationCurve randomCurve = new(_flashingCurves.Curves[randomCurveIndex].keys);
+
+			AnimationCurve scaledCurve = ScaleCurveToMatchDuration(randomCurve, flashingDelay);
+
+			StartCoroutine(LaunchFlashingAnimation(scaledCurve, flashingDelay));
+		}
+
 		protected virtual bool IsCanStartFlashingEvent()
 		{
-			if (!_isFlashableLamp || Time.realtimeSinceStartup < _timeSinceGameStartToStartFlashing)
+			if (!_isFlashableLamp || Time.timeSinceLevelLoad < _timeSinceGameStartToStartFlashing)
 				return false;
 
 			return true;
@@ -145,10 +149,11 @@ namespace Level.Lights.Lamp
 			{
 				float t = curve.Evaluate(elapsedTime);
 
-				Color currentEmissionColor = Color.Lerp(Color.black, Color.white, t);
+				Color currentEmissionColor = Color.Lerp(DisabledLampColor, DefaultLampColor, t);
 
-				_block.SetColor(_emissionColor, currentEmissionColor);
-				LampRenderer.SetPropertyBlock(_block);
+				MaterialPropertyBlock.SetColor(EmissionColor, currentEmissionColor);
+
+				LampRenderer.SetPropertyBlock(MaterialPropertyBlock);
 
 				Light.intensity = Mathf.Lerp(0, _maxLightIntensity, t);
 
@@ -165,7 +170,7 @@ namespace Level.Lights.Lamp
 
 			_flashingCooldownRemaining = Random.Range(_minFlashingCooldownDelay, _maxFlashingCooldownDelay);
 
-			LampRenderer.material.SetColor(_emissionColor, Color.white);
+			LampRenderer.material.SetColor(EmissionColor, DefaultLampColor);
 
 			_isFlashing = false;
 		}

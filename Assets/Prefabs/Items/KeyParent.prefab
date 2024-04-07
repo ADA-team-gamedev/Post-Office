@@ -95,6 +95,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6485191b0e2689642b635a73b4b1dd1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _canBePicked: 1
+  _dropSound: Drop Item
+  _pickupSound: Pickup Item
+  <ItemIcon>k__BackingField:
+    <IsIconNeeded>k__BackingField: 1
+    <ItemIcon>k__BackingField: {fileID: 0}
+    <IconTargetToLook>k__BackingField: {fileID: 0}
+    <EnableOnStart>k__BackingField: 0
+    <ChangeIconStateAutomatically>k__BackingField: 0
   <DoorKeyType>k__BackingField: 0
 --- !u!1 &3095729001062395363
 GameObject:

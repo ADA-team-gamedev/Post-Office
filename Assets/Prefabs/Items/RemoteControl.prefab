@@ -95,7 +95,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1ef8ced4bc6b804cb07d1a54b9cacd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _canBePicked: 1
+  _dropSound: Drop Item
+  _pickupSound: Pickup Item
+  <ItemIcon>k__BackingField:
+    <IsIconNeeded>k__BackingField: 1
+    <ItemIcon>k__BackingField: {fileID: 0}
+    <IconTargetToLook>k__BackingField: {fileID: 0}
+    <EnableOnStart>k__BackingField: 0
+    <ChangeIconStateAutomatically>k__BackingField: 0
   _playerCamera: {fileID: 0}
+  _findRemoteControlTask: {fileID: 0}
 --- !u!1 &8936858545506054445
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,9 @@
+using Enemy;
+using InputSystem;
 using Items;
 using System;
 using System.Collections.Generic;
+using TaskSystem.NoteBook;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -20,8 +23,6 @@ namespace Player
 		[SerializeField] private float _dropUpForce = 2f;
 		[SerializeField] private float _dropForce = 1f;
 
-		[SerializeField] private bool _changeItemWhenPickup = false;
-
 		[Header("Objects")]
 		[SerializeField] private Transform _playerHand;
 		[SerializeField] private Camera _playerCamera;
@@ -38,22 +39,20 @@ namespace Player
 
 		#region Inventory fields
 
-		private const byte _inventorySlotsAmount = 3;
+		public const byte InventorySlotsAmount = 4;
 
 		private int _currentSlotIndex = -1;
 
-		private List<GameObject> _inventory;
+		private List<Item> _inventory;
 
 		#endregion
 
-		private PlayerInput _playerInput;
-
 		private PlayerDeathController _playerDeathController;
+
+		[SerializeField] private Tablet _noteBook;
 
 		private void Awake()
 		{
-			_playerInput = new();
-
 			if (Instance == null)
 				Instance = this;
 		}
@@ -62,28 +61,47 @@ namespace Player
 		{
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += ClearInventory;
+			_playerDeathController.OnDied += ClearInventory;
 
-			_inventory = new(_inventorySlotsAmount);
+			_inventory = new(InventorySlotsAmount);
 
-			_playerInput.Player.PickUpItem.performed += OnPickUpItem;
+			InputManager.Instance.PlayerInput.Player.PickUpItem.performed += OnPickUpItem;
 
-			_playerInput.Player.DropItem.performed += OnDropItem;
+			InputManager.Instance.PlayerInput.Player.DropItem.performed += OnDropItem;
 
-			_playerInput.Player.UseItem.performed += OnUseItem;
+			InputManager.Instance.PlayerInput.Player.UseItem.performed += OnUseItem;
 
-			_playerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
+			InputManager.Instance.PlayerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
 
-			_playerInput.Player.Hotbar1.performed += Hotbar1;
-			_playerInput.Player.Hotbar2.performed += Hotbar2;
-			_playerInput.Player.Hotbar3.performed += Hotbar3;
+			InputManager.Instance.PlayerInput.Player.Hotbar1.performed += (context) =>
+			{
+				HotbarSlotChange(1);
+			};
+
+			InputManager.Instance.PlayerInput.Player.Hotbar2.performed += (context) =>
+			{
+				HotbarSlotChange(2);
+			};
+
+			InputManager.Instance.PlayerInput.Player.Hotbar3.performed += (context) =>
+			{
+				HotbarSlotChange(3);
+			};
+
+			InputManager.Instance.PlayerInput.Player.Hotbar4.performed += (context) =>
+			{
+				HotbarSlotChange(4);
+			};
 		}
 
 		#region Pickup system
 
-		public void TryPickupObject()
+		private void TryPickupObject()
 		{
-			if (_inventory.Count >= _inventorySlotsAmount)
+			if (_inventory.Count >= InventorySlotsAmount)
+				return;
+
+			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked)
 				return;
 
 			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange, _itemLayer))
@@ -96,9 +114,9 @@ namespace Player
 
 					SetPickedItem();
 
-					AddItem(_currentObjectTransform.gameObject);
-
 					item.OnPickUpItem?.Invoke(item);
+
+					AddItem(item);
 
 					OnItemPicked?.Invoke(item);
 				}
@@ -153,12 +171,23 @@ namespace Player
 
 		#region Inventory system
 
+		public bool IsContainsItem<T>(T item) where T : Item
+		{
+			foreach (var inventoryItem in _inventory)
+			{
+				if (Equals(inventoryItem, item))
+					return true;		
+			}
+
+			return false;
+		}
+
 		public bool TryGetItem<T>(out T item) where T : Item
 		{
 			foreach (var inventoryItem in _inventory)
 			{
 				if (inventoryItem.TryGetComponent(out item))
-					return true;
+					return true;		
 			}
 
 			item = default;
@@ -188,6 +217,23 @@ namespace Player
 			return false;
 		}
 
+		public bool TryRemoveItem<T>(T item) where T : Item
+		{
+			if (!IsContainsItem(item))
+				return false;
+
+			_inventory.Remove(item);
+
+			if (_currentSlotIndex == 0)
+				_currentSlotIndex = _inventory.Count - 1;
+			else if (_currentSlotIndex > 0)
+				_currentSlotIndex--;
+
+			ChangeSelectedSlot();
+
+			return true;
+		}
+
 		private void HotbarSlotChange(int keyCodeNumber)
 		{
 			keyCodeNumber--;
@@ -195,19 +241,22 @@ namespace Player
 			if (_inventory.Count <= keyCodeNumber)
 				return;
 
+			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked)
+				return;
+
 			_currentSlotIndex = keyCodeNumber;
 
 			ChangeSelectedSlot();
 		}
 
-		private void AddItem(GameObject item)
+		private void AddItem(Item item)
 		{
 			_inventory.Add(item);
 
-			_currentSlotIndex++;
+			_currentSlotIndex = _inventory.Count - 1;
 
-			if (_inventory.Count != 1 && !_changeItemWhenPickup)
-				_currentSlotIndex--;
+			//if (_inventory.Count != 1 && !_changeItemWhenPickup)
+			//	_currentSlotIndex--;
 
 			ChangeSelectedSlot();
 		}
@@ -232,13 +281,13 @@ namespace Player
 			for (int i = 0; i < _inventory.Count; i++)
 			{
 				if (i != _currentSlotIndex)
-					_inventory[i].SetActive(false);
+					_inventory[i].gameObject.SetActive(false);
 			}
 
-			GameObject currentItem = _inventory[_currentSlotIndex];
+			var currentItem = _inventory[_currentSlotIndex];
 
 			if (currentItem)
-				currentItem.SetActive(true);
+				currentItem.gameObject.SetActive(true);
 
 			_currentObjectTransform = currentItem.transform;
 
@@ -271,7 +320,7 @@ namespace Player
 			if (_currentSlotIndex < 0)
 				return;
 
-			GameObject item = _inventory[_currentSlotIndex];
+			var item = _inventory[_currentSlotIndex];
 
 			if (item == null)
 				return;
@@ -284,10 +333,13 @@ namespace Player
 
 		private void OnScrollWheelYChanged(InputAction.CallbackContext context)
 		{
-			if (_inventory.Count <= 0 || _playerInput.UI.NoteBook.IsPressed())
+			if (_inventory.Count <= 0 || _noteBook.IsViewing)
 				return;
-
+			
 			float scrollWheelValue = context.ReadValue<float>();
+
+			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked)
+				return;
 
 			if (scrollWheelValue != 0)
 			{
@@ -305,21 +357,6 @@ namespace Player
 			}
 		}
 
-		private void Hotbar1(InputAction.CallbackContext context)
-		{
-			HotbarSlotChange(1);
-		}
-
-		private void Hotbar2(InputAction.CallbackContext context)
-		{
-			HotbarSlotChange(2);
-		}
-
-		private void Hotbar3(InputAction.CallbackContext context)
-		{
-			HotbarSlotChange(3);
-		}
-
 		#endregion
 
 		#endregion
@@ -332,16 +369,6 @@ namespace Player
 			}
 
 			Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 	}
 }

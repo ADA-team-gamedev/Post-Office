@@ -1,6 +1,7 @@
 using UnityEngine;
-using Items;
+using Items.Keys;
 using Player;
+using Audio;
 
 namespace Level.Doors
 {
@@ -26,7 +27,8 @@ namespace Level.Doors
 
 		[SerializeField] private Transform _doorModel;
 
-		[SerializeField] private Interactor _playerInteractor;
+		[SerializeField] private Interactor _playerInteractor;	
+
 		private Transform _interactorCameraTransform => _playerInteractor.PlayerCamera.transform;
 
 		private HingeJoint _hingeJoint;
@@ -50,14 +52,14 @@ namespace Level.Doors
 
 		#endregion
 
-		private PlayerInput _playerInput;
+		[Header("Sounds")]
+
+		[SerializeField] private string _unlockDoorSound = "Unlock Door";
+		[SerializeField] private string _closedDoor = "Door Closed";
+		[SerializeField] private string _fullyClosedDoor = "Fully Closed Door";
+		[SerializeField] private string _doorRotationSound = "Door Rotation";
 
 		private bool _isPlayerDragDoor = false;
-
-		private void Awake()
-		{
-			_playerInput = new();
-		}
 
 		private void Start()
 		{
@@ -68,7 +70,7 @@ namespace Level.Doors
 			_playerClickedViewPoint = _doorModel.position;
 
 			_doorRotation = _isDoorMustBeClosedOnStart ? _hingeJoint.limits.max : _hingeJoint.limits.min;
-
+			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
 		}
 
@@ -84,21 +86,24 @@ namespace Level.Doors
 			if (!IsClosed)
 				return;
 
-			if (PlayerInventory.Instance.TryGetCurrentItem(out Key key))
+			bool hasRightKeyInInventory = PlayerInventory.Instance.TryGetCurrentItem(out Key key) && key.KeyType == DoorKeyType;
+
+			bool hasRightKeyInKeyBunch = PlayerInventory.Instance.TryGetCurrentItem(out KeyBunch keyBunch) && keyBunch.IsContainsKey(DoorKeyType);
+
+			if (hasRightKeyInInventory || hasRightKeyInKeyBunch)
 			{
-				if (key.DoorKeyType == DoorKeyType)
-				{
-					//play door key opening sound
+				AudioManager.Instance.PlaySound(_unlockDoorSound, transform.position, spatialBlend: 0.8f);
 
-					IsClosed = false;
-				}
-				else
-				{
-					Debug.Log("Player doesn't have right key to open this door");
+				IsClosed = false;
 
-					//play door key closed sound
-				}
+				return;
 			}
+			else
+			{
+				Debug.Log("Player doesn't have right key to open this door");
+			}
+
+			AudioManager.Instance.PlaySound(_closedDoor, transform.position, spatialBlend: 0.8f);
 		}
 
 		#endregion
@@ -119,7 +124,7 @@ namespace Level.Doors
 			_doorRotation += Mathf.Clamp(-GetDoorRotation() * _doorRotationSpeed * Time.deltaTime, -_doorOpeningForce, _doorOpeningForce);
 
 			_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
-
+			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
 		}
 
@@ -131,17 +136,17 @@ namespace Level.Doors
 			_isPlayerDragDoor = true;
 
 			_isDoorMoving = true;
+
+			AudioManager.Instance.PlaySound(_doorRotationSound, transform.position, spatialBlend: 0.8f);
 		}
 
 		private void StopRotateDoor()
 		{
 			if (!_isDoorMoving)
 				return;
-
-			if (transform.rotation.eulerAngles.y == _defaultDoorYRotation)
-			{
-				//play fully closed door sound
-			}
+			
+			if (Mathf.Approximately(transform.rotation.eulerAngles.y, _defaultDoorYRotation))
+				AudioManager.Instance.PlaySound(_fullyClosedDoor, transform.position, spatialBlend: 0.8f);		
 
 			_isPlayerDragDoor = false;
 
@@ -187,16 +192,6 @@ namespace Level.Doors
 		private void OnValidate()
 		{
 			_hingeJoint ??= GetComponent<HingeJoint>();
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 
 		private void OnDrawGizmosSelected()

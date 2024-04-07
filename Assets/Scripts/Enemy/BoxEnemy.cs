@@ -12,6 +12,8 @@ namespace Enemy
 	[RequireComponent(typeof(NavMeshAgent))]
 	public class BoxEnemy : MonoBehaviour
 	{
+		[SerializeField] private bool _isAliveBox = true;
+
 		[Header("Player Sanity")]
 		[SerializeField] private PlayerSanity _playerSanity;
 
@@ -36,6 +38,7 @@ namespace Enemy
 		[SerializeField][Range(0.01f, 1f)] private float _attackPhaseStartSanityPercent = 0.1f;
 
 		[field: SerializeField, Space(10)] public float TranfromToEnemyDelay { get; private set; } = 5f;
+		[field: SerializeField, Space(10)] public float TranfromToBoxDelay { get; private set; } = 1.5f;
 
 		#endregion
 
@@ -50,6 +53,9 @@ namespace Enemy
 
 		[Space(10), SerializeField] private GameObject _killerBoxJumpScare;
 
+		[SerializeField] private float _patrolingAnimationSpeed = 1;
+		[SerializeField] private float _fleeingAnimationSpeed = 1;
+
 		private float _defaultAnimationSpeed;
 
 		#endregion
@@ -61,7 +67,6 @@ namespace Enemy
 		[SerializeField] private List<Transform> _hiddenPoints;
 
 		private Vector3 _currentPointToMove;
-		private int _currentPatrolPointIndex = 0;
 
 		private EnemyState _enemyState = EnemyState.Patroling;
 
@@ -71,14 +76,16 @@ namespace Enemy
 		private Rigidbody _rigidbody;
 		private FieldOfView _fieldOfView;
 
-		private Box _box;
+		private Box _boxItem;
 
 		//flags
 		private bool _isFleeing = false;
+		private bool _isReachedHidenPoint = false;
+
 		private bool _isPatroling = false;
 		private bool _isWaiting = false;
 
-		private bool _isPicked = false;
+		public bool IsPicked { get; private set; } = false;
 
 		private bool _isEnemyPhasesStarts = false; //only for first enemy start moment in update
 
@@ -86,10 +93,10 @@ namespace Enemy
 		{
 			_agent = GetComponent<NavMeshAgent>();
 			_agent.speed = _patrolingSpeed;
-
+			
 			_fieldOfView = GetComponent<FieldOfView>();
 
-			_box = GetComponent<Box>();
+			_boxItem = GetComponent<Box>();
 
 			_rigidbody = GetComponent<Rigidbody>();
 
@@ -99,16 +106,18 @@ namespace Enemy
 
 			DisableAI();
 
-			_box.OnPickUpItem += PickUpItem;
+			_boxItem.OnPickUpItem += PickUpItem;
 
-			_box.OnDropItem += DropItem;
+			_boxItem.OnDropItem += DropItem;
+
+			_boxItem.OnItemPickingPropertyChanged += OnItemPickingPropertyChanged;
 
 			_defaultAnimationSpeed = _animator.speed;
 		}
 
 		private void Update()
 		{
-			if (_isPicked)
+			if (IsPicked)
 				return;
 
 			if (!_isEnemyPhasesStarts && IsCanStartEnemyLogic()) //AI first start check
@@ -124,20 +133,21 @@ namespace Enemy
 
 				HandleStateLauncher();
 			}
+
+			if (_boxItem.ItemIcon.IsIconEnabled()) //For task. If task enable item icons we update icon position
+				_boxItem.ItemIcon.ShowIcon(_boxItem);		
 		}
 
 		#region Checker
 
 		public bool IsCanActivateEnemy()
-			=> !_isPicked && IsOnGround();
+			=> !IsPicked && IsOnGround();
 
 		private bool IsCanStartEnemyLogic()
-			=> !_isPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround();
+			=> !IsPicked && (_playerSanity.SanityPercent <= _patrolPhaseStartSanityPercent) && IsOnGround() && _isAliveBox;
 
 		private bool IsOnGround()
-		{
-			return Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);
-		}
+			=> Physics.Raycast(transform.position, Vector3.down, out RaycastHit _, _groundCheckDistance, _groundLayer);		
 
 		private void CheckVision()
 		{
@@ -204,29 +214,6 @@ namespace Enemy
 
 		#region Patrol
 
-		private void MoveTo()
-		{
-			if (_patrolPoints.Count <= 0)
-				return;
-
-			_currentPatrolPointIndex = Random.Range(0, _patrolPoints.Count); //possible simillar points
-
-			_currentPointToMove = _patrolPoints[_currentPatrolPointIndex].position;
-
-			_animator.SetBool(IsMoving, true);
-
-			_agent.SetDestination(_currentPointToMove);
-		}
-
-		private void MoveTo(Vector3 point)
-		{
-			_currentPointToMove = point;
-
-			_animator.SetBool(IsMoving, true);
-
-			_agent.SetDestination(_currentPointToMove);
-		}
-
 		private void Patroling()
 		{
 			if (_isPatroling)
@@ -234,18 +221,15 @@ namespace Enemy
 				if (_agent.remainingDistance <= _agent.stoppingDistance)
 				{
 					_isPatroling = false;
-
+					
 					_enemyState = EnemyState.Idle;
 				}
 
 				return;
 			}
-
-			_isPatroling = true;
-
-			_agent.speed = _patrolingSpeed;
-
-			MoveTo();
+			
+			if (TryMoveTo(_patrolPoints, _patrolingSpeed, _patrolingAnimationSpeed))
+				_isPatroling = true;		
 		}
 
 		private IEnumerator TakeRestOnTime(float delay)
@@ -257,6 +241,93 @@ namespace Enemy
 			_enemyState = EnemyState.Patroling;
 		}
 
+		private bool TryMoveTo(Vector3 point, float agentSpeed, float animationSpeed)
+		{
+			if (IsReachablePoint(point))
+			{
+				_currentPointToMove = point;
+
+				_agent.speed = agentSpeed;
+
+				_animator.speed = animationSpeed;
+
+				_agent.SetDestination(_currentPointToMove);
+
+				_animator.SetBool(IsMoving, true);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool TryMoveTo(List<Transform> points, float agentSpeed, float animationSpeed)
+		{
+			if (TryGetPoint(points, out Vector3 pointToMove))
+			{
+				_currentPointToMove = pointToMove;
+
+				_agent.speed = agentSpeed;
+
+				_animator.speed = animationSpeed;
+
+				_agent.SetDestination(_currentPointToMove);
+
+				_animator.SetBool(IsMoving, true);
+
+				return true;
+			}
+
+			return false;
+		}
+
+		private bool TryGetPoint(List<Transform> points, out Vector3 pointToMove)
+		{
+			if (points.Count <= 0)
+			{
+				pointToMove = Vector3.zero;
+
+				return false;
+			}
+
+			List<Transform> possiblePointsToMove = new(points.Count);
+
+			possiblePointsToMove.AddRange(points);
+
+			int randomPointIndex;
+
+			Transform randomPoint;
+
+			while (possiblePointsToMove.Count > 0)
+			{
+				randomPointIndex = Random.Range(0, possiblePointsToMove.Count);
+
+				randomPoint = possiblePointsToMove[randomPointIndex];
+
+				if (IsReachablePoint(randomPoint.position))
+				{
+					pointToMove = randomPoint.position;
+
+					return true;
+				}
+
+				possiblePointsToMove.Remove(randomPoint);
+			}
+
+			Debug.LogError($"No reachable points in {points} collection!");
+
+			pointToMove = Vector3.zero;
+
+			return false;
+		}
+
+		private bool IsReachablePoint(Vector3 point)
+		{
+			NavMeshPath path = new();
+
+			return _agent.CalculatePath(point, path) && path.status == NavMeshPathStatus.PathComplete;
+		}
+
 		#endregion
 
 		#region Fleeing
@@ -265,35 +336,30 @@ namespace Enemy
 		{
 			if (_isFleeing)
 			{
-				if (_agent.remainingDistance <= _agent.stoppingDistance)
+				if (!_isReachedHidenPoint && _agent.remainingDistance <= _agent.stoppingDistance) 
 				{
 					_animator.SetBool(IsMoving, false);
+
+					_agent.speed = _patrolingSpeed;
+
+					_animator.speed = _defaultAnimationSpeed;
+
+					_isReachedHidenPoint = true;
 				}
 
 				return;
 			}
 
-			StopAllCoroutines();
-
 			_isPatroling = false;
-			_isFleeing = true;
 
-			_agent.speed = _runningSpeed;
+			_isReachedHidenPoint = false;
 
 			_animator.speed *= 1.5f;
 
-			_animator.SetBool(IsMoving, true);
-
-			if (_hiddenPoints.Count > 0)
-			{
-				_currentPointToMove = _hiddenPoints[Random.Range(0, _hiddenPoints.Count)].position;
-
-				_agent.SetDestination(_currentPointToMove);
-			}
+			if (TryMoveTo(_hiddenPoints, _runningSpeed, _fleeingAnimationSpeed))
+				_isFleeing = true;		
 			else
-			{
-				Debug.Log($"Can't start fleeing because the {gameObject} doesn't have points to hide");
-			}
+				Debug.LogError($"Can't start fleeing because the {gameObject.name} doesn't have points to hide");		
 		}
 
 		#endregion
@@ -307,15 +373,17 @@ namespace Enemy
 
 			StopAllCoroutines();
 
-			_enemyState = EnemyState.Attacking;
+			if (TryMoveTo(point, _attackingSpeed, _patrolingAnimationSpeed))
+			{
+				_enemyState = _playerSanity.SanityPercent <= _attackPhaseStartSanityPercent ? EnemyState.Attacking : EnemyState.Patroling;
 
-			_isWaiting = false;
-			_isPatroling = false;
-			_isFleeing = false;
+				_isPatroling = true;
 
-			_agent.speed = _attackingSpeed;
-
-			MoveTo(point);
+				_isWaiting = false;
+				_isFleeing = false;
+			}
+			else
+				Debug.Log($"Can't go to that point({point}), because i can't reach it!");
 		}
 
 		private void Attacking()
@@ -348,7 +416,14 @@ namespace Enemy
 		{
 			DisableAI();
 
-			_fieldOfView.Target.GetComponent<PlayerDeathController>().Die();
+			if (!_fieldOfView.Target.TryGetComponent(out PlayerDeathController playerDeath))
+			{
+				Debug.LogError($"No {nameof(PlayerDeathController)} in the target({_fieldOfView.Target})");
+
+				return;
+			}
+
+			playerDeath.Die();
 
 			_killerBoxJumpScare.SetActive(true);
 
@@ -365,23 +440,25 @@ namespace Enemy
 
 		private void PickUpItem(Item item)
 		{
-			_isPicked = true;
-
-			_attackingTarget = null;
-
 			DisableAI();
+
+			_animator.SetTrigger(BecomeBoxTrigger);
+			
+			StartCoroutine(TransformFromInsectToBox(TranfromToBoxDelay));	
+		}
+
+		private IEnumerator TransformFromInsectToBox(float delay)
+		{
+			yield return new WaitForSeconds(delay);
+
+			IsPicked = true;
 		}
 
 		private void DisableAI()
 		{
+			_attackingTarget = null;
+
 			StopAllCoroutines();
-
-			if (IsAIActivated)
-			{
-				//_animator.speed = _runningSpeed;
-
-				_animator.SetTrigger(BecomeBoxTrigger);
-			}
 
 			IsAIActivated = false;
 
@@ -396,7 +473,7 @@ namespace Enemy
 			_isWaiting = false;
 
 			_enemyState = EnemyState.None;
-		}
+		}	
 
 		#endregion
 
@@ -404,21 +481,26 @@ namespace Enemy
 
 		private void DropItem(Item item)
 		{
-			_isPicked = false;
-
+			IsPicked = false;
+			
 			if (IsCanStartEnemyLogic())
 				StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
 		}
 
 		private IEnumerator TransformFromBoxToInsect(float delay)
 		{
-			_animator.speed = _defaultAnimationSpeed;
+			if (!IsAIActivated)
+			{
+				_animator.speed = _defaultAnimationSpeed;
 
-			_animator.SetTrigger(BecomeInsectTrigger);
+				yield return new WaitForSeconds(delay / 2);
 
-			yield return new WaitForSeconds(delay);
+				_animator.SetTrigger(BecomeInsectTrigger);
 
-			EnableAI();
+				yield return new WaitForSeconds(delay / 2);
+
+				EnableAI();
+			}		
 		}
 
 		private void EnableAI()
@@ -430,20 +512,27 @@ namespace Enemy
 			_enemyState = EnemyState.Patroling;
 
 			_rigidbody.isKinematic = true;
-
+			
 			IsAIActivated = true;
 		}
 
 		#endregion
 
+		private void OnItemPickingPropertyChanged()
+		{
+			StopAllCoroutines();
+
+			_isAliveBox = _boxItem.CanBePicked;
+		}
+
 		#endregion
 
 		public void ActivateEnemyBox()
 		{
-			if (!gameObject.activeSelf || !IsCanActivateEnemy())
+			if (!gameObject.activeInHierarchy || !IsCanActivateEnemy())
 				return;
-
-			_isPicked = false;
+			
+			IsPicked = false;
 
 			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
 		}
@@ -461,12 +550,18 @@ namespace Enemy
 			Gizmos.DrawRay(transform.position, Vector3.down * _groundCheckDistance);
 
 			foreach (var point in _patrolPoints)
-				Gizmos.DrawSphere(point.position, 0.3f);
+			{
+				if (point)
+					Gizmos.DrawSphere(point.position, 0.3f);
+			}
 
 			Gizmos.color = Color.green;
 
 			foreach (var point in _hiddenPoints)
-				Gizmos.DrawSphere(point.position, 0.3f);
+			{
+				if (point)
+					Gizmos.DrawSphere(point.position, 0.3f);
+			}
 		}
 	}
 }

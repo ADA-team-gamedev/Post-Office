@@ -1,3 +1,4 @@
+using Audio;
 using UnityEngine;
 
 namespace Level.Lights.Lamp
@@ -16,13 +17,18 @@ namespace Level.Lights.Lamp
 
 		private float _lampDelayBeforeBreakingRemaining;
 
-		private void Start()
+		private void Awake()
 		{
+			InitializeLamp();
+		}
+
+		protected override void InitializeLamp()
+		{
+			base.InitializeLamp();
+
 			_electronicalSparkVF.gameObject.SetActive(false);
 
-			_lampDelayBeforeBreakingRemaining = _maxLampLifeDelayBeforeBreaking;
-
-			InitializeFlickeringLamp();
+			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
 		}
 
 		private void Update()
@@ -88,6 +94,8 @@ namespace Level.Lights.Lamp
 		{
 			if (IsLampDestroyed)
 				return;
+
+			AudioManager.Instance.PlaySound("Lamp Crush", transform.position, spatialBlend: 1f);
 
 			IsLampDestroyed = true;
 

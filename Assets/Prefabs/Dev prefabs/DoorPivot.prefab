@@ -195,8 +195,8 @@ HingeJoint:
   m_ExtendedLimits: 1
   m_UseAcceleration: 0
   m_Limits:
-    min: 0
-    max: 90
+    min: 90
+    max: 180
     bounciness: 0
     bounceMinVelocity: 0.2
     contactDistance: 0
@@ -218,10 +218,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4590ef6b7d295241a6a33c6d09fd43f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _isDoorMustBeClosedOnStart: 1
   _doorDragingDistance: 3
   _doorOpeningForce: 10
   _doorRotationSpeed: 5000
   _doorModel: {fileID: 897634541931364424}
   _playerInteractor: {fileID: 0}
-  <IsKeyNeeded>k__BackingField: 1
+  <IsClosed>k__BackingField: 1
   <DoorKeyType>k__BackingField: 0

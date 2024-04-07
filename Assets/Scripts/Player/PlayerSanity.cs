@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using TaskSystem;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -12,9 +13,9 @@ namespace Player
 		#region Sanity
 
 		[Header("Sanity")]
-		[SerializeField][Range(1, 100f)] private float _maxSanityValue = 100f;
+		[SerializeField][Range(1, 100)] private float _maxSanityValue = 100;
 
-		[SerializeField] private float _sanityDecreaseSpeed = 1f;
+		[SerializeField][Range(0.01f, 10)] private float _sanityDecreaseSpeed = 1f;
 
 		/// <summary>
 		/// Return percent from 0.01 to 1
@@ -29,19 +30,14 @@ namespace Player
 			}
 			set
 			{
-				if (value > 0 && value <= _maxSanityValue)
-					_sanityValue = value;
-				else if (value > _maxSanityValue)
-					_sanityValue = _maxSanityValue;
-				else
-					_sanityValue = 0;
+				_sanityValue = Mathf.Clamp(value, 0, _maxSanityValue);
 			}
 		}
 		private float _sanityValue;
 
 		#endregion
 
-		#region 
+		#region Visual
 
 		[Header("Visualization")]
 
@@ -55,6 +51,8 @@ namespace Player
 
 		private PlayerDeathController _playerDeathController;
 
+		private int _taskAmount => TaskManager.Instance.TaskCount + 1; // + 1 because we must * it with our sanity. if we have 0 task, means default sanity decrease speed
+
 		private void Start()
 		{
 			_sanityValue = _maxSanityValue;
@@ -67,14 +65,14 @@ namespace Player
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += DisableSanity;
+			_playerDeathController.OnDied += DisableSanity;
 
 			StartCoroutine(LoseSanity());
 		}
 
 		public void IncreaseSanity(float value)
 		{
-			if (_sanityDecreaseSpeed >= value)
+			if (_sanityDecreaseSpeed * _taskAmount >= value)
 				Debug.LogWarning("Sanity increase value simillar or less then sanity decreas speed");
 
 			Sanity += Time.deltaTime * value;
@@ -84,7 +82,7 @@ namespace Player
 		{
 			while (true)
 			{
-				Sanity -= Time.deltaTime * _sanityDecreaseSpeed;
+				Sanity -= Time.deltaTime * _sanityDecreaseSpeed * _taskAmount;
 
 				float newValue = -(_sanityValue - _maxSanityValue);
 

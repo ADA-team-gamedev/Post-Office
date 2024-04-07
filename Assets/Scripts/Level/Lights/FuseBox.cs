@@ -1,3 +1,4 @@
+using Audio;
 using Items.Icon;
 using TaskSystem;
 using UnityEngine;
@@ -72,9 +73,7 @@ namespace Level.Lights
 
 		private void Start()
 		{
-			_energyAmount = _maxEnergyAmount;
-
-			TaskManager.Instance.OnNewCurrentTaskSet += ChangeIconState;
+			_energyAmount = _maxEnergyAmount;	
 
 			CountNumberOfActivatedSwitches();
 
@@ -127,12 +126,9 @@ namespace Level.Lights
 
 			OnFuseDisabled?.Invoke();
 
-			if (!_isTaskAdded)
-			{
-				TaskManager.Instance.SetNewCurrentTask(_taskData);
+			AudioManager.Instance.PlaySound("Fuse Off", transform.position, spatialBlend: 0.5f);
 
-				_isTaskAdded = true;
-			}
+			GiveTask();	
 		}
 
 		private void EnableFuse()
@@ -154,6 +150,18 @@ namespace Level.Lights
 			}
 
 			_fuseIconForTask.ShowIcon();
+		}
+
+		private void GiveTask()
+		{
+			if (_isTaskAdded)
+				return;
+
+			TaskManager.Instance.SetNewCurrentTask(_taskData);
+
+			TaskManager.Instance.OnNewCurrentTaskSet += ChangeIconState;
+
+			_isTaskAdded = true;
 		}
 
 		private void CompleteTask()

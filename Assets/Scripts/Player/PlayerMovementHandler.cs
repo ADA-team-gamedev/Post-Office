@@ -1,3 +1,5 @@
+using Audio;
+using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -86,7 +88,11 @@ namespace Player
 
 		#endregion
 
-		private PlayerInput _playerInput;
+		#region Footstep
+
+		private bool _canPlayFootstepSound;
+
+		#endregion
 
 		private PlayerDeathController _playerDeathController;
 
@@ -100,9 +106,7 @@ namespace Player
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += DisableMovement;
-
-			_playerInput = new();
+			_playerDeathController.OnDied += DisableMovement;
 
 			_playerSpeed = _playerWalkSpeed;
 
@@ -117,14 +121,14 @@ namespace Player
 
 		private void Start()
 		{
-			_playerInput.Player.Move.performed += OnMove;
-			_playerInput.Player.Move.canceled += OnMove;
+			InputManager.Instance.PlayerInput.Player.Move.performed += OnMove;
+			InputManager.Instance.PlayerInput.Player.Move.canceled += OnMove;
 
-			_playerInput.Player.Sprint.performed += OnSprint;
-			_playerInput.Player.Sprint.canceled += OnSprint;
+			InputManager.Instance.PlayerInput.Player.Sprint.performed += OnSprint;
+			InputManager.Instance.PlayerInput.Player.Sprint.canceled += OnSprint;
 
-			_playerInput.Player.Crouch.performed += OnCrouch;
-			_playerInput.Player.Crouch.canceled += OnCrouch;
+			InputManager.Instance.PlayerInput.Player.Crouch.performed += OnCrouch;
+			InputManager.Instance.PlayerInput.Player.Crouch.canceled += OnCrouch;
 
 			_sprintBarCanvasGroup.gameObject.SetActive(true);
 
@@ -144,6 +148,8 @@ namespace Player
 
 			if (HeadBobEnabled)
 				HeadBob();
+
+			PlayFootstepSound();
 		}
 
 		private void FixedUpdate()
@@ -229,15 +235,19 @@ namespace Player
 					_playerSpeed = _playerWalkSpeed;
 
 					if (MoveDirection == Vector2.zero)
+					{
 						MovementState = MovementState.Idle;
-					else if (_playerInput.Player.Sprint.IsPressed())
+					}
+					else if (InputManager.Instance.PlayerInput.Player.Sprint.IsPressed())
 					{
 						MovementState = MovementState.Sprinting;
 
 						_playerSpeed = _playerSprintSpeed;
 					}
 					else
+					{
 						MovementState = MovementState.Walking;
+					}
 				}
 
 				return;
@@ -280,6 +290,16 @@ namespace Player
 			_joint.localPosition = new Vector3(x, y, z);
 		}
 
+		private void PlayFootstepSound()
+		{
+			var footfall = Mathf.Cos(_timer);
+
+			if (footfall < 0 && _canPlayFootstepSound)
+				AudioManager.Instance.PlaySound("Footstep", transform.position);
+
+			_canPlayFootstepSound = footfall >= 0;
+		}
+
 		#region Chekers
 
 		private bool CanPlayerStandUp()
@@ -317,14 +337,16 @@ namespace Player
 
 			if (context.performed && MoveDirection != Vector2.zero && MovementState == MovementState.Idle)
 			{
-				if (_playerInput.Player.Sprint.IsPressed() && !_isSprintOnCooldown)
+				if (InputManager.Instance.PlayerInput.Player.Sprint.IsPressed() && !_isSprintOnCooldown)
 				{
 					_playerSpeed = _playerSprintSpeed;
 
 					MovementState = MovementState.Sprinting;
 				}
 				else
+				{
 					MovementState = MovementState.Walking;
+				}
 			}
 			else if (context.canceled && MoveDirection == Vector2.zero)
 			{
@@ -387,20 +409,6 @@ namespace Player
 		private void DisableMovement()
 		{
 			//Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput = new();
-
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput = new();
-
-			_playerInput.Disable();
 		}
 
 		private void OnValidate()

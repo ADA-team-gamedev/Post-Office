@@ -14,7 +14,7 @@ namespace DataPersistance
 
 		public bool SaveData<T>(string relativePath, T data, bool encrypted)
 		{
-			string path = $"{Application.persistentDataPath}/Saves{relativePath}";
+			string path = $"{Application.persistentDataPath}/{relativePath}";
 
 			try
 			{
@@ -63,7 +63,7 @@ namespace DataPersistance
 
 		public bool LoadData<T>(out T data, string relativePath, bool encrypted)
 		{
-			string path = $"{Application.persistentDataPath}/Saves{relativePath}";
+			string path = $"{Application.persistentDataPath}/{relativePath}";
 			
 			if (!File.Exists(path))
 			{

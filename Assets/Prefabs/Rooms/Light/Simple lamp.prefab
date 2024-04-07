@@ -92,6 +92,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1929330341153762250}
+  - component: {fileID: 5952471537702670367}
   m_Layer: 0
   m_Name: lamp
   m_TagString: Untagged
@@ -116,6 +117,27 @@ Transform:
   m_Father: {fileID: 5315869992489511047}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5952471537702670367
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3067556867819520399}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 5.93, y: 5.68, z: 95}
+  m_Center: {x: -2.7, y: 2.96, z: 0}
 --- !u!1 &3102101575265464000
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,10 +230,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5315869992489511047}
-  - component: {fileID: 7051586894766041973}
   - component: {fileID: 2816876177583828192}
   - component: {fileID: 5340364884852306247}
-  m_Layer: 0
+  - component: {fileID: 3897142070960382466}
+  m_Layer: 2
   m_Name: Simple lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -233,29 +255,8 @@ Transform:
   - {fileID: 1929330341153762250}
   - {fileID: 5486081480637404713}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
---- !u!65 &7051586894766041973
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5039700582005339892}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.12, y: 0.13, z: 1.95}
-  m_Center: {x: -0.06, y: 0.06, z: 0}
 --- !u!65 &2816876177583828192
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -295,6 +296,26 @@ MonoBehaviour:
   OnStay:
     m_PersistentCalls:
       m_Calls: []
+--- !u!205 &3897142070960382466
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039700582005339892}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: -0.056120932, y: 0.08196291, z: -0.001161933}
+  m_Size: 1.891912
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.04445988
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 5914022788079723374}
+    - renderer: {fileID: 2370094034542831453}
+  m_Enabled: 1
 --- !u!1 &8528654241009626397
 GameObject:
   m_ObjectHideFlags: 0
@@ -340,8 +361,8 @@ Light:
   m_Type: 2
   m_Shape: 0
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 5
-  m_Range: 10
+  m_Intensity: 3
+  m_Range: 6
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10

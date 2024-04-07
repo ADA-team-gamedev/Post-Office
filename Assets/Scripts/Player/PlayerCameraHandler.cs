@@ -1,3 +1,4 @@
+using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -34,22 +35,15 @@ namespace Player
 
 		[SerializeField] private PlayerMovementHandler _playerMovement;
 
-		private PlayerInput _playerInput;
-
 		private PlayerDeathController _playerDeathController;
 
 		private Vector2 _lookDirection;
 
-		private void Awake()
-		{
-			_playerInput = new();
-
-			_playerInput.Player.Look.performed += OnLook;
-			_playerInput.Player.Look.canceled += OnLook;
-		}
-
 		private void Start()
 		{
+			InputManager.Instance.PlayerInput.Player.Look.performed += OnLook;
+			InputManager.Instance.PlayerInput.Player.Look.canceled += OnLook;
+
 			_playerCamera ??= GetComponent<Camera>();
 
 			Cursor.lockState = CursorLockMode.Locked;
@@ -58,7 +52,7 @@ namespace Player
 
 			_playerDeathController = transform.parent.parent.GetComponent<PlayerDeathController>(); //Player with DeathController -> HeadJoint -> Camera
 
-			_playerDeathController.OnDeath += DisableCamera;
+			_playerDeathController.OnDied += DisableCamera;
 		}
 
 		private void Update()
@@ -88,7 +82,7 @@ namespace Player
 
 		private void OnLook(InputAction.CallbackContext context)
 		{
-			_lookDirection = _playerInput.Player.Look.ReadValue<Vector2>();
+			_lookDirection = InputManager.Instance.PlayerInput.Player.Look.ReadValue<Vector2>();
 		}
 
 		private void ChangeFOV()
@@ -106,16 +100,6 @@ namespace Player
 		private void DisableCamera()
 		{
 			//Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 
 		private void OnValidate()

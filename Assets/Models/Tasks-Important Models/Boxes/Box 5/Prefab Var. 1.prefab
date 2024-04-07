@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6487461006013743517}
   - component: {fileID: 3030889248998297220}
   - component: {fileID: 6085114525617649358}
+  - component: {fileID: 3780520069015175021}
   m_Layer: 0
   m_Name: Prefab Var. 1
   m_TagString: Untagged
@@ -31,7 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: -91, z: -3.2}
 --- !u!33 &3030889248998297220
 MeshFilter:
@@ -83,3 +84,22 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!205 &3780520069015175021
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5666713608936516936}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 0.2899999
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.021545067
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 6085114525617649358}
+  m_Enabled: 1
