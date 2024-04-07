@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5720796327289386452}
+  - component: {fileID: 5265631092966445696}
   m_Layer: 0
   m_Name: Wood Box Horizontal
   m_TagString: Untagged
@@ -33,6 +34,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!205 &5265631092966445696
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2469161349147072754}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 1.4081252, y: 0.99774444, z: -1.2869024}
+  m_Size: 5.76
+  m_FadeMode: 0
+  m_AnimateCrossFading: 0
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.14675802
+    fadeTransitionWidth: 0
+    renderers:
+    - renderer: {fileID: 297382804841207118}
+    - renderer: {fileID: 794346408265825037}
+    - renderer: {fileID: 5484765353449822636}
+  m_Enabled: 1
 --- !u!1001 &2493803133989487507
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -135,6 +157,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 936220386618468434}
   m_SourcePrefab: {fileID: 100100000, guid: b9afe48018300964299f8d1852a1a45c, type: 3}
+--- !u!23 &794346408265825037 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2998783159970674846, guid: b9afe48018300964299f8d1852a1a45c,
+    type: 3}
+  m_PrefabInstance: {fileID: 2493803133989487507}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4621074678661417432 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7114172641159252555, guid: b9afe48018300964299f8d1852a1a45c,
@@ -285,6 +313,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 4103412053632371334}
   m_SourcePrefab: {fileID: 100100000, guid: 8ef2a689f38a6f34aafe524161d4f952, type: 3}
+--- !u!23 &297382804841207118 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6745302439343835087, guid: 8ef2a689f38a6f34aafe524161d4f952,
+    type: 3}
+  m_PrefabInstance: {fileID: 6466224315098780289}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2322704519975694821 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -466329591000292508, guid: 8ef2a689f38a6f34aafe524161d4f952,
@@ -312,6 +346,12 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 2.0260825, y: 2.026082, z: 4.270316}
   m_Center: {x: -4.1645135e-11, y: 1.013041, z: 0.0055894866}
+--- !u!23 &5484765353449822636 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7664728788398519507, guid: 8ef2a689f38a6f34aafe524161d4f952,
+    type: 3}
+  m_PrefabInstance: {fileID: 6466224315098780289}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6788646182501070186 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 8ef2a689f38a6f34aafe524161d4f952,

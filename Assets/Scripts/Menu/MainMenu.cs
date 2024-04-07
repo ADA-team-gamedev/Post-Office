@@ -1,37 +1,41 @@
+using DataPersistance;
+using Level;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class MainMenu : MonoBehaviour
+namespace Menu
 {
-	[Header("Menus")]
-	[SerializeField] private GameObject _settingsWindow;
-
-	private void Awake()
+	public class MainMenu : MonoBehaviour
 	{
-		_settingsWindow.SetActive(false);
-	}
+		[Header("Menus")]
+		[SerializeField] private GameObject _settingsWindow;
 
-	public void OnResumeButton()
-	{
-		SceneManager.LoadScene("BuildMap"); //write here game scene
-	}
+		private IDataService _dataService = new JsonDataService();
 
-	public void OnNewGameButton()
-	{
-		//reset level data and create new, then load game scene
-	}
+		private void Start()
+		{
+			_settingsWindow.SetActive(false);
 
-	public void OnLoadButton()
-	{
-		//Load game data with level
-	}
+			Cursor.lockState = CursorLockMode.None;
+		}
 
-	#region Settings
+		public void OnResumeButton(string sceneToLoad)
+		{
+			if (_dataService.SaveData(SceneLoader.LoadingInfoPath, sceneToLoad, true))
+				SceneManager.LoadScene(SceneLoader.LoadingSceneName);
+		}
 
-	#endregion
+		public void OnNewGameButton(string sceneToLoad)
+		{
+			WeekDay weekDay = WeekDay.Monday;
 
-	public void OnExit()
-	{
-		Application.Quit();
+			if (_dataService.SaveData(DayObjectLoader.WeekDayPath, weekDay, true))
+				OnResumeButton(sceneToLoad);		
+		}
+
+		public void OnExit()
+		{
+			Application.Quit();
+		}
 	}
 }

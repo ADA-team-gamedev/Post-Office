@@ -1,106 +1,112 @@
+using Audio;
 using UnityEngine;
 
-public enum GarageDoorPhase
+namespace Level.Doors
 {
-	None,
-	Opening,
-	Closing,
-}
-
-public class GarageDoor : MonoBehaviour
-{
-	[Header("Values")]
-
-	[SerializeField] private float _doorMaxHeight;
-
-	[SerializeField][Range(0.5f, 5)] private float _doorRaisingSpeed = 1f;
-
-	[Header("Objects")]
-
-	[SerializeField] private Transform _doorModel;
-
-	private float _defaultDoorYPosition;
-
-	private GarageDoorPhase _garageDoorPhase = GarageDoorPhase.None;
-	private bool _isOpenedAutomatically = false;
-
-	private void Start()
+	public enum GarageDoorPhase
 	{
-		_defaultDoorYPosition = _doorModel.position.y;
+		None,
+		Opening,
+		Closing,
 	}
 
-	private void Update()
+	public class GarageDoor : MonoBehaviour
 	{
-		if (_garageDoorPhase == GarageDoorPhase.Opening)
-			OpenDoorAutomatically();
-		else if (_garageDoorPhase == GarageDoorPhase.Closing)
-			CloseDoorAutomatically();
-	}
+		[Header("Values")]
 
-	#region Door raising
+		[SerializeField] private float _doorMaxHeight;
 
-	public void InteractRemotely()
-	{
-		if (_isOpenedAutomatically)
+		[SerializeField][Range(0.5f, 5)] private float _doorRaisingSpeed = 1f;
+
+		[Header("Objects")]
+
+		[SerializeField] private Transform _doorModel;
+
+		private float _defaultDoorYPosition;
+
+		private GarageDoorPhase _garageDoorPhase = GarageDoorPhase.None;
+		private bool _isOpenedAutomatically = false;
+
+		private void Start()
 		{
-			_isOpenedAutomatically = false;
-
-			_garageDoorPhase = GarageDoorPhase.Closing;
-		}
-		else
-		{
-			_isOpenedAutomatically = true;
-
-			_garageDoorPhase = GarageDoorPhase.Opening;
-		}
-	}
-
-	private void OpenDoorAutomatically()
-	{
-		if (_garageDoorPhase != GarageDoorPhase.Opening)
-		{
-			return;
+			_defaultDoorYPosition = _doorModel.position.y;
 		}
 
-		Vector3 raisedDoorPosiiton = new(_doorModel.position.x, _doorMaxHeight, _doorModel.position.z);
+		private void Update()
+		{
+			if (_garageDoorPhase == GarageDoorPhase.Opening)
+				OpenDoorAutomatically();
+			else if (_garageDoorPhase == GarageDoorPhase.Closing)
+				CloseDoorAutomatically();
+		}
 
-		if (_doorModel.position.y == raisedDoorPosiiton.y)
-			_garageDoorPhase = GarageDoorPhase.None;
+		#region Door raising
 
-		_doorModel.position = Vector3.Lerp(_doorModel.position, raisedDoorPosiiton, Time.deltaTime * _doorRaisingSpeed);
-	}
+		public void InteractRemotely()
+		{
+			if (_isOpenedAutomatically)
+			{
+				_isOpenedAutomatically = false;
 
-	private void CloseDoorAutomatically()
-	{	
-		if (_garageDoorPhase != GarageDoorPhase.Closing)
-			return;
+				_garageDoorPhase = GarageDoorPhase.Closing;
+			}
+			else
+			{
+				_isOpenedAutomatically = true;
 
-		Vector3 defaultDoorPosition = new(_doorModel.position.x, _defaultDoorYPosition, _doorModel.position.z);
+				_garageDoorPhase = GarageDoorPhase.Opening;
+			}
 
-		if (_doorModel.position.y == defaultDoorPosition.y)
-			_garageDoorPhase = GarageDoorPhase.None;		
+			AudioManager.Instance.PlaySound("Garage Door Open", transform.position, spatialBlend: 0.8f);
+		}
 
-		_doorModel.position = Vector3.Lerp(_doorModel.position, defaultDoorPosition, Time.deltaTime * _doorRaisingSpeed);
-	}
+		private void OpenDoorAutomatically()
+		{
+			if (_garageDoorPhase != GarageDoorPhase.Opening)
+			{
+				return;
+			}
 
-	#endregion
+			Vector3 raisedDoorPosiiton = new(_doorModel.position.x, _doorMaxHeight, _doorModel.position.z);
 
-	private void OnValidate()
-	{
-		if (_doorMaxHeight < transform.position.y)
-			_doorMaxHeight++;
-	}
+			if (_doorModel.position.y == raisedDoorPosiiton.y)
+				_garageDoorPhase = GarageDoorPhase.None;
 
-	private void OnDrawGizmosSelected()
-	{
-		//door possible max position
-		Gizmos.color = Color.cyan;
+			_doorModel.position = Vector3.Lerp(_doorModel.position, raisedDoorPosiiton, Time.deltaTime * _doorRaisingSpeed);
+		}
 
-		Gizmos.DrawWireCube(new(_doorModel.position.x, _doorMaxHeight, _doorModel.position.z), _doorModel.localScale);
+		private void CloseDoorAutomatically()
+		{
+			if (_garageDoorPhase != GarageDoorPhase.Closing)
+				return;
 
-		//door possible min position
-		Gizmos.color = Color.green;
+			Vector3 defaultDoorPosition = new(_doorModel.position.x, _defaultDoorYPosition, _doorModel.position.z);
 
-		Gizmos.DrawWireCube(new(_doorModel.position.x, _defaultDoorYPosition, _doorModel.position.z), _doorModel.localScale);
+			if (_doorModel.position.y == defaultDoorPosition.y)
+				_garageDoorPhase = GarageDoorPhase.None;
+
+			_doorModel.position = Vector3.Lerp(_doorModel.position, defaultDoorPosition, Time.deltaTime * _doorRaisingSpeed);
+		}
+
+		#endregion
+
+		private void OnValidate()
+		{
+			if (_doorMaxHeight < transform.position.y)
+				_doorMaxHeight++;
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			//door possible max position
+			Gizmos.color = Color.cyan;
+
+			Gizmos.DrawWireCube(new(_doorModel.position.x, _doorMaxHeight, _doorModel.position.z), _doorModel.localScale);
+
+			//door possible min position
+			Gizmos.color = Color.green;
+
+			Gizmos.DrawWireCube(new(_doorModel.position.x, _defaultDoorYPosition, _doorModel.position.z), _doorModel.localScale);
+		}
 	}
 }

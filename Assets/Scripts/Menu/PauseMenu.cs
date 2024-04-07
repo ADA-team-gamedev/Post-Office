@@ -1,127 +1,124 @@
+using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class PauseMenu : MonoBehaviour
+namespace Menu
 {
-	[Header("Menus")]
-    [SerializeField] private GameObject _pauseMenu;
-    [SerializeField] private GameObject _exitWindow;
-    [SerializeField] private GameObject _settingsWindow;
-
-	[Header("Player")]
-	[SerializeField] private GameObject _playerCrosshair;
-	[SerializeField] private GameObject _playerStaminaBar;
-
-	private PlayerInput _playerInput;
-
-    private bool _isPaused = false;
-
-	private void Awake()
+	public class PauseMenu : MonoBehaviour
 	{
-        _playerInput = new();
+		[Header("Menus")]
+		[SerializeField] private GameObject _pauseMenu;
+		[SerializeField] private GameObject _exitWindow;
+		[SerializeField] private GameObject _settingsWindow;
 
-        _playerInput.UI.PauseMenu.performed += OnPauseMenu;
+		[Header("Player")]
+		[SerializeField] private GameObject _playerCrosshair;
+		[SerializeField] private GameObject _playerStaminaBar;
 
-		_exitWindow.SetActive(false);
+		private bool _isPaused = false;
 
-		_settingsWindow.SetActive(false);
-	}
-
-	private void Start()
-    {
-		OnResumeButton();
-	}
-
-	#region Pause Menu
-
-	private void OnPauseMenu(InputAction.CallbackContext context)
-	{
-		_isPaused = !_isPaused;
-
-		if (_isPaused)
+		private void Awake()
 		{
-			Time.timeScale = 0;
+			_exitWindow.SetActive(false);
 
-			Cursor.lockState = CursorLockMode.None;
+			_settingsWindow.SetActive(false);
 		}
-		else
-		{
-			Time.timeScale = 1;
 
-			Cursor.lockState = CursorLockMode.Locked;
-			
+		private void Start()
+		{
+			InputManager.Instance.PlayerInput.UI.PauseMenu.performed += OnPauseMenu;
+
 			OnResumeButton();
 		}
 
-		_pauseMenu.SetActive(_isPaused);
+		#region Pause Menu
 
-		_playerCrosshair.SetActive(!_isPaused);
+		private void OnPauseMenu(InputAction.CallbackContext context)
+		{
+			_isPaused = !_isPaused;
+			
+			if (_isPaused)
+			{
+				Time.timeScale = 0;
 
-		_playerStaminaBar.SetActive(!_isPaused);
-	}
+				Cursor.lockState = CursorLockMode.None;
+			}
+			else
+			{
+				Time.timeScale = 1;
 
-	public void OnResumeButton()
-	{
-		Time.timeScale = 1f;
+				Cursor.lockState = CursorLockMode.Locked;
 
-		Cursor.lockState = CursorLockMode.Locked;
+				OnResumeButton();
+			}
 
-		_isPaused = false;
+			_pauseMenu.SetActive(_isPaused);
 
-		_exitWindow.SetActive(false);
+			_playerCrosshair.SetActive(!_isPaused);
 
-		_settingsWindow.SetActive(false);
+			_playerStaminaBar.SetActive(!_isPaused);
+			
+			if (_isPaused)
+				InputManager.Instance.PlayerInput.Player.Disable();	
+			else
+				InputManager.Instance.PlayerInput.Player.Enable();	
+		}
 
-		_pauseMenu.SetActive(false);
+		public void OnResumeButton()
+		{
+			Time.timeScale = 1f;
 
-		_playerCrosshair.SetActive(true);
+			Cursor.lockState = CursorLockMode.Locked;
 
-		_playerStaminaBar.SetActive(true);	
-	}
+			_isPaused = false;
 
-	public void OnNewGameButton()
-	{
-		SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-	}
+			InputManager.Instance.PlayerInput.Player.Enable();
 
-	public void OnSaveButton()
-	{
-		return;
-	}
+			_exitWindow.SetActive(false);
 
-	public void OnLoadButton()
-	{
-		return;
-	}
+			_settingsWindow.SetActive(false);
 
-	#endregion
+			_pauseMenu.SetActive(false);
 
-	#region Settings
+			_playerCrosshair.SetActive(true);
 
-	#endregion
+			_playerStaminaBar.SetActive(true);
+		}
 
-	#region Exit Panel
+		public void OnNewGameButton()
+		{
+			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+		}
 
-	public void OnExitToMenu()
-	{
-		SceneManager.LoadScene("Menu");
-	}
+		public void OnSaveButton()
+		{
+			return;
+		}
 
-	public void OnExitToDesktop()
-	{
-		Application.Quit();
-	}
+		public void OnLoadButton()
+		{
+			return;
+		}
 
-	#endregion
+		#endregion
 
-	private void OnEnable()
-	{
-        _playerInput.Enable();
-	}
+		#region Settings
 
-	private void OnDisable()
-	{
-		_playerInput.Disable();
+		#endregion
+
+		#region Exit Panel
+
+		public void OnExitToMenu()
+		{
+			SceneManager.LoadScene("Menu");
+		}
+
+		public void OnExitToDesktop()
+		{
+			Application.Quit();
+		}
+
+		#endregion
 	}
 }

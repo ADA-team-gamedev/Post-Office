@@ -1,50 +1,54 @@
 using System;
+using TaskSystem.NoteBook;
 using UnityEngine;
 
-[CreateAssetMenu]
-public class TaskData : ScriptableObject
+namespace TaskSystem
 {
-	[field: SerializeField] public Task Task { get; private set; }
-}
-
-[Serializable]
-public class Task
-{
-	public bool IsCompleted { get; private set; } = false;
-
-	[field: SerializeField] public int ID { get; private set; }
-
-	[field: SerializeField, TextArea(2, 2)] public string Name { get; private set; }
-
-	[field: SerializeField, TextArea(5, 5)] public string Description { get; private set; }
-
-	public event Action<Task> OnCompleted;
-
-	public Task(int id, string name, string description)
+	[CreateAssetMenu]
+	public class TaskData : ScriptableObject
 	{
-		ID = id;
-
-		Name = name;
-
-		Description = description;
+		[field: SerializeField] public Task Task { get; private set; }
 	}
 
-	public Task(TaskData taskData)
+	[Serializable]
+	public class Task
 	{
-		ID = taskData.Task.ID;
+		public bool IsCompleted { get; private set; } = false;
 
-		Name = taskData.Task.Name;
+		[field: SerializeField] public int ID { get; private set; }
 
-		Description = taskData.Task.Description;
-	}
+		[field: SerializeField, TextArea(2, 2)] public string Name { get; private set; }
 
-	public void Complete()
-	{
-		if (IsCompleted)
-			Debug.LogWarning($"Task is already completed but you still trying to complete him");
+		[field: SerializeField, TextArea(5, 5)] public string Description { get; private set; }
 
-		IsCompleted = true;
+		public event Action<Task> OnCompleted;
 
-		OnCompleted?.Invoke(this);
+		public Task(int id, string name, string description)
+		{
+			ID = id;
+
+			Name = name;
+
+			Description = description;
+		}
+
+		public Task(Task task)
+		{
+			ID = task.ID;
+
+			Name = task.Name;
+
+			Description = task.Description;
+		}
+
+		public void Complete()
+		{
+			if (IsCompleted)
+				Debug.LogWarning($"Task is already completed but you still trying to complete him");
+
+			IsCompleted = true;
+
+			OnCompleted?.Invoke(this);
+		}
 	}
 }

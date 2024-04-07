@@ -1,57 +1,66 @@
+using Audio;
+using Player;
 using System;
 using System.Collections;
 using UnityEngine;
 
-public class Pill : Item, IUsable
+namespace Items
 {
-    [SerializeField][Range(1, 5)] private int _countOfUses = 1;
-
-    [SerializeField] private float _sanityAddingNumber;
-    [SerializeField] private float _sanityAddingDelay;
-
-    [SerializeField] private PlayerSanity _sanity;
-
-    private bool _isUsing = false;
-
-    public void Use()
+    public class Pill : Item, IUsable
     {
-        if (IsHaveCharge())
+        [Header("Pill settings")]
+        [SerializeField][Range(1, 5)] private int _countOfUses = 1;
+
+        [Header("Values")]
+        [SerializeField] private float _sanityAddingNumber;
+        [SerializeField] private float _sanityAddingDelay;
+
+        [SerializeField] private PlayerSanity _sanity;
+
+        private bool _isUsing = false;
+
+        public void Use()
         {
-            if (!_isUsing)
+            if (IsHaveCharge())
             {
-				_countOfUses--;
+                if (!_isUsing)
+                {
+                    _countOfUses--;
 
-                Debug.Log($"{gameObject.name}s are used");
+                    Debug.Log($"{gameObject.name}s are used");
 
-				StartCoroutine(ResoteSanity());
-			}             
+					AudioManager.Instance.PlaySound("Use Pills", transform.position);
+
+					StartCoroutine(RestoreeSanity());
+                }
+            }
+            else
+            {
+                Debug.Log($"These {gameObject.name} pills are empty");
+
+				AudioManager.Instance.PlaySound("Pill Empty", transform.position);
+			}
         }
-        else
+
+        private bool IsHaveCharge()
+            => _countOfUses > 0;
+
+        private IEnumerator RestoreeSanity()
         {
-            Debug.Log("These pills are empty");
+            _isUsing = true;
 
-            //Play empty sound
+            float timer = _sanityAddingDelay;
+
+			while (timer > 0)
+            {
+                timer -= Time.deltaTime;
+
+                _sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
+
+                yield return new WaitForSeconds(Time.deltaTime);
+            }
+
+            _isUsing = false;
         }
-    }  
-
-    private bool IsHaveCharge()
-        => _countOfUses > 0;
-
-    private IEnumerator ResoteSanity()
-    {
-        _isUsing = true;            
-        
-        float timer = _sanityAddingDelay;
-
-        while (timer > 0)
-        {
-            timer -= Time.deltaTime;
-
-            _sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
-
-            yield return new WaitForSeconds(Time.deltaTime);
-        }
-
-        _isUsing = false;
     }
 }

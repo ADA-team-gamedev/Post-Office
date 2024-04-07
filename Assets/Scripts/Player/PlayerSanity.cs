@@ -1,75 +1,104 @@
+using System;
 using System.Collections;
+using TaskSystem;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
 
-public class PlayerSanity : MonoBehaviour
+namespace Player
 {
-	[SerializeField][Range(1, 100f)] private float _maxSanityValue = 100f;
-
-	public float Sanity
+	[RequireComponent(typeof(PlayerDeathController))]
+	public class PlayerSanity : MonoBehaviour
 	{
-		get
+		#region Sanity
+
+		[Header("Sanity")]
+		[SerializeField][Range(1, 100)] private float _maxSanityValue = 100;
+
+		[SerializeField][Range(0.01f, 10)] private float _sanityDecreaseSpeed = 1f;
+
+		/// <summary>
+		/// Return percent from 0.01 to 1
+		/// </summary>
+		public float SanityPercent => (float)Math.Round(_sanityValue / _maxSanityValue, 2);
+
+		public float Sanity
 		{
-			return _sanityValue;
+			get
+			{
+				return _sanityValue;
+			}
+			set
+			{
+				_sanityValue = Mathf.Clamp(value, 0, _maxSanityValue);
+			}
 		}
-		set
+		private float _sanityValue;
+
+		#endregion
+
+		#region Visual
+
+		[Header("Visualization")]
+
+		[SerializeField] private Volume _sanityVolume;
+
+		private float percent;
+
+		[SerializeField] private Slider _slider;
+
+		#endregion
+
+		private PlayerDeathController _playerDeathController;
+
+		private int _taskAmount => TaskManager.Instance.TaskCount + 1; // + 1 because we must * it with our sanity. if we have 0 task, means default sanity decrease speed
+
+		private void Start()
 		{
-			if (value > 0 && value <= _maxSanityValue)
-				_sanityValue = value;
-			else if (value > _maxSanityValue)
-				_sanityValue = _maxSanityValue;
-			else
-				_sanityValue = 0;		
+			_sanityValue = _maxSanityValue;
+
+			_sanityVolume.weight = 0;
+
+			_slider.maxValue = _maxSanityValue;
+
+			_slider.value = _sanityValue;
+
+			_playerDeathController = GetComponent<PlayerDeathController>();
+
+			_playerDeathController.OnDied += DisableSanity;
+
+			StartCoroutine(LoseSanity());
 		}
-	}
-	private float _sanityValue;
 
-	[SerializeField] private float _sanityDecreaseSpeed = 1f;
-
-	[SerializeField] private Volume _sanityVolume;
-
-	private float percent;
-
-	[SerializeField] private Slider _slider;
-
-	private void Start()
-	{
-		_sanityValue = _maxSanityValue;
-
-		_sanityVolume.weight = 0;
-
-		_slider.maxValue = _maxSanityValue;
-
-		_slider.value = _sanityValue;
-
-
-		StartCoroutine(LoseSanity());
-	}
-
-	public void IncreaseSanity(float value)
-	{
-		if (_sanityDecreaseSpeed >= value)
-			Debug.LogWarning("Sanity increase value simillar or less then sanity decreas speed");
-		
-		Sanity += Time.deltaTime * value;
-	}
-
-	private IEnumerator LoseSanity()
-	{
-		while (true)
+		public void IncreaseSanity(float value)
 		{
-			Sanity -= Time.deltaTime * _sanityDecreaseSpeed;
-		
-			float newValue = -(_sanityValue - _maxSanityValue);
+			if (_sanityDecreaseSpeed * _taskAmount >= value)
+				Debug.LogWarning("Sanity increase value simillar or less then sanity decreas speed");
 
-			percent = newValue / _maxSanityValue;
+			Sanity += Time.deltaTime * value;
+		}
 
-			_sanityVolume.weight = percent;
+		private IEnumerator LoseSanity()
+		{
+			while (true)
+			{
+				Sanity -= Time.deltaTime * _sanityDecreaseSpeed * _taskAmount;
 
-			_slider.value = Sanity;
+				float newValue = -(_sanityValue - _maxSanityValue);
 
-			yield return null;
+				percent = newValue / _maxSanityValue;
+
+				_sanityVolume.weight = percent;
+
+				_slider.value = Sanity;
+
+				yield return null;
+			}
+		}
+
+		private void DisableSanity()
+		{
+			Destroy(this);
 		}
 	}
 }

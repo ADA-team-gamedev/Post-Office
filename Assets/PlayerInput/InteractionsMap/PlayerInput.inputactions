@@ -123,9 +123,36 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Hotbar 4",
+                    "type": "Button",
+                    "id": "62a5ebb4-3efd-4871-a0b9-49ce8180167d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "FlahsLight",
                     "type": "Button",
                     "id": "54d6d703-1eb2-4085-bb7b-c6e66da1bf97",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "AnyKey",
+                    "type": "Button",
+                    "id": "435782f9-ce92-493e-ac83-a31471976dbf",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "NoteBook",
+                    "type": "Button",
+                    "id": "b00963c1-724c-4f34-bd4f-d2e16265011f",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -363,6 +390,39 @@
                     "action": "FlahsLight",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "23fa90c5-ddd7-4fcc-b92b-d37810885a76",
+                    "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "AnyKey",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "05a3ccd6-068d-49af-9231-71e3709a24b4",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "Tap,Hold(duration=0.2)",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "NoteBook",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "14cfde13-b98f-401f-825c-71ae29160eb8",
+                    "path": "<Keyboard>/4",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "Hotbar 4",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -378,15 +438,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "NoteBook",
-                    "type": "Button",
-                    "id": "8a87231b-0e7c-4459-877c-8b3c99278cd6",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -394,21 +445,10 @@
                     "name": "",
                     "id": "3ebc75a2-0025-438d-bf06-2b390ebc2fe8",
                     "path": "<Keyboard>/escape",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "processors": "",
                     "groups": "Keyboard and Mouse",
                     "action": "PauseMenu",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "a4c9b2e6-3df2-425a-b029-71d8b9162c78",
-                    "path": "<Keyboard>/tab",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "NoteBook",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
