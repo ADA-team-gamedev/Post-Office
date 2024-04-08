@@ -13,7 +13,7 @@ namespace Player
 	{
 		[field: SerializeField] public Camera PlayerCamera { get; private set; }
 
-		public float InteractionDistance { get; private set; } = 3f;
+		[field: SerializeField, Range(0.5f, 10f)] public float InteractionDistance { get; private set; } = 3f;
 
 		[Header("Crosshair")]
 		[SerializeField] private Image _crosshairImage;

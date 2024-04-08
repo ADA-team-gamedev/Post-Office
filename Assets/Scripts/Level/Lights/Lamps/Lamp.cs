@@ -4,6 +4,7 @@ using UnityEngine.Events;
 namespace Level.Lights.Lamp
 {
 	[RequireComponent(typeof(BoxCollider))] //triger zone
+	[SelectionBase]
 	public class Lamp : MonoBehaviour
 	{
 		[field: SerializeField] public bool IsLampEnabled { get; set; } = true;
