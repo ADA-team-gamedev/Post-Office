@@ -1,8 +1,8 @@
 using Audio;
-using InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Player
 {
@@ -98,6 +98,23 @@ namespace Player
 
 		private Rigidbody _rb;
 
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.Player.Move.performed += OnMove;
+			_playerInput.Player.Move.canceled += OnMove;
+
+			_playerInput.Player.Sprint.performed += OnSprint;
+			_playerInput.Player.Sprint.canceled += OnSprint;
+
+			_playerInput.Player.Crouch.performed += OnCrouch;
+			_playerInput.Player.Crouch.canceled += OnCrouch;
+		}
+
 		private void Awake()
 		{
 			_rb = GetComponent<Rigidbody>();
@@ -121,15 +138,6 @@ namespace Player
 
 		private void Start()
 		{
-			InputManager.Instance.PlayerInput.Player.Move.performed += OnMove;
-			InputManager.Instance.PlayerInput.Player.Move.canceled += OnMove;
-
-			InputManager.Instance.PlayerInput.Player.Sprint.performed += OnSprint;
-			InputManager.Instance.PlayerInput.Player.Sprint.canceled += OnSprint;
-
-			InputManager.Instance.PlayerInput.Player.Crouch.performed += OnCrouch;
-			InputManager.Instance.PlayerInput.Player.Crouch.canceled += OnCrouch;
-
 			_sprintBarCanvasGroup.gameObject.SetActive(true);
 
 			_sprintBarCanvasGroup.alpha = 0;
@@ -238,7 +246,7 @@ namespace Player
 					{
 						MovementState = MovementState.Idle;
 					}
-					else if (InputManager.Instance.PlayerInput.Player.Sprint.IsPressed())
+					else if (_playerInput.Player.Sprint.IsPressed())
 					{
 						MovementState = MovementState.Sprinting;
 
@@ -337,7 +345,7 @@ namespace Player
 
 			if (context.performed && MoveDirection != Vector2.zero && MovementState == MovementState.Idle)
 			{
-				if (InputManager.Instance.PlayerInput.Player.Sprint.IsPressed() && !_isSprintOnCooldown)
+				if (_playerInput.Player.Sprint.IsPressed() && !_isSprintOnCooldown)
 				{
 					_playerSpeed = _playerSprintSpeed;
 
