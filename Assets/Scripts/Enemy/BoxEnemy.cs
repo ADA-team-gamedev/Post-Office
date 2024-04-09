@@ -67,7 +67,6 @@ namespace Enemy
 		[SerializeField] private List<Transform> _hiddenPoints;
 
 		private Vector3 _currentPointToMove;
-		private int _currentPatrolPointIndex = 0;
 
 		private EnemyState _enemyState = EnemyState.Patroling;
 

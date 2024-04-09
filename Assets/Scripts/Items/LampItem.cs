@@ -6,23 +6,25 @@ namespace Items
 {
 	public class LampItem : Item, IUsable
 	{
-		[SerializeField] private Camera _playerCamera;
-		[SerializeField, Range(0.5f, 5f)] private float _interactionDistance = 1f;
-
+		[SerializeField] private Interactor _playerInteractor;
+		
 		public void Use()
 		{
-			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _interactionDistance))
+			if (Physics.Raycast(_playerInteractor.PlayerCamera.transform.position, _playerInteractor.PlayerCamera.transform.forward, out RaycastHit hit, _playerInteractor.InteractionDistance))
 			{
-				Debug.DrawRay(_playerCamera.transform.position, _playerCamera.transform.forward * _interactionDistance);
+				Debug.DrawRay(_playerInteractor.PlayerCamera.transform.position, _playerInteractor.PlayerCamera.transform.forward * _playerInteractor.InteractionDistance);
 
-				if (hit.transform.TryGetComponent(out BreakableLamp lamp) && lamp.IsLampDestroyed)
+				if (hit.transform.parent)
 				{
-					lamp.RepairLamp();
+					if (hit.transform.parent.TryGetComponent(out BreakableLamp lamp) && lamp.IsLampDestroyed)
+					{
+						lamp.RepairLamp();
 
-					PlayerInventory.Instance.DropItem();
+						PlayerInventory.Instance.DropItem();
 
-					Destroy(gameObject);
-				}
+						Destroy(gameObject);
+					}
+				}			
 			}
 		}
 	}

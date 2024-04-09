@@ -2,6 +2,7 @@ using Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Player
 {
@@ -93,11 +94,26 @@ namespace Player
 
 		#endregion
 
-		private PlayerInput _playerInput;
-
 		private PlayerDeathController _playerDeathController;
 
 		private Rigidbody _rb;
+
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
+		{
+			_playerInput = playerInput;
+
+			_playerInput.Player.Move.performed += OnMove;
+			_playerInput.Player.Move.canceled += OnMove;
+
+			_playerInput.Player.Sprint.performed += OnSprint;
+			_playerInput.Player.Sprint.canceled += OnSprint;
+
+			_playerInput.Player.Crouch.performed += OnCrouch;
+			_playerInput.Player.Crouch.canceled += OnCrouch;
+		}
 
 		private void Awake()
 		{
@@ -107,9 +123,7 @@ namespace Player
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += DisableMovement;
-
-			_playerInput = new();
+			_playerDeathController.OnDied += DisableMovement;
 
 			_playerSpeed = _playerWalkSpeed;
 
@@ -124,15 +138,6 @@ namespace Player
 
 		private void Start()
 		{
-			_playerInput.Player.Move.performed += OnMove;
-			_playerInput.Player.Move.canceled += OnMove;
-
-			_playerInput.Player.Sprint.performed += OnSprint;
-			_playerInput.Player.Sprint.canceled += OnSprint;
-
-			_playerInput.Player.Crouch.performed += OnCrouch;
-			_playerInput.Player.Crouch.canceled += OnCrouch;
-
 			_sprintBarCanvasGroup.gameObject.SetActive(true);
 
 			_sprintBarCanvasGroup.alpha = 0;
@@ -238,7 +243,9 @@ namespace Player
 					_playerSpeed = _playerWalkSpeed;
 
 					if (MoveDirection == Vector2.zero)
+					{
 						MovementState = MovementState.Idle;
+					}
 					else if (_playerInput.Player.Sprint.IsPressed())
 					{
 						MovementState = MovementState.Sprinting;
@@ -246,7 +253,9 @@ namespace Player
 						_playerSpeed = _playerSprintSpeed;
 					}
 					else
+					{
 						MovementState = MovementState.Walking;
+					}
 				}
 
 				return;
@@ -343,7 +352,9 @@ namespace Player
 					MovementState = MovementState.Sprinting;
 				}
 				else
+				{
 					MovementState = MovementState.Walking;
+				}
 			}
 			else if (context.canceled && MoveDirection == Vector2.zero)
 			{
@@ -406,20 +417,6 @@ namespace Player
 		private void DisableMovement()
 		{
 			//Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput = new();
-
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput = new();
-
-			_playerInput.Disable();
 		}
 
 		private void OnValidate()

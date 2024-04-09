@@ -1699,10 +1699,12 @@ MonoBehaviour:
   _playerInteractor: {fileID: 0}
   <IsClosed>k__BackingField: 1
   <DoorKeyType>k__BackingField: 9
-  _unlockDoorSound: Unlcok Door
-  _closedDoor: Door Closed
-  _fullyClosedDoor: Fully Closed Door
-  _doorRotationSound: Door Rotation
+  _unlockDoorSound: Open Fuse Door
+  _closedDoor: Fuse Door Closed
+  _fullyClosedDoor: Fully Closed Fuse Door
+  _doorRotationSound: Fuse Door Rotation
+  _rotationSoundRemainingSpeed: 1
+  _rotationSoundCooldown: 1
 --- !u!1 &7162989682918446349
 GameObject:
   m_ObjectHideFlags: 0

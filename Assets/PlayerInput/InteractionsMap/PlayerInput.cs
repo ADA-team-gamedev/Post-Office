@@ -145,6 +145,15 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Hotbar 4"",
+                    ""type"": ""Button"",
+                    ""id"": ""62a5ebb4-3efd-4871-a0b9-49ce8180167d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""FlahsLight"",
                     ""type"": ""Button"",
                     ""id"": ""54d6d703-1eb2-4085-bb7b-c6e66da1bf97"",
@@ -163,9 +172,9 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Hotbar 4"",
+                    ""name"": ""NoteBook"",
                     ""type"": ""Button"",
-                    ""id"": ""62a5ebb4-3efd-4871-a0b9-49ce8180167d"",
+                    ""id"": ""b00963c1-724c-4f34-bd4f-d2e16265011f"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -417,6 +426,17 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""05a3ccd6-068d-49af-9231-71e3709a24b4"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": ""Tap,Hold(duration=0.2)"",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""NoteBook"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""14cfde13-b98f-401f-825c-71ae29160eb8"",
                     ""path"": ""<Keyboard>/4"",
                     ""interactions"": """",
@@ -438,15 +458,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""id"": ""4432731b-6563-41de-9216-27a44cc242bd"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap"",
-                    ""initialStateCheck"": false
-                },
-                {
-                    ""name"": ""NoteBook"",
-                    ""type"": ""Button"",
-                    ""id"": ""8a87231b-0e7c-4459-877c-8b3c99278cd6"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
                 }
@@ -456,21 +467,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""name"": """",
                     ""id"": ""3ebc75a2-0025-438d-bf06-2b390ebc2fe8"",
                     ""path"": ""<Keyboard>/escape"",
-                    ""interactions"": """",
+                    ""interactions"": ""Tap"",
                     ""processors"": """",
                     ""groups"": ""Keyboard and Mouse"",
                     ""action"": ""PauseMenu"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""a4c9b2e6-3df2-425a-b029-71d8b9162c78"",
-                    ""path"": ""<Keyboard>/tab"",
-                    ""interactions"": ""Tap,Hold(duration=0.2)"",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard and Mouse"",
-                    ""action"": ""NoteBook"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -522,13 +522,13 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Hotbar1 = m_Player.FindAction("Hotbar 1", throwIfNotFound: true);
         m_Player_Hotbar2 = m_Player.FindAction("Hotbar 2", throwIfNotFound: true);
         m_Player_Hotbar3 = m_Player.FindAction("Hotbar 3", throwIfNotFound: true);
+        m_Player_Hotbar4 = m_Player.FindAction("Hotbar 4", throwIfNotFound: true);
         m_Player_FlahsLight = m_Player.FindAction("FlahsLight", throwIfNotFound: true);
         m_Player_AnyKey = m_Player.FindAction("AnyKey", throwIfNotFound: true);
-        m_Player_Hotbar4 = m_Player.FindAction("Hotbar 4", throwIfNotFound: true);
+        m_Player_NoteBook = m_Player.FindAction("NoteBook", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
-        m_UI_NoteBook = m_UI.FindAction("NoteBook", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -603,9 +603,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Hotbar1;
     private readonly InputAction m_Player_Hotbar2;
     private readonly InputAction m_Player_Hotbar3;
+    private readonly InputAction m_Player_Hotbar4;
     private readonly InputAction m_Player_FlahsLight;
     private readonly InputAction m_Player_AnyKey;
-    private readonly InputAction m_Player_Hotbar4;
+    private readonly InputAction m_Player_NoteBook;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -623,9 +624,10 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Hotbar1 => m_Wrapper.m_Player_Hotbar1;
         public InputAction @Hotbar2 => m_Wrapper.m_Player_Hotbar2;
         public InputAction @Hotbar3 => m_Wrapper.m_Player_Hotbar3;
+        public InputAction @Hotbar4 => m_Wrapper.m_Player_Hotbar4;
         public InputAction @FlahsLight => m_Wrapper.m_Player_FlahsLight;
         public InputAction @AnyKey => m_Wrapper.m_Player_AnyKey;
-        public InputAction @Hotbar4 => m_Wrapper.m_Player_Hotbar4;
+        public InputAction @NoteBook => m_Wrapper.m_Player_NoteBook;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -674,15 +676,18 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Hotbar3.started += instance.OnHotbar3;
             @Hotbar3.performed += instance.OnHotbar3;
             @Hotbar3.canceled += instance.OnHotbar3;
+            @Hotbar4.started += instance.OnHotbar4;
+            @Hotbar4.performed += instance.OnHotbar4;
+            @Hotbar4.canceled += instance.OnHotbar4;
             @FlahsLight.started += instance.OnFlahsLight;
             @FlahsLight.performed += instance.OnFlahsLight;
             @FlahsLight.canceled += instance.OnFlahsLight;
             @AnyKey.started += instance.OnAnyKey;
             @AnyKey.performed += instance.OnAnyKey;
             @AnyKey.canceled += instance.OnAnyKey;
-            @Hotbar4.started += instance.OnHotbar4;
-            @Hotbar4.performed += instance.OnHotbar4;
-            @Hotbar4.canceled += instance.OnHotbar4;
+            @NoteBook.started += instance.OnNoteBook;
+            @NoteBook.performed += instance.OnNoteBook;
+            @NoteBook.canceled += instance.OnNoteBook;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -726,15 +731,18 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @Hotbar3.started -= instance.OnHotbar3;
             @Hotbar3.performed -= instance.OnHotbar3;
             @Hotbar3.canceled -= instance.OnHotbar3;
+            @Hotbar4.started -= instance.OnHotbar4;
+            @Hotbar4.performed -= instance.OnHotbar4;
+            @Hotbar4.canceled -= instance.OnHotbar4;
             @FlahsLight.started -= instance.OnFlahsLight;
             @FlahsLight.performed -= instance.OnFlahsLight;
             @FlahsLight.canceled -= instance.OnFlahsLight;
             @AnyKey.started -= instance.OnAnyKey;
             @AnyKey.performed -= instance.OnAnyKey;
             @AnyKey.canceled -= instance.OnAnyKey;
-            @Hotbar4.started -= instance.OnHotbar4;
-            @Hotbar4.performed -= instance.OnHotbar4;
-            @Hotbar4.canceled -= instance.OnHotbar4;
+            @NoteBook.started -= instance.OnNoteBook;
+            @NoteBook.performed -= instance.OnNoteBook;
+            @NoteBook.canceled -= instance.OnNoteBook;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -757,13 +765,11 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
     private readonly InputAction m_UI_PauseMenu;
-    private readonly InputAction m_UI_NoteBook;
     public struct UIActions
     {
         private @PlayerInput m_Wrapper;
         public UIActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @PauseMenu => m_Wrapper.m_UI_PauseMenu;
-        public InputAction @NoteBook => m_Wrapper.m_UI_NoteBook;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -776,9 +782,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @PauseMenu.started += instance.OnPauseMenu;
             @PauseMenu.performed += instance.OnPauseMenu;
             @PauseMenu.canceled += instance.OnPauseMenu;
-            @NoteBook.started += instance.OnNoteBook;
-            @NoteBook.performed += instance.OnNoteBook;
-            @NoteBook.canceled += instance.OnNoteBook;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -786,9 +789,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @PauseMenu.started -= instance.OnPauseMenu;
             @PauseMenu.performed -= instance.OnPauseMenu;
             @PauseMenu.canceled -= instance.OnPauseMenu;
-            @NoteBook.started -= instance.OnNoteBook;
-            @NoteBook.performed -= instance.OnNoteBook;
-            @NoteBook.canceled -= instance.OnNoteBook;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -839,13 +839,13 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnHotbar1(InputAction.CallbackContext context);
         void OnHotbar2(InputAction.CallbackContext context);
         void OnHotbar3(InputAction.CallbackContext context);
+        void OnHotbar4(InputAction.CallbackContext context);
         void OnFlahsLight(InputAction.CallbackContext context);
         void OnAnyKey(InputAction.CallbackContext context);
-        void OnHotbar4(InputAction.CallbackContext context);
+        void OnNoteBook(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
         void OnPauseMenu(InputAction.CallbackContext context);
-        void OnNoteBook(InputAction.CallbackContext context);
     }
 }

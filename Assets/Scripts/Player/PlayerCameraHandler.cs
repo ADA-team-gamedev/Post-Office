@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Player
 {
@@ -34,15 +35,16 @@ namespace Player
 
 		[SerializeField] private PlayerMovementHandler _playerMovement;
 
-		private PlayerInput _playerInput;
-
 		private PlayerDeathController _playerDeathController;
 
 		private Vector2 _lookDirection;
 
-		private void Awake()
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
 		{
-			_playerInput = new();
+			_playerInput = playerInput;
 
 			_playerInput.Player.Look.performed += OnLook;
 			_playerInput.Player.Look.canceled += OnLook;
@@ -58,7 +60,7 @@ namespace Player
 
 			_playerDeathController = transform.parent.parent.GetComponent<PlayerDeathController>(); //Player with DeathController -> HeadJoint -> Camera
 
-			_playerDeathController.OnDeath += DisableCamera;
+			_playerDeathController.OnDied += DisableCamera;
 		}
 
 		private void Update()
@@ -106,16 +108,6 @@ namespace Player
 		private void DisableCamera()
 		{
 			//Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 
 		private void OnValidate()

@@ -95,11 +95,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 16e8e0694ef93e849aae15042585809b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CanBePicked>k__BackingField: 1
+  _canBePicked: 1
+  _dropSound: Drop Item
+  _pickupSound: Pickup Item
   <ItemIcon>k__BackingField:
-    _isIconNeeded: 0
+    <IsIconNeeded>k__BackingField: 0
     <ItemIcon>k__BackingField: {fileID: 0}
     <IconTargetToLook>k__BackingField: {fileID: 0}
+    <EnableOnStart>k__BackingField: 0
     <ChangeIconStateAutomatically>k__BackingField: 0
   _playerCamera: {fileID: 0}
   _interactionDistance: 1.71

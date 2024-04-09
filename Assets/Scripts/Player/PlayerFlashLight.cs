@@ -3,6 +3,7 @@ using Items;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace Player
 {
@@ -19,9 +20,10 @@ namespace Player
 
 		private PlayerInput _playerInput;
 
-		private void Awake()
+		[Inject]
+		private void Construct(PlayerInput playerInput)
 		{
-			_playerInput = new();
+			_playerInput = playerInput;
 
 			_playerInput.Player.FlahsLight.performed += UseFlashLight;
 		}
@@ -112,15 +114,5 @@ namespace Player
 		}
 
 		#endregion
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
-		}
 	}
 }

@@ -4,6 +4,7 @@ using Level.Lights.Lamp;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using Zenject;
 
 namespace Player
 {
@@ -12,7 +13,7 @@ namespace Player
 	{
 		[field: SerializeField] public Camera PlayerCamera { get; private set; }
 
-		public float InteractionDistance { get; private set; } = 3f;
+		[field: SerializeField, Range(0.5f, 10f)] public float InteractionDistance { get; private set; } = 3f;
 
 		[Header("Crosshair")]
 		[SerializeField] private Image _crosshairImage;
@@ -24,8 +25,6 @@ namespace Player
 		[SerializeField] private Color _defaultCrosshairColor = new(108, 108, 108, 255);
 		[SerializeField] private Color _interactableCrosshairColor = new(152, 152, 152, 255);
 
-		private PlayerInput _playerInput;
-
 		private PlayerDeathController _playerDeathController;
 
 		private IInteractable _interactableObject;
@@ -34,20 +33,26 @@ namespace Player
 
 		private bool _isHitInteractableObject = false;
 
-		private void Awake()
+		private PlayerInput _playerInput;
+
+		[Inject]
+		private void Construct(PlayerInput playerInput)
 		{
-			_playerInput = new();
+			_playerInput = playerInput;
 
 			_playerInput.Player.Interact.performed += OnStartInteract;
 			_playerInput.Player.Interact.canceled += OnStopInteract;
+		}
 
+		private void Start()
+		{
 			_crosshairImage.sprite = _defaultCrosshair;
 
 			_crosshairImage.color = _defaultCrosshairColor;
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDeath += DisableInteractor;
+			_playerDeathController.OnDied += DisableInteractor;
 		}
 
 		private void Update()
@@ -134,16 +139,6 @@ namespace Player
 		private void DisableInteractor()
 		{
 			Destroy(this);
-		}
-
-		private void OnEnable()
-		{
-			_playerInput.Enable();
-		}
-
-		private void OnDisable()
-		{
-			_playerInput.Disable();
 		}
 
 		private void OnDrawGizmosSelected()

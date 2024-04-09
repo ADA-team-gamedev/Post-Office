@@ -27,8 +27,6 @@ namespace Audio
 		private void Start()
 		{
 			FillSoundClips();
-			
-			FillAudioSources();
 		}
 
 		private void FillSoundClips()
@@ -48,35 +46,12 @@ namespace Audio
 			}
 		}
 
-		private void FillAudioSources()
-		{
-			if (AudioSources.Count > 0)
-				return;
-
-			AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
-
-			foreach (var source in audioSources)
-			{
-				AudioSources.Add(source.outputAudioMixerGroup, source);
-			}
-		}
+		#region Play Sound
 
 		public void PlaySound(string clipName, Vector3 spawnPosition, float volume = 1f, float spatialBlend = 0)
 		{
-			if (!_soundclips.TryGetValue(clipName, out SoundClip soundClip))
-			{
-				Debug.LogWarning($"No clip with name - ({clipName})");
-
+			if (!TryGetClipFromCollection(clipName, out SoundClip soundClip) || !TryGetAudioSourceFromCollection(soundClip.MixerGroup, out AudioSource basedAudioSource))
 				return;
-			}
-
-			if (!AudioSources.TryGetValue(soundClip.MixerGroup, out AudioSource basedAudioSource))
-			{
-
-				Debug.LogWarning($"No audio source with {soundClip.MixerGroup}");
-
-				return;
-			}
 
 			AudioSource audioSource = Instantiate(basedAudioSource, spawnPosition, Quaternion.identity);
 
@@ -87,21 +62,10 @@ namespace Audio
 			Destroy(audioSource.gameObject, audioSource.clip.length);
 		}
 
-		public void PlaySound(string clipName, Vector3 spawnPosition, float soundDelay, float volume = 1, float spatialBlend = 0)
+		public void PlaySound(string clipName, Vector3 spawnPosition, float soundDelay, float volume = 1f, float spatialBlend = 0)
 		{
-			if (!_soundclips.TryGetValue(clipName, out SoundClip soundClip))
-			{
-				Debug.LogWarning($"No clip with name - ({clipName})");
-
+			if (!TryGetClipFromCollection(clipName, out SoundClip soundClip) || !TryGetAudioSourceFromCollection(soundClip.MixerGroup, out AudioSource basedAudioSource))
 				return;
-			}
-
-			if (!AudioSources.TryGetValue(soundClip.MixerGroup, out AudioSource basedAudioSource))
-			{
-				Debug.LogWarning($"No audio source with {soundClip.MixerGroup}");
-
-				return;
-			}
 			
 			AudioSource audioSource = Instantiate(basedAudioSource, spawnPosition, Quaternion.identity);
 
@@ -112,6 +76,20 @@ namespace Audio
 			Destroy(audioSource.gameObject, soundDelay);
 		}
 
+		public void PlayLoopedSound(string clipName, Vector3 spawnPosition, float volume = 1f, float spatialBlend = 0)
+		{
+			if (!TryGetClipFromCollection(clipName, out SoundClip soundClip) || !TryGetAudioSourceFromCollection(soundClip.MixerGroup, out AudioSource basedAudioSource))
+				return;
+
+			AudioSource audioSource = Instantiate(basedAudioSource, spawnPosition, Quaternion.identity);
+
+			SetValuesInAudioSource(audioSource, new(soundClip.Clip, volume, soundClip.MixerGroup, spatialBlend, true));
+
+			audioSource.Play();
+		}
+
+		#endregion
+
 		private void SetValuesInAudioSource(AudioSource audioSource, AudioSourceParameters audioSourceParameters)
 		{
 			audioSource.clip = audioSourceParameters.AudioClip;
@@ -121,6 +99,26 @@ namespace Audio
 			audioSource.outputAudioMixerGroup = audioSourceParameters.MixerGroup;
 
 			audioSource.spatialBlend = audioSourceParameters.SpatialBlend;
+		}
+
+		private bool TryGetClipFromCollection(string clipName, out SoundClip soundClip)
+		{
+			if (_soundclips.TryGetValue(clipName, out soundClip))
+				return true;
+
+			Debug.LogWarning($"No clip with name - ({clipName})");
+
+			return false;
+		}
+
+		private bool TryGetAudioSourceFromCollection(AudioMixerGroup mixerGroup, out AudioSource basedAudioSource)
+		{
+			if (AudioSources.TryGetValue(mixerGroup, out basedAudioSource))
+				return true;
+
+			Debug.LogWarning($"No audio source with {mixerGroup}");
+
+			return false;
 		}
 	}
 
@@ -134,11 +132,15 @@ namespace Audio
 
 		public float SpatialBlend { get; private set; }
 
-		public AudioSourceParameters(AudioClip audioClip, float volume, AudioMixerGroup mixerGroup, float spatialBlend)
+		public bool IsLooped { get; private set; }
+
+		public AudioSourceParameters(AudioClip audioClip, float volume, AudioMixerGroup mixerGroup, float spatialBlend, bool isLooped = false)
 		{
 			AudioClip = audioClip;
 
 			Volume = Mathf.Clamp01(volume);
+
+			IsLooped = isLooped;
 
 			MixerGroup = mixerGroup;
 

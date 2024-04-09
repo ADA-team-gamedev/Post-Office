@@ -31,7 +31,7 @@ namespace Items
 
 					AudioManager.Instance.PlaySound("Use Pills", transform.position);
 
-					StartCoroutine(ResoteSanity());
+					StartCoroutine(RestoreeSanity());
                 }
             }
             else
@@ -45,7 +45,7 @@ namespace Items
         private bool IsHaveCharge()
             => _countOfUses > 0;
 
-        private IEnumerator ResoteSanity()
+        private IEnumerator RestoreeSanity()
         {
             _isUsing = true;
 
