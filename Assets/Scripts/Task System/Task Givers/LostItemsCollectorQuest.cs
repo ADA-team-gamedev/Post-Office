@@ -1,38 +1,63 @@
 using Items;
+using Level.Spawners.LostItemSpawner;
 using System.Collections.Generic;
 using TaskSystem;
 using UnityEngine;
+using Zenject;
 
 public class LostItemsCollectorQuest : MonoBehaviour
 {
-    [SerializeField] private List<Item> _lostItems = new();
-
 	[SerializeField] private TaskData _lostItemsTask;
 
-	private void Start()
-	{
-		foreach (var item in _lostItems)
-		{
-			if (item.gameObject.activeInHierarchy)
-				item.OnPickUpItem += TryCompleteTask;
-		}
+	private Dictionary<Item, LostItemSticker> _lostItems;
 
-		if (_lostItems.Count > 0)
-			TaskManager.Instance.TryAddNewTask(_lostItemsTask);
-		else
-			Debug.LogWarning("Can't add task, because you don't set lost items!");
+	private LostItemSpawner _lostItemSpawner;
+
+	[Inject]
+	private void Construct(LostItemSpawner lostItemSpawner)
+	{
+		_lostItemSpawner = lostItemSpawner;
+		
+		_lostItemSpawner.OnLostItemSpawned += GiveLostItemQuest;
 	}
 
-	private void TryCompleteTask(Item item)
+	private void GiveLostItemQuest(Dictionary<Item, LostItemSticker> lostItems)
 	{
-		_lostItems.Remove(item);
+		_lostItemSpawner.OnLostItemSpawned -= GiveLostItemQuest;
 
-		item.OnPickUpItem -= TryCompleteTask;
+		if (lostItems.Count <= 0 || !TaskManager.Instance.TryAddNewTask(_lostItemsTask))
+		{
+			Debug.LogWarning($"Can't add \"Find Lost Item\" task!");
+
+			return;
+		}
+
+		_lostItems = lostItems;
+
+		foreach (var item in _lostItems)
+		{
+			item.Key.OnPickUpItem += OnPlayerFindItem;
+		}
+	}
+
+	private void OnPlayerFindItem(Item item)
+	{
+		if (!_lostItems.Remove(item, out LostItemSticker sticker))
+			return;
+
+		sticker.gameObject.SetActive(false);
+
+		item.OnPickUpItem -= OnPlayerFindItem;
 
 		if (_lostItems.Count <= 0)
-		{
-			if (TaskManager.Instance.TryGetTask(_lostItemsTask.Task.ID, out Task task))
-				task.Complete();
-		}
+			CompleteTask();
+	}
+
+	private void CompleteTask()
+	{
+		if (!TaskManager.Instance.TryGetTask(_lostItemsTask.Task.ID, out Task task))
+			return;
+
+		task.Complete();
 	}
 }

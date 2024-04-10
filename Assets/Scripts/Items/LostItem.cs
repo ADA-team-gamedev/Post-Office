@@ -2,9 +2,9 @@ using UnityEngine;
 
 namespace Items
 {
-	public class LostedItem : Item
+	public class LostItem : Item
 	{
-		[SerializeField] private GameObject _lostedItemPhoto;
+		[field: SerializeField] public Texture StikckerTexture { get; private set; }
 
 		private void Start()
 		{
@@ -16,15 +16,11 @@ namespace Items
 			base.InitializeItem();
 
 			OnPickUpItem += OnPlayerFindItem;
-
-			_lostedItemPhoto.SetActive(true);
 		}
 
 		private void OnPlayerFindItem(Item item)
 		{
 			OnPickUpItem -= OnPlayerFindItem;
-
-			_lostedItemPhoto.SetActive(false);
 		}
 	}
 }
