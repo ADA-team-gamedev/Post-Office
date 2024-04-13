@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Level.Map
+namespace Level.Spawners
 {
 	public class MapRandomizer : MonoBehaviour
 	{
