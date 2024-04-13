@@ -3,6 +3,7 @@ using Items.Icon;
 using System.Collections.Generic;
 using TaskSystem.NoteBook;
 using UnityEngine;
+using Zenject;
 
 namespace TaskSystem.TaskGivers
 {
@@ -15,7 +16,7 @@ namespace TaskSystem.TaskGivers
 		[SerializeField] private bool _giveTaskOnStart = false;
 		[SerializeField] private bool _canPlayerPickUpItemAfterQuestFinishing = false;
 
-		[SerializeField] private Tablet _noteBook;
+		[Inject] private Tablet _tablet;
 
 		[Header("Hint Text")]
 		[SerializeField] private string _addedItemHint = "Added Box";
@@ -55,7 +56,7 @@ namespace TaskSystem.TaskGivers
 			{
 				_addedItem.Add(item);
 
-				_noteBook.WriteHintText(_addedItemHint, _neededItems.Contains(item) ? Color.green : Color.red);
+				_tablet.WriteHintText(_addedItemHint, _neededItems.Contains(item) ? Color.green : Color.red);
 
 				item.OnPickUpItem += RemoveBoxFromCollection;
 
@@ -67,7 +68,7 @@ namespace TaskSystem.TaskGivers
 		{
 			if (other.TryGetComponent(out Item item))
 			{
-				_noteBook.WriteHintText(_removedItemHint, _neededItems.Contains(item) ? Color.red : Color.green);
+				_tablet.WriteHintText(_removedItemHint, _neededItems.Contains(item) ? Color.red : Color.green);
 
 				if (_addedItem.Contains(item))
 					_addedItem.Remove(item);
@@ -80,7 +81,7 @@ namespace TaskSystem.TaskGivers
 
 		private void ChangeQuestIconsState(Task currentTask)
 		{
-			if (currentTask.ID != _addedTask.Task.ID)
+			if (currentTask == null || currentTask.ID != _addedTask.Task.ID)
 			{
 				_questZoneIcon.HideIcon();
 
@@ -124,6 +125,8 @@ namespace TaskSystem.TaskGivers
 			if (_isTaskAdded)
 				return;
 
+			ChangeQuestIconsState(TaskManager.Instance.CurrentTask);
+
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeQuestIconsState;
 
 			TaskManager.Instance.TryAddNewTask(_addedTask);
@@ -132,6 +135,8 @@ namespace TaskSystem.TaskGivers
 
 			foreach (Item item in _neededItems)
 			{
+				item.ItemIcon.HideIcon();
+
 				item.OnPickUpItem += item.ItemIcon.HideIcon;
 
 				item.OnDropItem += OnItemDroped;
@@ -175,7 +180,7 @@ namespace TaskSystem.TaskGivers
 
 		private void RemoveBoxFromCollection(Item item)
 		{
-			_noteBook.WriteHintText(_removedItemHint, _neededItems.Contains(item) ? Color.red : Color.green);
+			_tablet.WriteHintText(_removedItemHint, _neededItems.Contains(item) ? Color.red : Color.green);
 
 			_addedItem.Remove(item);
 

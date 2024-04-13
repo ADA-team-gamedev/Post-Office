@@ -20,12 +20,17 @@ namespace DataPersistance
 			{
 				if (File.Exists(path))
 				{
+#if UNITY_EDITOR
 					Debug.Log($"Data alredy exists in path: {path}. <color=green>Deleting old file and writing a new one!</color>");
-
+#endif
 					File.Delete(path);
 				}
 				else
+				{
+#if UNITY_EDITOR
 					Debug.Log("<color=green>Writing file for the first time!</color>");
+#endif
+				}
 
 				using FileStream stream = File.Create(path);
 
@@ -42,8 +47,9 @@ namespace DataPersistance
 			}
 			catch (Exception exception)
 			{
+#if UNITY_EDITOR
 				Debug.LogError($"Unable to save data due to: {exception.Message} {exception.StackTrace}");
-
+#endif
 				return false;
 			}
 		}
@@ -67,8 +73,9 @@ namespace DataPersistance
 			
 			if (!File.Exists(path))
 			{
+#if UNITY_EDITOR
 				Debug.LogError($"Cannot load file at {path}. File doesn't exist!");
-
+#endif
 				data = default(T);	
 
 				return false;
@@ -87,8 +94,9 @@ namespace DataPersistance
 			}
 			catch (Exception exception)
 			{
+#if UNITY_EDITOR
 				Debug.LogError($"Failed to load data due to: {exception.Message} {exception.StackTrace}");
-
+#endif
 				data = default(T);
 
 				return false;
@@ -114,9 +122,9 @@ namespace DataPersistance
 			using StreamReader reader = new(cryptoStream);
 
 			string result = reader.ReadToEnd();
-
+#if UNITY_EDITOR
 			Debug.Log($"<color=green>Decrypted result</color> (if the following is not legible, probably wrond key or iv): {result}");
-
+#endif
 			return JsonConvert.DeserializeObject<T>(result);
 		}
 	}

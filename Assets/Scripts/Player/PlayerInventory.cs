@@ -49,14 +49,16 @@ namespace Player
 
 		private PlayerDeathController _playerDeathController;
 
-		[SerializeField] private Tablet _noteBook;
+		private Tablet _tablet;
 
 		private PlayerInput _playerInput;
 
 		[Inject]
-		private void Construct(PlayerInput playerInput)
+		private void Construct(PlayerInput playerInput, Tablet tablet)
 		{
 			_playerInput = playerInput;
+
+			_tablet = tablet;
 
 			_playerInput.Player.PickUpItem.performed += OnPickUpItem;
 
@@ -341,7 +343,7 @@ namespace Player
 
 		private void OnScrollWheelYChanged(InputAction.CallbackContext context)
 		{
-			if (_inventory.Count <= 0 || _noteBook.IsViewing)
+			if (_inventory.Count <= 0 || _tablet.IsViewing)
 				return;
 			
 			float scrollWheelValue = context.ReadValue<float>();

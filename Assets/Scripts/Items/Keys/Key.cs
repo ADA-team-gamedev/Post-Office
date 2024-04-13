@@ -1,4 +1,3 @@
-using Player;
 using UnityEngine;
 
 namespace Items.Keys
@@ -23,10 +22,5 @@ namespace Items.Keys
 	{
 		[field: Header("Key")]
 		[field: SerializeField] public DoorKeyTypes KeyType { get; private set; }
-
-		private void Start()
-		{
-			
-		}
 	}
 }
