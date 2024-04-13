@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.Audio;
-using AYellowpaper.SerializedCollections;
 using System.Collections.Generic;
 
 namespace Audio
@@ -13,20 +12,28 @@ namespace Audio
 
 		private Dictionary<string, SoundClip> _soundclips = new();
 
-		[SerializedDictionary(nameof(AudioMixerGroup), nameof(AudioSource))]
-        public SerializedDictionary<AudioMixerGroup, AudioSource> AudioSources;
+        private Dictionary<AudioMixerGroup, AudioSource> _audioSources = new();
 
 		private void Awake()
 		{
 			if (Instance == null)
 				Instance = this;		
 			else
-				Debug.LogError($"{nameof(AudioManager)} Instance already exists!");		
+				Debug.LogError($"{nameof(AudioManager)} Instance already exists!");
+
+			FillAudioSource();
+
+			FillSoundClips();
 		}
 
-		private void Start()
+		private void FillAudioSource()
 		{
-			FillSoundClips();
+			AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
+
+			foreach (var source in audioSources)
+			{
+				_audioSources.TryAdd(source.outputAudioMixerGroup, source);
+			}
 		}
 
 		private void FillSoundClips()
@@ -88,6 +95,20 @@ namespace Audio
 			audioSource.Play();
 		}
 
+		public bool TryGetSound(string clipName, out AudioClip clip)
+		{
+			if (TryGetClipFromCollection(clipName, out SoundClip soundClip))
+			{
+				clip = soundClip.Clip;
+
+				return true;	
+			}
+
+			clip = null;
+
+			return false;
+		}
+
 		#endregion
 
 		private void SetValuesInAudioSource(AudioSource audioSource, AudioSourceParameters audioSourceParameters)
@@ -113,7 +134,7 @@ namespace Audio
 
 		private bool TryGetAudioSourceFromCollection(AudioMixerGroup mixerGroup, out AudioSource basedAudioSource)
 		{
-			if (AudioSources.TryGetValue(mixerGroup, out basedAudioSource))
+			if (_audioSources.TryGetValue(mixerGroup, out basedAudioSource))
 				return true;
 
 			Debug.LogWarning($"No audio source with {mixerGroup}");

@@ -1,5 +1,7 @@
 using Audio;
+using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Level.Lights.Lamp
 {
@@ -17,9 +19,24 @@ namespace Level.Lights.Lamp
 
 		private float _lampDelayBeforeBreakingRemaining;
 
-		private void Awake()
+		public event Action OnLampDestroyed;
+		public event Action OnLampFixed;
+
+		protected override void Awake()
 		{
 			InitializeLamp();
+		}
+
+		protected override void Update()
+		{
+			TryStartFlashingEvent();
+
+			TryBreakLamp();
+		}
+
+		protected virtual void OnTriggerEnter(Collider other)
+		{
+			TryInvokeLamp(other);
 		}
 
 		protected override void InitializeLamp()
@@ -29,18 +46,6 @@ namespace Level.Lights.Lamp
 			_electronicalSparkVF.gameObject.SetActive(false);
 
 			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
-		}
-
-		private void Update()
-		{
-			TryStartFlashingEvent();
-
-			TryBreakLamp();
-		}
-
-		private void OnTriggerEnter(Collider other)
-		{
-			TryInvokeLamp(other);
 		}
 
 		private void TryBreakLamp()
@@ -78,15 +83,17 @@ namespace Level.Lights.Lamp
 			if (!IsLampDestroyed)
 				return;
 
+			OnLampFixed?.Invoke();
+
+			IsLampDestroyed = false;
+
 			LampRenderer.gameObject.SetActive(true);
 
 			_electronicalSparkVF.gameObject.SetActive(false);
 
 			SwitchLampState(true);
 
-			StartFlashingEvent();
-
-			IsLampDestroyed = false;
+			StartFlashingEvent();		
 		}
 
 		[ContextMenu(nameof(BreakLamp))]
@@ -97,6 +104,8 @@ namespace Level.Lights.Lamp
 
 			AudioManager.Instance.PlaySound("Lamp Crush", transform.position, spatialBlend: 1f);
 
+			OnLampDestroyed?.Invoke();
+
 			IsLampDestroyed = true;
 
 			LampRenderer.gameObject.SetActive(false);
@@ -106,8 +115,10 @@ namespace Level.Lights.Lamp
 			_electronicalSparkVF.gameObject.SetActive(true);
 		}
 
-		private void OnValidate()
+		protected override void OnValidate()
 		{
+			base.OnValidate();
+
 			if (_minLampLifeDelayBeforeBreaking < 0)
 				_minLampLifeDelayBeforeBreaking = 0;
 

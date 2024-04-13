@@ -116,7 +116,11 @@ namespace Items.Keys
 			foreach (var key in _keysOnStart)
 			{
 				if (TryAddKey(key))
+				{
+					key.ItemIcon.HideIcon();
+					
 					Destroy(key.gameObject);
+				}
 			}
 		}
 	}
