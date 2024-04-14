@@ -27,6 +27,9 @@ namespace Level.Lights.Lamp
 		[Space(10)]
 		[SerializeField] private FlashingLightCurvesData _flashingCurves;
 
+		[Space(10)]
+		[SerializeField] private string _lampFlashingSoundName = "Lamp Flashing";
+
 		private bool _isFlashing = false;
 
 		private float _maxLightRange;
@@ -104,7 +107,7 @@ namespace Level.Lights.Lamp
 
 			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
 
-			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, soundDelay: flashingDelay, spatialBlend: 1f);
+			AudioManager.Instance.PlaySound(_lampFlashingSoundName, transform.position, soundDelay: flashingDelay, spatialBlend: 1f);
 
 			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
 

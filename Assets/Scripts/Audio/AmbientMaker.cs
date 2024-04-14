@@ -12,9 +12,9 @@ namespace Audio
 		[SerializeField] private List<string> _ambientSoundsName = new();
 
 		[Header("Values")]
-		[SerializeField, Delayed] private float _minDelayBeforeAmbientPlaying;
+		[SerializeField, Delayed] private float _minDelayBeforeAmbientPlaying = 10;
 
-		[SerializeField, Delayed] private float _maxDelayBeforeAmbientPlaying;
+		[SerializeField, Delayed] private float _maxDelayBeforeAmbientPlaying = 20;
 
 		private Dictionary<string, float> _ambientSounds;
 

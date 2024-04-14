@@ -45,7 +45,9 @@ namespace Menu
 		private void OnPauseMenu(InputAction.CallbackContext context)
 		{
 			_isPaused = !_isPaused;
-			
+
+			AudioListener.pause = _isPaused;
+
 			if (_isPaused)
 			{
 				Time.timeScale = 0;
@@ -80,6 +82,8 @@ namespace Menu
 			Cursor.lockState = CursorLockMode.Locked;
 
 			_isPaused = false;
+
+			AudioListener.pause = false;
 
 			_playerInput.Player.Enable();
 
