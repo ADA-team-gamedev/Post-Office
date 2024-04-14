@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -26,7 +27,9 @@ namespace Level.Lights.Lamp
 		[Space(10)]
 		[SerializeField] private UnityEvent OnStay;
 
-		private void Awake()
+		public event Action<bool> OnLampStateChanged;
+
+		protected virtual void Awake()
 		{
 			InitializeLamp();
 		}
@@ -53,7 +56,9 @@ namespace Level.Lights.Lamp
 		{
 			if (!gameObject.activeInHierarchy)
 				return;
-			
+
+			OnLampStateChanged?.Invoke(isEnabled);
+
 			IsLampEnabled = isEnabled;
 
 			Light.gameObject.SetActive(IsLampEnabled);
@@ -65,7 +70,7 @@ namespace Level.Lights.Lamp
 			LampRenderer.SetPropertyBlock(MaterialPropertyBlock);
 		}
 
-		private void OnValidate()
+		protected virtual void OnValidate()
 		{
 			MaterialPropertyBlock ??= new();
 

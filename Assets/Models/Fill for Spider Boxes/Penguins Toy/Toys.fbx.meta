@@ -3,7 +3,22 @@ guid: 7ad77aa3baf4f2045b484a066642e34a
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stuffed Toy Penguin Type A ALT
+    second: {fileID: 2100000, guid: daceced721a0fa8469043131b2cb0add, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stuffed Toy Penguin Type A Standard
+    second: {fileID: 2100000, guid: daceced721a0fa8469043131b2cb0add, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Stuffed Toy Penguin Type A Well Loved
+    second: {fileID: 2100000, guid: daceced721a0fa8469043131b2cb0add, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

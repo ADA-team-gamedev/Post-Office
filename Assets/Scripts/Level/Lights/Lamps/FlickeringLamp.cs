@@ -1,6 +1,8 @@
 using Audio;
+using System;
 using System.Collections;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Level.Lights.Lamp
 {
@@ -32,9 +34,17 @@ namespace Level.Lights.Lamp
 
 		private int _possibleCountOfCurves;
 
-		private void Awake()
+		public event Action OnLampStartFlashing;
+		public event Action OnLampStopFlashing;
+
+		protected override void Awake()
 		{
 			InitializeLamp();
+		}
+
+		protected virtual void Update()
+		{
+			TryStartFlashingEvent();
 		}
 
 		protected override void InitializeLamp()
@@ -47,11 +57,6 @@ namespace Level.Lights.Lamp
 
 			_possibleCountOfCurves = _flashingCurves.Curves.Count;
 		}
-
-		private void Update()
-		{
-			TryStartFlashingEvent();
-		}	
 
 		protected void TryStartFlashingEvent()
 		{
@@ -94,6 +99,8 @@ namespace Level.Lights.Lamp
 				return;
 
 			_isFlashing = true;
+
+			OnLampStartFlashing?.Invoke();
 
 			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
 
@@ -172,11 +179,15 @@ namespace Level.Lights.Lamp
 
 			LampRenderer.material.SetColor(EmissionColor, DefaultLampColor);
 
+			OnLampStopFlashing?.Invoke();
+
 			_isFlashing = false;
 		}
 
-		private void OnValidate()
+		protected override void OnValidate()
 		{
+			base.OnValidate();
+
 			if (_minFlashingDelay < 0)
 				_minFlashingDelay = 0;
 

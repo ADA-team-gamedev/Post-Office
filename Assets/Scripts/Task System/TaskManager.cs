@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using TaskSystem.NoteBook;
 using UnityEngine;
+using Zenject;
 
 namespace TaskSystem
 {
@@ -35,7 +36,7 @@ namespace TaskSystem
 
 		#endregion
 
-		[SerializeField] private Tablet _tablet;
+		[Inject] private Tablet _tablet;
 
 		private void Awake()
 		{
@@ -59,8 +60,8 @@ namespace TaskSystem
 
 		private void Start()
 		{
-			if (_tasks.Count > 0)
-				SetNewCurrentTask(_tasks.Keys.ElementAt(0));
+			if (CurrentTask == null && _tasks.Count > 0)
+				SetNewCurrentTask(0);
 		}
 
 		public bool TryGetTask(int id, out Task task)
@@ -131,7 +132,7 @@ namespace TaskSystem
 			OnAddedNewTask?.Invoke();
 
 			if (CurrentTask == null)
-				SetNewCurrentTask(task);
+				SetNewCurrentTask(task);		
 
 			return true;
 		}

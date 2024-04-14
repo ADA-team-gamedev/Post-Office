@@ -72,10 +72,6 @@ namespace TaskSystem.NoteBook
 
 			_playerDeathController.OnDied += DisableNoteBook;
 
-			ClearNotebookTaskInfo();
-
-			StartCoroutine(ClearHintTextField(0));
-
 			_defaultFontStyle = _taskName.fontStyle;
 
 			_deffaultScreenInfoScale = _tabletScreenInfo.transform.localScale.x;
@@ -91,6 +87,10 @@ namespace TaskSystem.NoteBook
 
 		public void SubcribeOnTaskManager()
 		{
+			ClearNotebookTaskInfo();
+
+			StartCoroutine(ClearHintTextField(0));
+
 			ChangeArrowState();
 
 			TaskManager.Instance.OnAddedNewTask += () =>
@@ -101,9 +101,6 @@ namespace TaskSystem.NoteBook
 			TaskManager.Instance.OnAddedNewTask += ChangeArrowState;
 
 			TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
-
-			if (TaskManager.Instance.CurrentTask != null)
-				WriteTextInNoteBook(TaskManager.Instance.CurrentTask);
 
 			TaskManager.Instance.OnNewCurrentTaskSet += (Task Task) =>
 			{
@@ -204,7 +201,7 @@ namespace TaskSystem.NoteBook
 
 		public void WriteHintText(string hintText, Color textColor)
 		{
-			StopCoroutine(ClearHintTextField(_hintTextDisplaingDelay));
+			StopAllCoroutines();
 			
 			_hintText.color = textColor;
 
@@ -224,14 +221,14 @@ namespace TaskSystem.NoteBook
 
 		private void WriteTextInNoteBook(Task task)
 		{
-			FontStyles fontStyle = _defaultFontStyle;
+			//FontStyles fontStyle = _defaultFontStyle;
 
-			if (task.IsCompleted)
-				fontStyle += (int)FontStyles.Strikethrough;
+			//if (task.IsCompleted)
+			//	fontStyle += (int)FontStyles.Strikethrough;
 
-			_taskName.fontStyle = fontStyle;
+			//_taskName.fontStyle = fontStyle;
 
-			_taskDescription.fontStyle = fontStyle;
+			//_taskDescription.fontStyle = fontStyle;
 
 			_taskName.text = task.Name;
 
