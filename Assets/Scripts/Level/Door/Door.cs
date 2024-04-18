@@ -89,11 +89,6 @@ namespace Level.Doors
 			_currentDegressThreshold = transform.rotation.eulerAngles.y;
 		}
 
-		private void Update()
-		{
-			TryRotateDoor();
-		}
-
 		#region Key open
 
 		private void TryOpenDoorByKey()
@@ -215,6 +210,13 @@ namespace Level.Doors
 				TryOpenDoorByKey();
 
 			StartRotateDoor();
+		}
+
+		public void UpdateInteract()
+		{
+			Debug.Log("SS");
+
+			TryRotateDoor();
 		}
 
 		public void StopInteract()

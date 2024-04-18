@@ -62,9 +62,9 @@ Material:
     - _BlendModePreserveSpecular: 1
     - _CastShadows: 1
     - _Cull: 2
-    - _DissolveBorderSize: 0.903
+    - _DissolveBorderSize: 0.036
     - _DissolveNoiseStrength: 42
-    - _DissolveStrength: 0.187
+    - _DissolveStrength: 0.01
     - _DstBlend: 0
     - _Float: 4.2
     - _QueueControl: 0
@@ -78,7 +78,7 @@ Material:
     - _ZWriteControl: 0
     m_Colors:
     - _DissolveBorder: {r: 0.011792451, g: 0.011792451, b: 0.011792451, a: 1}
-    - _DissolveBorderColor: {r: 0, g: 0, b: 0, a: 1}
+    - _DissolveBorderColor: {r: 0.009433985, g: 0.009433985, b: 0.009433985, a: 1}
     - _DissolveColor: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &173599246137178297

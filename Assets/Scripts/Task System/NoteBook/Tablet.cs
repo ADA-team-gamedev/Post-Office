@@ -28,8 +28,6 @@ namespace TaskSystem.NoteBook
 		private const string _selectedNewTaskHint = "Selected new task";
 		private const string _completedTaskHint = "Task is completed";
 
-		private FontStyles _defaultFontStyle;
-
 		#endregion
 
 		[Header("Tablet Screen Info")]
@@ -71,8 +69,6 @@ namespace TaskSystem.NoteBook
 			_defaultPosition = transform.position;
 
 			_playerDeathController.OnDied += DisableNoteBook;
-
-			_defaultFontStyle = _taskName.fontStyle;
 
 			_deffaultScreenInfoScale = _tabletScreenInfo.transform.localScale.x;
 		}

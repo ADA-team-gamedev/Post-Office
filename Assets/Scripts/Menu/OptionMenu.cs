@@ -1,4 +1,5 @@
 using DataPersistance;
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -18,6 +19,7 @@ namespace Menu
 
 		[SerializeField] private Toggle _vSyncToggle;
 
+		#region Audio
 		[Header("Audio")]
 
 		[SerializeField] private AudioMixer _masterMixer;
@@ -31,6 +33,10 @@ namespace Menu
 		[SerializeField] private Slider _effectSlider;
 		[SerializeField] private Slider _musicSlider;
 		[SerializeField] private Slider _uiSlider;
+
+		private const float _minLinearVolume = 0.0001f;
+
+		#endregion
 
 		#region Load System
 
@@ -97,15 +103,10 @@ namespace Menu
 
 			_vSyncToggle.isOn = _optionData.VSyncCountEnable;
 
-			_masterSlider.value = _optionData.MasterVolume;
-			_musicSlider.value = _optionData.MusicVolume;
-			_effectSlider.value = _optionData.EffectVolume;
-			_uiSlider.value = _optionData.UIVolume;
-
-			_masterMixerPercentText.text = $"{_masterSlider.value + 80}";
-			_musicMixerPercentText.text = $"{_musicSlider.value + 80}";
-			_effectMixerPercentText.text = $"{_effectSlider.value + 80}";
-			_uiMixerPercentText.text = $"{_uiSlider.value + 80}";
+			_masterSlider.value = DecibelToLinear(_optionData.MasterVolume);
+			_musicSlider.value = DecibelToLinear(_optionData.MusicVolume);
+			_effectSlider.value = DecibelToLinear(_optionData.EffectVolume);
+			_uiSlider.value = DecibelToLinear(_optionData.UIVolume);
 		}
 
 		#region Video Buttons
@@ -151,39 +152,59 @@ namespace Menu
 
 		public void SetMasterVolume()
 		{
-			_masterMixerPercentText.text = $"{_masterSlider.value + 80}";
+			float level = Mathf.Log10(_masterSlider.value) * 20f;
 
-			_masterMixer.SetFloat("MasterVolume", _masterSlider.value);
+			_masterMixerPercentText.text = $"{Mathf.RoundToInt(DecibelToLinear(level) * 100)}";
+			_masterMixer.SetFloat("MasterVolume", level);
 
-			_optionData.MasterVolume = _masterSlider.value;
+			_optionData.MasterVolume = level;
 		}
 
 		public void SetMusicVolume()
 		{
-			_musicMixerPercentText.text = $"{_musicSlider.value + 80}";
+			float level = Mathf.Log10(_musicSlider.value) * 20f;
 
-			_masterMixer.SetFloat("MusicVolume", _musicSlider.value);
+			_musicMixerPercentText.text = $"{Mathf.RoundToInt(DecibelToLinear(level) * 100)}";
 
-			_optionData.MusicVolume = _musicSlider.value;
+			_masterMixer.SetFloat("MusicVolume", level);
+
+			_optionData.MusicVolume = level;
 		}
 
 		public void SetEffectVolume()
 		{
-			_effectMixerPercentText.text = $"{_effectSlider.value + 80}";
+			float level = Mathf.Log10(_effectSlider.value) * 20f;
 
-			_masterMixer.SetFloat("EffectVolume", _effectSlider.value);
+			_effectMixerPercentText.text = $"{Mathf.RoundToInt(DecibelToLinear(level) * 100)}";
 
-			_optionData.EffectVolume = _effectSlider.value;
+			_masterMixer.SetFloat("EffectVolume", level);
+
+			_optionData.EffectVolume = level;
 		}
 
 		public void SetUIVolume()
 		{
-			_uiMixerPercentText.text = $"{_uiSlider.value + 80}";
+			float level = Mathf.Log10(_uiSlider.value) * 20f;
 
-			_masterMixer.SetFloat("UIVolume", _uiSlider.value);
+			_uiMixerPercentText.text = $"{Mathf.RoundToInt(DecibelToLinear(level) * 100)}";
 
-			_optionData.UIVolume = _uiSlider.value;
+			_masterMixer.SetFloat("UIVolume", level);
+
+			_optionData.UIVolume = level;
 		}
+
+		private float LinearToDecibel(float linear)
+		{
+			if (linear > 0)
+				return Mathf.Log10(linear) * 20f;
+			else
+				return _minLinearVolume;
+		}
+
+		private float DecibelToLinear(float decibel)
+		{
+			return Mathf.Pow(10f, decibel / 20f);
+		}	
 
 		#endregion
 	}
