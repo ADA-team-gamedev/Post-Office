@@ -120,6 +120,8 @@ namespace Audio
 			audioSource.outputAudioMixerGroup = audioSourceParameters.MixerGroup;
 
 			audioSource.spatialBlend = audioSourceParameters.SpatialBlend;
+
+			audioSource.loop = audioSourceParameters.IsLooped;
 		}
 
 		private bool TryGetClipFromCollection(string clipName, out SoundClip soundClip)

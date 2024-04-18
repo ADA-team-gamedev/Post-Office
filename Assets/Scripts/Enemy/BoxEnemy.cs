@@ -321,7 +321,7 @@ namespace Enemy
 			return false;
 		}
 
-		private bool IsReachablePoint(Vector3 point)
+		public bool IsReachablePoint(Vector3 point)
 		{
 			NavMeshPath path = new();
 

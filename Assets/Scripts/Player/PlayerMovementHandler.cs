@@ -330,6 +330,8 @@ namespace Player
 
 			Vector3 playerBodyCenter = new(transform.position.x, playerHalfHeight, transform.position.z);
 
+			Debug.DrawRay(playerBodyCenter, new(0, -(playerHalfHeight + 0.2f), 0));
+
 			bool isGrounded = Physics.Raycast(playerBodyCenter, Vector3.down, playerHalfHeight + 0.2f, _groundMask);
 
 			_rb.drag = isGrounded ? _groundDrag : 0;
@@ -424,6 +426,15 @@ namespace Player
 			_rb ??= GetComponent<Rigidbody>();
 
 			_playerCollider ??= GetComponent<CapsuleCollider>();
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			//float playerHalfHeight = transform.localScale.y * 0.5f;
+
+			//Vector3 playerBodyCenter = new(transform.position.x, playerHalfHeight, transform.position.z);
+			
+			//Gizmos.DrawRay(new(playerBodyCenter, new(0, -(playerHalfHeight + 0.2f), 0)));
 		}
 	}
 }
