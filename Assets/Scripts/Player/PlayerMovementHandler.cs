@@ -326,11 +326,15 @@ namespace Player
 
 		private void CheckGround()
 		{
-			float playerHalfHeight = transform.localScale.y * 0.5f;
+			float playerHalfHeight = _playerCollider.height * 0.5f;
 
-			Vector3 playerBodyCenter = new(transform.position.x, playerHalfHeight, transform.position.z);
+			Vector3 playerBodyCenter = new(transform.position.x, transform.position.y, transform.position.z);
 
-			bool isGrounded = Physics.Raycast(playerBodyCenter, Vector3.down, playerHalfHeight + 0.2f, _groundMask);
+			float rayLength = playerHalfHeight * 1.25f;
+
+			bool isGrounded = Physics.Raycast(playerBodyCenter, Vector3.down, rayLength, _groundMask);
+			
+			Debug.DrawRay(playerBodyCenter, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
 
 			_rb.drag = isGrounded ? _groundDrag : 0;
 		}
