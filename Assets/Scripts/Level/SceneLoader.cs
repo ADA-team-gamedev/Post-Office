@@ -28,7 +28,7 @@ public class SceneLoader : MonoBehaviour
 
 		_loadingProgressBar.value = 0;
 		
-		if (_dataService.LoadData(out string loadedSceneName, LoadingInfoPath, true))
+		if (_dataService.TryLoadData(out string loadedSceneName, LoadingInfoPath, true))
 			StartCoroutine(AsyncSceneLoading(loadedSceneName));		
 	}
 

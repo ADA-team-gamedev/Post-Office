@@ -37,7 +37,7 @@ namespace Level.Spawners
 
 		private void LoadDayProgress()
 		{
-			if (_dataService.LoadData(out WeekDay weekDay, WeekDayPath, true))
+			if (_dataService.TryLoadData(out WeekDay weekDay, WeekDayPath, true))
 				_currentWeekDay = weekDay;
 		}
 

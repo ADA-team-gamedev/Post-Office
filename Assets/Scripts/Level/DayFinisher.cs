@@ -46,7 +46,7 @@ namespace Level
 		[ContextMenu("Save & Load/" + nameof(LoadDayProgress))]
 		public void LoadDayProgress()
 		{
-			if (_dataService.LoadData(out WeekDay weekDay, WeekDayPath, true))
+			if (_dataService.TryLoadData(out WeekDay weekDay, WeekDayPath, true))
 				_currentWeekDay = weekDay;
 
 			Debug.Log($"Loaded current week day as {_currentWeekDay}");

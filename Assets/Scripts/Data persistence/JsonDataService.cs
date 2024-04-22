@@ -67,7 +67,7 @@ namespace DataPersistance
 			cryptoStream.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(data)));
 		}
 
-		public bool LoadData<T>(out T data, string relativePath, bool encrypted)
+		public bool TryLoadData<T>(out T data, string relativePath, bool encrypted)
 		{
 			string path = $"{Application.persistentDataPath}/{relativePath}";
 			
