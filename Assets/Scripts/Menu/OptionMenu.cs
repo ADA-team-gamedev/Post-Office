@@ -55,7 +55,7 @@ namespace Menu
 		[ContextMenu(nameof(LoadSettings))]
 		private void LoadSettings()
 		{
-			if (_dataService.LoadData(out OptionData optionData, SettingDataPath, true))
+			if (_dataService.TryLoadData(out OptionData optionData, SettingDataPath, true))
 				_optionData = optionData;
 			
 			ApplyChanges();
@@ -111,34 +111,25 @@ namespace Menu
 
 		#region Video Buttons
 
-		public void RightResolutionButton()
+		public void ResolutionButton(int index)
 		{
-			_optionData.SelectedScreenResolutionIndex++;
+			index = Mathf.Clamp(index, -1, 1);
+
+			_optionData.SelectedScreenResolutionIndex += index;
 		}
 
-		public void LeftResolutionButton()
+		public void FrameRateButton(int index)
 		{
-			_optionData.SelectedScreenResolutionIndex--;
+			index = Mathf.Clamp(index, -1, 1);
+
+			_optionData.SelectedFrameRatesIndex += index;
 		}
 
-		public void RightFrameRateButton()
+		public void FullScreenModeButton(int index)
 		{
-			_optionData.SelectedFrameRatesIndex++;
-		}
+			index = Mathf.Clamp(index, -1, 1);
 
-		public void LeftFrameRateButton()
-		{
-			_optionData.SelectedFrameRatesIndex--;
-		}
-
-		public void RightFullScreenModeButton()
-		{
-			_optionData.FullScreenMode++;
-		}
-
-		public void LeftFullScreenModeButton()
-		{
-			_optionData.FullScreenMode--;
+			_optionData.FullScreenMode += index;
 		}
 
 		public void ChangeVSyncState()

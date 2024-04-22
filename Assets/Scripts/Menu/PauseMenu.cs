@@ -1,3 +1,5 @@
+using DataPersistance;
+using Level.Spawners;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -20,6 +22,10 @@ namespace Menu
 
 		private PlayerInput _playerInput;
 
+		private IDataService _dataService = new JsonDataService();
+
+		private WeekDay _currentWeekDay = WeekDay.Monday;
+
 		[Inject]
 		private void Construct(PlayerInput playerInput)
 		{
@@ -33,6 +39,8 @@ namespace Menu
 			_exitWindow.SetActive(false);
 
 			_settingsWindow.SetActive(false);
+
+			_dataService.TryLoadData(out _currentWeekDay, DayObjectLoader.WeekDayPath, true);
 		}	
 
 		private void Start()
@@ -100,22 +108,11 @@ namespace Menu
 
 		public void OnNewGameButton()
 		{
-			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+			_currentWeekDay = WeekDay.Monday;
+
+			if (_dataService.SaveData(DayObjectLoader.WeekDayPath, _currentWeekDay, true))
+				SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
-
-		public void OnSaveButton()
-		{
-			return;
-		}
-
-		public void OnLoadButton()
-		{
-			return;
-		}
-
-		#endregion
-
-		#region Settings
 
 		#endregion
 
