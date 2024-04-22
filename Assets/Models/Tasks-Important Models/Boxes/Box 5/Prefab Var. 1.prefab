@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 3030889248998297220}
   - component: {fileID: 6085114525617649358}
   - component: {fileID: 3780520069015175021}
+  - component: {fileID: 429532110039140303}
   m_Layer: 0
   m_Name: Prefab Var. 1
   m_TagString: Untagged
@@ -103,3 +104,24 @@ LODGroup:
     renderers:
     - renderer: {fileID: 6085114525617649358}
   m_Enabled: 1
+--- !u!65 &429532110039140303
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5666713608936516936}
+  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.28999993, y: 0.16999999, z: 0.19}
+  m_Center: {x: 0, y: 0, z: -0.0000000037252903}

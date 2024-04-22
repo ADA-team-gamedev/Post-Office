@@ -214,8 +214,6 @@ namespace Level.Doors
 
 		public void UpdateInteract()
 		{
-			Debug.Log("SS");
-
 			TryRotateDoor();
 		}
 

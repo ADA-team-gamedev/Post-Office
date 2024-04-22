@@ -39,9 +39,7 @@ namespace Events.CrushedPC
 		#endregion
 
 		public event Action OnPCCrushed;
-		public event Action OnPlayerFixedPC;
 		public event Action OnPCFixed;
-
 
 		[Header("Fix Button")]
 		[SerializeField, Min(0.1f)] private float _buttonHoldingSpeed = 1f;
