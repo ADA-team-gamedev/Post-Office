@@ -177,6 +177,7 @@ GameObject:
   - component: {fileID: 3461595891710349044}
   - component: {fileID: 2333157007285414573}
   - component: {fileID: 9218265034933793277}
+  - component: {fileID: 1533863142147540320}
   m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
@@ -249,6 +250,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1533863142147540320
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4470540492507158720}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 31, y: 95.92568, z: 32.52264}
+  m_Center: {x: 0, y: 48.03716, z: 0.7613201}
 --- !u!1 &6777548023156612720
 GameObject:
   m_ObjectHideFlags: 0
@@ -343,6 +365,7 @@ GameObject:
   - component: {fileID: 7087647231295844083}
   - component: {fileID: 5146510185148994256}
   - component: {fileID: 3322770029319520392}
+  - component: {fileID: 3327866061658063189}
   m_Layer: 0
   m_Name: Bottle
   m_TagString: Untagged
@@ -415,6 +438,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3327866061658063189
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6874663001291563916}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 28.248348, y: 40.847214, z: 28.24834}
+  m_Center: {x: 0, y: 117.83634, z: 0.0000052452087}
 --- !u!1 &7144682823532997210
 GameObject:
   m_ObjectHideFlags: 0
@@ -534,7 +578,7 @@ Transform:
   - {fileID: 3763262246202217343}
   - {fileID: 5468283657100275894}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &9043169988511350149
 GameObject:

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8329880757796706415}
   - component: {fileID: 5710998188564263908}
   - component: {fileID: 1528866652561888403}
+  - component: {fileID: 9082619621667593307}
   m_Layer: 0
   m_Name: Muscle Car
   m_TagString: Untagged
@@ -33,7 +34,7 @@ Transform:
   - {fileID: 6593354090080490654}
   - {fileID: 5973954862175793353}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: -89.98, y: -160.56, z: 0}
 --- !u!33 &5710998188564263908
 MeshFilter:
@@ -85,6 +86,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &9082619621667593307
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3052669573088679703}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.019063799, y: 0.049243715, z: 0.010606048}
+  m_Center: {x: -1.10178006e-10, y: 0.0006974593, z: 0.007124402}
 --- !u!1 &5648118893154853918
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7806927112731009027}
   - component: {fileID: 7966450988567910281}
   - component: {fileID: 4888821597181909815}
+  - component: {fileID: 4112028165311465543}
   m_Layer: 0
   m_Name: Stand
   m_TagString: Untagged
@@ -83,6 +84,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4112028165311465543
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1626943943014166177}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 9.734483, y: 2.0552616, z: 8.3300905}
+  m_Center: {x: 0.05120516, y: 0.007444977, z: -0.13854812}
 --- !u!1 &6211524411124383748
 GameObject:
   m_ObjectHideFlags: 0
@@ -114,7 +136,7 @@ Transform:
   - {fileID: 7806927112731009027}
   - {fileID: 2945016587387002087}
   m_Father: {fileID: 0}
-  m_RootOrder: 19
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7095520226446841201
 GameObject:
@@ -127,6 +149,7 @@ GameObject:
   - component: {fileID: 2945016587387002087}
   - component: {fileID: 5934190750250353855}
   - component: {fileID: 1263409082603206458}
+  - component: {fileID: 4892904462728210052}
   m_Layer: 0
   m_Name: Moon
   m_TagString: Untagged
@@ -199,3 +222,26 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!136 &4892904462728210052
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7095520226446841201}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.9999998
+  m_Height: 1.9999989
+  m_Direction: 1
+  m_Center: {x: 0.00006070733, y: 0.0000003278255, z: 0.0000019073486}
