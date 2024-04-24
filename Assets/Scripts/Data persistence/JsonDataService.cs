@@ -9,6 +9,10 @@ namespace DataPersistance
 {
 	public class JsonDataService : IDataService
 	{
+		public const string SettingDataPath = "/Settings";
+		public const string LoadingInfoPath = "/LoadingInfo";
+		public const string WeekDayPath = "/WeekDay";
+
 		private const string Key = "ggdPhkeOoiv6YMiPWa34kIuOdDUL7NwQFg611DVdwN8=";
 		private const string IV = "JZuM0HQsWSBVpRHTeRZMYQ==";
 

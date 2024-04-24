@@ -40,7 +40,7 @@ namespace Menu
 
 			_settingsWindow.SetActive(false);
 
-			_dataService.TryLoadData(out _currentWeekDay, DayObjectLoader.WeekDayPath, true);
+			_dataService.TryLoadData(out _currentWeekDay, JsonDataService.WeekDayPath, true);
 		}	
 
 		private void Start()
@@ -110,7 +110,7 @@ namespace Menu
 		{
 			_currentWeekDay = WeekDay.Monday;
 
-			if (_dataService.SaveData(DayObjectLoader.WeekDayPath, _currentWeekDay, true))
+			if (_dataService.SaveData(JsonDataService.WeekDayPath, _currentWeekDay, true))
 				SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
 

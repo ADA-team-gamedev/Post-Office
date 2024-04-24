@@ -43,7 +43,6 @@ namespace Menu
 		public OptionData _optionData = new();
 
 		private IDataService _dataService = new JsonDataService();
-		public const string SettingDataPath = "/Settings";
 
 		#endregion
 
@@ -55,7 +54,7 @@ namespace Menu
 		[ContextMenu(nameof(LoadSettings))]
 		private void LoadSettings()
 		{
-			if (_dataService.TryLoadData(out OptionData optionData, SettingDataPath, true))
+			if (_dataService.TryLoadData(out OptionData optionData, JsonDataService.SettingDataPath, true))
 				_optionData = optionData;
 			
 			ApplyChanges();
@@ -66,13 +65,13 @@ namespace Menu
 		{
 			OptionData optionData = new();
 
-			_dataService.SaveData(SettingDataPath, optionData, true);
+			_dataService.SaveData(JsonDataService.SettingDataPath, optionData, true);
 		}
 
 		[ContextMenu(nameof(SaveSettings))]
 		private void SaveSettings()
 		{
-			_dataService.SaveData(SettingDataPath, _optionData, true);
+			_dataService.SaveData(JsonDataService.SettingDataPath, _optionData, true);
 		}
 
 		[ContextMenu(nameof(ApplyChanges))]

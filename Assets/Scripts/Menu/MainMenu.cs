@@ -21,7 +21,7 @@ namespace Menu
 
 		public void OnResumeButton(string sceneToLoad)
 		{
-			if (_dataService.SaveData(SceneLoader.LoadingInfoPath, sceneToLoad, true))
+			if (_dataService.SaveData(JsonDataService.LoadingInfoPath, sceneToLoad, true))
 				SceneManager.LoadScene(SceneLoader.LoadingSceneName);
 		}
 
@@ -29,7 +29,7 @@ namespace Menu
 		{
 			WeekDay weekDay = WeekDay.Monday;
 
-			if (_dataService.SaveData(DayObjectLoader.WeekDayPath, weekDay, true))
+			if (_dataService.SaveData(JsonDataService.WeekDayPath, weekDay, true))
 				OnResumeButton(sceneToLoad);		
 		}
 
