@@ -99,7 +99,7 @@ namespace Menu
 			}
 		}
 
-		private int _selectedFrameRates = 0;
+		private int _selectedFrameRates = 4;
 
 		public bool VSyncCountEnable { get; set; } = false;
 
