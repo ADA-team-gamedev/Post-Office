@@ -321,7 +321,7 @@ namespace Enemy
 			return false;
 		}
 
-		private bool IsReachablePoint(Vector3 point)
+		public bool IsReachablePoint(Vector3 point)
 		{
 			NavMeshPath path = new();
 
@@ -383,7 +383,9 @@ namespace Enemy
 				_isFleeing = false;
 			}
 			else
+			{
 				Debug.Log($"Can't go to that point({point}), because i can't reach it!");
+			}
 		}
 
 		private void Attacking()

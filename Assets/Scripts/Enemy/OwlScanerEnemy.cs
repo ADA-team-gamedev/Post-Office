@@ -91,7 +91,7 @@ namespace Enemy
 					return true;
 				}
 
-				if (boxEnemy.IsCanActivateEnemy())
+				if (boxEnemy.IsCanActivateEnemy() && boxEnemy.IsReachablePoint(_targetPosition))
 				{
 					boxToOrder = boxEnemy;
 

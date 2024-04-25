@@ -5,6 +5,13 @@ using Audio;
 
 namespace Level.Doors
 {
+	public enum DoorRotationDirection
+	{
+		Possitive = 1,
+		Neutral = 0,
+		Negative = -1,
+	}
+
 	[RequireComponent(typeof(HingeJoint))] //don't forget to set up them, change rigidbody to static
 	public class Door : MonoBehaviour, IInteractable
 	{
@@ -19,7 +26,9 @@ namespace Level.Doors
 		[SerializeField] private float _doorDragingDistance = 3f;
 
 		[SerializeField] private float _doorOpeningForce = 10f;
-		[SerializeField][Range(2000f, 10000f)] private float _doorRotationSpeed = 5000f;
+		[SerializeField, Range(2000f, 10000f)] private float _doorRotationSpeed = 5000f;
+
+		[SerializeField, Range(0f, 90f)] private float _rotationDegressThreshold = 45f;
 
 		#endregion	
 
@@ -39,6 +48,10 @@ namespace Level.Doors
 		private float _doorRotation;
 
 		private bool _isDoorMoving = false;
+
+		private DoorRotationDirection _previousDoorRotationDirection = DoorRotationDirection.Neutral;
+
+		private float _currentDegressThreshold;
 
 		#endregion
 
@@ -72,11 +85,8 @@ namespace Level.Doors
 			_doorRotation = _isDoorMustBeClosedOnStart ? _hingeJoint.limits.max : _hingeJoint.limits.min;
 			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
-		}
 
-		private void Update()
-		{
-			TryRotateDoor();
+			_currentDegressThreshold = transform.rotation.eulerAngles.y;
 		}
 
 		#region Key open
@@ -121,11 +131,34 @@ namespace Level.Doors
 
 			_playerClickedViewPoint = _interactorCameraTransform.position + _interactorCameraTransform.forward * _doorDragingDistance;
 
-			_doorRotation += Mathf.Clamp(-GetDoorRotation() * _doorRotationSpeed * Time.deltaTime, -_doorOpeningForce, _doorOpeningForce);
+			float doorRotation = GetDoorRotation() * _doorRotationSpeed * Time.deltaTime;
+
+			DoorRotationDirection currentDoorRotationDirection;
+
+			if (doorRotation > 0) 
+				currentDoorRotationDirection = DoorRotationDirection.Possitive;
+			else if (doorRotation < 0)
+				currentDoorRotationDirection = DoorRotationDirection.Negative;
+			else
+				currentDoorRotationDirection = DoorRotationDirection.Neutral;
+
+			_doorRotation += Mathf.Clamp(-doorRotation, -_doorOpeningForce, _doorOpeningForce); //we must invert direction
 
 			_doorRotation = Mathf.Clamp(_doorRotation, _hingeJoint.limits.min, _hingeJoint.limits.max);
 			
 			transform.rotation = Quaternion.Euler(0, _doorRotation, 0);
+			
+			if (currentDoorRotationDirection != DoorRotationDirection.Neutral && currentDoorRotationDirection != _previousDoorRotationDirection)
+			{
+				_previousDoorRotationDirection = currentDoorRotationDirection;
+
+				if (transform.rotation.eulerAngles.y >= _currentDegressThreshold + _rotationDegressThreshold || transform.rotation.eulerAngles.y <= _currentDegressThreshold - _rotationDegressThreshold)
+				{
+					_currentDegressThreshold = transform.rotation.eulerAngles.y;
+					
+					AudioManager.Instance.PlaySound(_doorRotationSound, transform.position, spatialBlend: 0.8f);
+				}
+			}
 		}
 
 		private void StartRotateDoor()
@@ -136,8 +169,6 @@ namespace Level.Doors
 			_isPlayerDragDoor = true;
 
 			_isDoorMoving = true;
-
-			AudioManager.Instance.PlaySound(_doorRotationSound, transform.position, spatialBlend: 0.8f);
 		}
 
 		private void StopRotateDoor()
@@ -179,6 +210,11 @@ namespace Level.Doors
 				TryOpenDoorByKey();
 
 			StartRotateDoor();
+		}
+
+		public void UpdateInteract()
+		{
+			TryRotateDoor();
 		}
 
 		public void StopInteract()

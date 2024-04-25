@@ -9,6 +9,10 @@ namespace DataPersistance
 {
 	public class JsonDataService : IDataService
 	{
+		public const string SettingDataPath = "/Settings";
+		public const string LoadingInfoPath = "/LoadingInfo";
+		public const string WeekDayPath = "/WeekDay";
+
 		private const string Key = "ggdPhkeOoiv6YMiPWa34kIuOdDUL7NwQFg611DVdwN8=";
 		private const string IV = "JZuM0HQsWSBVpRHTeRZMYQ==";
 
@@ -67,7 +71,7 @@ namespace DataPersistance
 			cryptoStream.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(data)));
 		}
 
-		public bool LoadData<T>(out T data, string relativePath, bool encrypted)
+		public bool TryLoadData<T>(out T data, string relativePath, bool encrypted)
 		{
 			string path = $"{Application.persistentDataPath}/{relativePath}";
 			

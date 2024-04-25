@@ -429,5 +429,14 @@ namespace Player
 
 			_playerCollider ??= GetComponent<CapsuleCollider>();
 		}
+
+		private void OnDrawGizmosSelected()
+		{
+			//float playerHalfHeight = transform.localScale.y * 0.5f;
+
+			//Vector3 playerBodyCenter = new(transform.position.x, playerHalfHeight, transform.position.z);
+			
+			//Gizmos.DrawRay(new(playerBodyCenter, new(0, -(playerHalfHeight + 0.2f), 0)));
+		}
 	}
 }

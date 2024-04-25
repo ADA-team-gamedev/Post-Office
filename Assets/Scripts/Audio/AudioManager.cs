@@ -29,7 +29,7 @@ namespace Audio
 		private void FillAudioSource()
 		{
 			AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
-
+			
 			foreach (var source in audioSources)
 			{
 				_audioSources.TryAdd(source.outputAudioMixerGroup, source);
@@ -54,6 +54,11 @@ namespace Audio
 		}
 
 		#region Play Sound
+
+		public void PlaySound(string clipName)
+		{
+			PlaySound(clipName, transform.position);
+		}
 
 		public void PlaySound(string clipName, Vector3 spawnPosition, float volume = 1f, float spatialBlend = 0)
 		{
@@ -120,6 +125,8 @@ namespace Audio
 			audioSource.outputAudioMixerGroup = audioSourceParameters.MixerGroup;
 
 			audioSource.spatialBlend = audioSourceParameters.SpatialBlend;
+
+			audioSource.loop = audioSourceParameters.IsLooped;
 		}
 
 		private bool TryGetClipFromCollection(string clipName, out SoundClip soundClip)

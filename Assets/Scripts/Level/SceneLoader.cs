@@ -18,7 +18,6 @@ public class SceneLoader : MonoBehaviour
 	private IDataService _dataService = new JsonDataService();
 
 	public const string LoadingSceneName = "Loading";
-	public const string LoadingInfoPath = "/LoadingInfo";
 
 	private void Start()
 	{
@@ -28,7 +27,7 @@ public class SceneLoader : MonoBehaviour
 
 		_loadingProgressBar.value = 0;
 		
-		if (_dataService.LoadData(out string loadedSceneName, LoadingInfoPath, true))
+		if (_dataService.TryLoadData(out string loadedSceneName, JsonDataService.LoadingInfoPath, true))
 			StartCoroutine(AsyncSceneLoading(loadedSceneName));		
 	}
 

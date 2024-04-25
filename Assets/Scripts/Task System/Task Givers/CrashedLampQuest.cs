@@ -7,7 +7,7 @@ namespace TaskSystem.TaskGivers
 	{
 		[Header("Task")]
 		[SerializeField] private TaskData _crashedLampTask;
-		
+
 		private BreakableLamp[] _breakableLamps;
 
 		private void Start()
