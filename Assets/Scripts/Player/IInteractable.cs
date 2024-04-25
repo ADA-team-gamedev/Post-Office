@@ -4,6 +4,8 @@ namespace Player
     {
         public void StartInteract();
 
+        public void UpdateInteract();
+
         public void StopInteract();
     }
 }

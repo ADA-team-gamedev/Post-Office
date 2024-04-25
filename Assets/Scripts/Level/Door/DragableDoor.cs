@@ -78,11 +78,6 @@ public class DragableDoor : MonoBehaviour, IInteractable
 		transform.rotation = Quaternion.Euler(0, _angle, 0);
 	}
 
-	private void Update()
-	{
-		RotateDoor();
-	}
-
 	#region Key Open
 
 	private void TryOpenDoorByKey()
@@ -194,6 +189,11 @@ public class DragableDoor : MonoBehaviour, IInteractable
 		TryOpenDoorByKey();
 
 		StartRotateDoor();
+	}
+
+	public void UpdateInteract()
+	{
+		RotateDoor();
 	}
 
 	public void StopInteract()

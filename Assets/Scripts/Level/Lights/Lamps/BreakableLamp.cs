@@ -17,6 +17,9 @@ namespace Level.Lights.Lamp
 		[SerializeField] private float _minLampLifeDelayBeforeBreaking = 40;
 		[SerializeField] private float _maxLampLifeDelayBeforeBreaking = 180;
 
+		[Space(10)]
+		[SerializeField] private string _lampCrushSoundName = "Lamp Crush";
+
 		private float _lampDelayBeforeBreakingRemaining;
 
 		public event Action OnLampDestroyed;
@@ -102,7 +105,7 @@ namespace Level.Lights.Lamp
 			if (IsLampDestroyed)
 				return;
 
-			AudioManager.Instance.PlaySound("Lamp Crush", transform.position, spatialBlend: 1f);
+			AudioManager.Instance.PlaySound(_lampCrushSoundName, transform.position, spatialBlend: 1f);
 
 			OnLampDestroyed?.Invoke();
 

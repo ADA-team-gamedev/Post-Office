@@ -1,3 +1,6 @@
+using Audio;
+using DataPersistance;
+using Level.Spawners;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -8,9 +11,24 @@ namespace Menu
 	public class PauseMenu : MonoBehaviour
 	{
 		[Header("Menus")]
-		[SerializeField] private GameObject _pauseMenu;
-		[SerializeField] private GameObject _exitWindow;
-		[SerializeField] private GameObject _settingsWindow;
+
+		[Header("Pause Menu")]
+		[SerializeField] private Animator _pauseMenuAnimator;
+
+		[SerializeField] private GameObject _pauseMenuParent;
+
+		[SerializeField] private string _showPauseMenuTrigger = "Show";
+		[SerializeField] private string _hidePauseMenuTrigger = "Hide";
+
+		[SerializeField] private string _pauseMenuSound = "Click";
+
+		[Header("Settings Window")]
+		[SerializeField] private Animator _settingsMenuAnimator;
+
+		[SerializeField] private GameObject _settingsMenuParent;
+
+		//[SerializeField] private string _showSettingsMenuTrigger = "Show";
+		[SerializeField] private string _hideSettingsMenuTrigger = "Hide";
 
 		[Header("Player")]
 		[SerializeField] private GameObject _playerCrosshair;
@@ -19,6 +37,10 @@ namespace Menu
 		private bool _isPaused = false;
 
 		private PlayerInput _playerInput;
+
+		private IDataService _dataService = new JsonDataService();
+
+		private WeekDay _currentWeekDay = WeekDay.Monday;
 
 		[Inject]
 		private void Construct(PlayerInput playerInput)
@@ -30,9 +52,9 @@ namespace Menu
 
 		private void Awake()
 		{
-			_exitWindow.SetActive(false);
+			//_settingsMenuAnimator.gameObject.SetActive(false);
 
-			_settingsWindow.SetActive(false);
+			_dataService.TryLoadData(out _currentWeekDay, JsonDataService.WeekDayPath, true);
 		}	
 
 		private void Start()
@@ -45,7 +67,11 @@ namespace Menu
 		private void OnPauseMenu(InputAction.CallbackContext context)
 		{
 			_isPaused = !_isPaused;
-			
+
+			AudioManager.Instance.PlaySound(_pauseMenuSound, transform.position);
+
+			//AudioListener.pause = _isPaused;
+
 			if (_isPaused)
 			{
 				Time.timeScale = 0;
@@ -61,7 +87,7 @@ namespace Menu
 				OnResumeButton();
 			}
 
-			_pauseMenu.SetActive(_isPaused);
+			_pauseMenuAnimator.SetTrigger(_isPaused ? _showPauseMenuTrigger : _hidePauseMenuTrigger);
 
 			_playerCrosshair.SetActive(!_isPaused);
 
@@ -81,13 +107,15 @@ namespace Menu
 
 			_isPaused = false;
 
+			//AudioListener.pause = false;
+
 			_playerInput.Player.Enable();
 
-			_exitWindow.SetActive(false);
+			if (_settingsMenuParent.activeInHierarchy)
+				_settingsMenuAnimator.SetTrigger(_hideSettingsMenuTrigger);
 
-			_settingsWindow.SetActive(false);
-
-			_pauseMenu.SetActive(false);
+			if (_pauseMenuParent.activeInHierarchy)
+				_pauseMenuAnimator.SetTrigger(_hidePauseMenuTrigger);
 
 			_playerCrosshair.SetActive(true);
 
@@ -96,22 +124,11 @@ namespace Menu
 
 		public void OnNewGameButton()
 		{
-			SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+			_currentWeekDay = WeekDay.Monday;
+
+			if (_dataService.SaveData(JsonDataService.WeekDayPath, _currentWeekDay, true))
+				SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
 		}
-
-		public void OnSaveButton()
-		{
-			return;
-		}
-
-		public void OnLoadButton()
-		{
-			return;
-		}
-
-		#endregion
-
-		#region Settings
 
 		#endregion
 

@@ -57,7 +57,17 @@ namespace Player
 
 		private void Update()
 		{
+			OnUpdateInteract();
+
 			ChangeCrossHair();
+		}
+
+		private void OnUpdateInteract()
+		{
+			if (!_playerInput.Player.Interact.IsPressed())
+				return;
+
+			_interactableObject?.UpdateInteract();
 		}
 
 		private void ChangeCrossHair()
@@ -122,7 +132,7 @@ namespace Player
 						_interactableObject.StartInteract();
 				}
 			}
-		}
+		}	
 
 		private void OnStopInteract(InputAction.CallbackContext context)
 		{

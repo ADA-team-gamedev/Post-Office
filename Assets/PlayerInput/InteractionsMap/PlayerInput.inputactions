@@ -69,15 +69,6 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "PlaceItem",
-                    "type": "Button",
-                    "id": "73918d3c-dca1-466c-9818-bc1801c892b8",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
-                },
-                {
                     "name": "DropItem",
                     "type": "Button",
                     "id": "d38466f0-2ef7-47fe-8781-a91e1ea7e1bd",
@@ -316,17 +307,6 @@
                 },
                 {
                     "name": "",
-                    "id": "1f15f03d-6efa-422d-bac1-155a7bff1cdf",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard and Mouse",
-                    "action": "PlaceItem",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "82e08f9e-4b52-4351-8045-834407c9d467",
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
@@ -395,6 +375,39 @@
                     "name": "",
                     "id": "23fa90c5-ddd7-4fcc-b92b-d37810885a76",
                     "path": "<Keyboard>/anyKey",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "AnyKey",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c8ad67c7-bb11-412e-8448-c6508ef1f91d",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "AnyKey",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bc0850fc-c8d0-4fa3-817b-05c8d1b2906a",
+                    "path": "<Mouse>/middleButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard and Mouse",
+                    "action": "AnyKey",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3c4a87c4-7412-4767-b909-d9da84579b50",
+                    "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard and Mouse",

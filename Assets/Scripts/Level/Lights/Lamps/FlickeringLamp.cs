@@ -12,20 +12,23 @@ namespace Level.Lights.Lamp
 
 		[SerializeField] private bool _isFlashableLamp = true;
 
-		[SerializeField] private float _timeSinceGameStartToStartFlashing = 60f;
+		[SerializeField, Min(0)] private float _timeSinceGameStartToStartFlashing = 60f;
 		[SerializeField, Range(1, 100)] private int _flashingStartChance = 50;
 
 		[Space(10)]
-		[SerializeField] private float _minFlashingCooldownDelay = 30;
-		[SerializeField] private float _maxFlashingCooldownDelay = 60;
+		[SerializeField, Min(0)] private float _minFlashingCooldownDelay = 30;
+		[SerializeField, Min(0)] private float _maxFlashingCooldownDelay = 60;
 		private float _flashingCooldownRemaining = 0;
 
 		[Space(10)]
-		[SerializeField] private float _minFlashingDelay = 1;
-		[SerializeField] private float _maxFlashingDelay = 7;
+		[SerializeField, Min(0)] private float _minFlashingDelay = 1;
+		[SerializeField, Min(0)] private float _maxFlashingDelay = 7;
 
 		[Space(10)]
 		[SerializeField] private FlashingLightCurvesData _flashingCurves;
+
+		[Space(10)]
+		[SerializeField] private string _lampFlashingSoundName = "Lamp Flashing";
 
 		private bool _isFlashing = false;
 
@@ -68,13 +71,9 @@ namespace Level.Lights.Lamp
 				int randomNumber = Random.Range(1, 100);
 
 				if (_flashingStartChance > randomNumber)
-				{
-					StartFlashingEvent();
-				}
+					StartFlashingEvent();		
 				else
-				{
-					_flashingCooldownRemaining = Random.Range(_minFlashingCooldownDelay, _maxFlashingCooldownDelay);
-				}
+					_flashingCooldownRemaining = Random.Range(_minFlashingCooldownDelay, _maxFlashingCooldownDelay);				
 			}
 			else
 			{
@@ -104,7 +103,7 @@ namespace Level.Lights.Lamp
 
 			float flashingDelay = Random.Range(_minFlashingDelay, _maxFlashingDelay);
 
-			AudioManager.Instance.PlaySound("Lamp Flashing", transform.position, soundDelay: flashingDelay, spatialBlend: 1f);
+			AudioManager.Instance.PlaySound(_lampFlashingSoundName, transform.position, soundDelay: flashingDelay, spatialBlend: 1f);
 
 			int randomCurveIndex = Random.Range(0, _possibleCountOfCurves);
 
@@ -157,7 +156,7 @@ namespace Level.Lights.Lamp
 				float t = curve.Evaluate(elapsedTime);
 
 				Color currentEmissionColor = Color.Lerp(DisabledLampColor, DefaultLampColor, t);
-
+				
 				MaterialPropertyBlock.SetColor(EmissionColor, currentEmissionColor);
 
 				LampRenderer.SetPropertyBlock(MaterialPropertyBlock);

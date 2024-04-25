@@ -18,7 +18,6 @@ namespace Level
 		private IDataService _dataService = new JsonDataService();
 
 		private WeekDay _currentWeekDay = WeekDay.Monday;
-		public const string WeekDayPath = "/WeekDay";
 
 		private void Start()
 		{
@@ -46,7 +45,7 @@ namespace Level
 		[ContextMenu("Save & Load/" + nameof(LoadDayProgress))]
 		public void LoadDayProgress()
 		{
-			if (_dataService.LoadData(out WeekDay weekDay, WeekDayPath, true))
+			if (_dataService.TryLoadData(out WeekDay weekDay, JsonDataService.WeekDayPath, true))
 				_currentWeekDay = weekDay;
 
 			Debug.Log($"Loaded current week day as {_currentWeekDay}");
@@ -57,7 +56,7 @@ namespace Level
 		[ContextMenu("Save & Load/" + nameof(SaveDayProgress))]
 		public void SaveDayProgress()
 		{
-			_dataService.SaveData(WeekDayPath, _currentWeekDay, true);
+			_dataService.SaveData(JsonDataService.WeekDayPath, _currentWeekDay, true);
 		}
 
 		[ContextMenu("Save & Load/" + nameof(ResetSaves))]

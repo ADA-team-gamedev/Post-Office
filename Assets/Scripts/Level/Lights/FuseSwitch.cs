@@ -72,6 +72,11 @@ namespace Level.Lights
 			AudioManager.Instance.PlaySound("Fuse Switch Change", transform.position, spatialBlend: 1);
 		}
 
+		public void UpdateInteract() 
+		{ 
+
+		}
+
 		public void StopInteract()
 		{
 

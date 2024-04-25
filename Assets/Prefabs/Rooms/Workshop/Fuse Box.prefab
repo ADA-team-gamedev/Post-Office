@@ -1695,6 +1695,7 @@ MonoBehaviour:
   _doorDragingDistance: 1.5
   _doorOpeningForce: 100
   _doorRotationSpeed: 10000
+  _rotationDegressThreshold: 45.2
   _doorModel: {fileID: 8878504986903011619}
   _playerInteractor: {fileID: 0}
   <IsClosed>k__BackingField: 1
@@ -1703,8 +1704,6 @@ MonoBehaviour:
   _closedDoor: Fuse Door Closed
   _fullyClosedDoor: Fully Closed Fuse Door
   _doorRotationSound: Fuse Door Rotation
-  _rotationSoundRemainingSpeed: 1
-  _rotationSoundCooldown: 1
 --- !u!1 &7162989682918446349
 GameObject:
   m_ObjectHideFlags: 0
