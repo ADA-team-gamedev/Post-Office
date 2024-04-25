@@ -1,3 +1,4 @@
+using Audio;
 using DataPersistance;
 using Level.Spawners;
 using UnityEngine;
@@ -10,9 +11,24 @@ namespace Menu
 	public class PauseMenu : MonoBehaviour
 	{
 		[Header("Menus")]
-		[SerializeField] private GameObject _pauseMenu;
-		[SerializeField] private GameObject _exitWindow;
-		[SerializeField] private GameObject _settingsWindow;
+
+		[Header("Pause Menu")]
+		[SerializeField] private Animator _pauseMenuAnimator;
+
+		[SerializeField] private GameObject _pauseMenuParent;
+
+		[SerializeField] private string _showPauseMenuTrigger = "Show";
+		[SerializeField] private string _hidePauseMenuTrigger = "Hide";
+
+		[SerializeField] private string _pauseMenuSound = "Click";
+
+		[Header("Settings Window")]
+		[SerializeField] private Animator _settingsMenuAnimator;
+
+		[SerializeField] private GameObject _settingsMenuParent;
+
+		//[SerializeField] private string _showSettingsMenuTrigger = "Show";
+		[SerializeField] private string _hideSettingsMenuTrigger = "Hide";
 
 		[Header("Player")]
 		[SerializeField] private GameObject _playerCrosshair;
@@ -36,9 +52,7 @@ namespace Menu
 
 		private void Awake()
 		{
-			_exitWindow.SetActive(false);
-
-			_settingsWindow.SetActive(false);
+			//_settingsMenuAnimator.gameObject.SetActive(false);
 
 			_dataService.TryLoadData(out _currentWeekDay, JsonDataService.WeekDayPath, true);
 		}	
@@ -54,7 +68,9 @@ namespace Menu
 		{
 			_isPaused = !_isPaused;
 
-			AudioListener.pause = _isPaused;
+			AudioManager.Instance.PlaySound(_pauseMenuSound, transform.position);
+
+			//AudioListener.pause = _isPaused;
 
 			if (_isPaused)
 			{
@@ -71,7 +87,7 @@ namespace Menu
 				OnResumeButton();
 			}
 
-			_pauseMenu.SetActive(_isPaused);
+			_pauseMenuAnimator.SetTrigger(_isPaused ? _showPauseMenuTrigger : _hidePauseMenuTrigger);
 
 			_playerCrosshair.SetActive(!_isPaused);
 
@@ -91,15 +107,15 @@ namespace Menu
 
 			_isPaused = false;
 
-			AudioListener.pause = false;
+			//AudioListener.pause = false;
 
 			_playerInput.Player.Enable();
 
-			_exitWindow.SetActive(false);
+			if (_settingsMenuParent.activeInHierarchy)
+				_settingsMenuAnimator.SetTrigger(_hideSettingsMenuTrigger);
 
-			_settingsWindow.SetActive(false);
-
-			_pauseMenu.SetActive(false);
+			if (_pauseMenuParent.activeInHierarchy)
+				_pauseMenuAnimator.SetTrigger(_hidePauseMenuTrigger);
 
 			_playerCrosshair.SetActive(true);
 
