@@ -134,7 +134,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -412,6 +412,7 @@ MonoBehaviour:
   <IsLampEnabled>k__BackingField: 1
   _playerTag: Player
   <Light>k__BackingField: {fileID: 5787579633289754172}
+  <LampRenderer>k__BackingField: {fileID: 3573831588885483870}
   OnStay:
     m_PersistentCalls:
       m_Calls: []
@@ -423,10 +424,11 @@ MonoBehaviour:
   _minFlashingDelay: 1
   _maxFlashingDelay: 7
   _flashingCurves: {fileID: 11400000, guid: 564591a613ff6f741ac8e2c9af728a24, type: 2}
-  <LampRenderer>k__BackingField: {fileID: 3573831588885483870}
+  _lampFlashingSoundName: Lamp Flashing
   _electronicalSparkVF: {fileID: 6020625768119497919}
   _minLampLifeDelayBeforeBreaking: 120
   _maxLampLifeDelayBeforeBreaking: 360
+  _lampCrushSoundName: Lamp Crush
 --- !u!205 &8356895055831143616
 LODGroup:
   m_ObjectHideFlags: 0

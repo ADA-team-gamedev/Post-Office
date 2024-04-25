@@ -134,7 +134,10 @@ namespace Menu
 
 		public void OnExitToMenu()
 		{
-			SceneManager.LoadScene("Menu");
+			string sceneToLoad = "Menu";
+
+			if (_dataService.SaveData(JsonDataService.LoadingInfoPath, sceneToLoad, true))
+				SceneManager.LoadScene(SceneLoader.LoadingSceneName);
 		}
 
 		public void OnExitToDesktop()
@@ -143,5 +146,11 @@ namespace Menu
 		}
 
 		#endregion
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+				_playerInput.UI.PauseMenu.performed -= OnPauseMenu;
+		}
 	}
 }

@@ -72,6 +72,7 @@ MonoBehaviour:
   <IsLampEnabled>k__BackingField: 1
   _playerTag: Player
   <Light>k__BackingField: {fileID: 9054486722243454009}
+  <LampRenderer>k__BackingField: {fileID: 930907785034465957}
   OnStay:
     m_PersistentCalls:
       m_Calls: []
@@ -83,7 +84,7 @@ MonoBehaviour:
   _minFlashingDelay: 1
   _maxFlashingDelay: 7
   _flashingCurves: {fileID: 11400000, guid: 564591a613ff6f741ac8e2c9af728a24, type: 2}
-  <LampRenderer>k__BackingField: {fileID: 930907785034465957}
+  _lampFlashingSoundName: Lamp Flashing
 --- !u!205 &7847750736144876921
 LODGroup:
   m_ObjectHideFlags: 0
@@ -293,7 +294,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
