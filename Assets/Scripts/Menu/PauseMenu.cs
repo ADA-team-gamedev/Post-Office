@@ -52,8 +52,6 @@ namespace Menu
 
 		private void Awake()
 		{
-			//_settingsMenuAnimator.gameObject.SetActive(false);
-
 			_dataService.TryLoadData(out _currentWeekDay, JsonDataService.WeekDayPath, true);
 		}	
 
