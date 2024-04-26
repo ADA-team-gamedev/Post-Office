@@ -18,8 +18,6 @@ namespace Effects
 		public const float MaxDissolveEffectStrength = 1;
 		public const float MinDissolveEffectStrength = 0;
 
-		[Range(0f, 1f)] public float some = 0;
-
 		private void Awake()
 		{
 			_block = new();
@@ -35,11 +33,6 @@ namespace Effects
 			_image.material.SetTexture(DissolveEffectTexture, _dissolveTexture);
 			
 			_image.material.SetFloat(DissolveEffectStrengthName, MinDissolveEffectStrength);
-		}
-
-		private void Update()
-		{
-			_image.material.SetFloat(DissolveEffectStrengthName, some);
 		}
 
 		private void OnValidate()

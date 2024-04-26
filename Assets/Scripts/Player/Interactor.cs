@@ -160,5 +160,14 @@ namespace Player
 
 			Gizmos.DrawRay(_interactionRay.origin, _interactionRay.direction * InteractionDistance);
 		}
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.Interact.performed -= OnStartInteract;
+				_playerInput.Player.Interact.canceled -= OnStopInteract;
+			}
+		}
 	}
 }

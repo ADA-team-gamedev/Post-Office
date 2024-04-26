@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TaskSystem;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
@@ -42,6 +43,8 @@ namespace Player
 		[Header("Visualization")]
 
 		[SerializeField] private Volume _sanityVolume;
+
+		[SerializeField] private TMP_Text _sanityPercentText;
 
 		private float percent;
 
@@ -91,6 +94,8 @@ namespace Player
 				_sanityVolume.weight = percent;
 
 				_slider.value = Sanity;
+
+				_sanityPercentText.text = $"{Mathf.RoundToInt(_sanityValue / _maxSanityValue * 100)}%";
 
 				yield return null;
 			}

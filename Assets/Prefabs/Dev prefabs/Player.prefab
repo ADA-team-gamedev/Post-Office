@@ -78,8 +78,8 @@ Camera:
   m_GameObject: {fileID: 4550157863427707663}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.3019608, g: 0.3019608, b: 0.3019608, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -101,7 +101,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 30
   field of view: 60
   orthographic: 0
   orthographic size: 5
@@ -365,10 +365,8 @@ MonoBehaviour:
   _pickupRange: 3
   _dropUpForce: 2
   _dropForce: 1
-  _changeItemWhenPickup: 1
   _playerHand: {fileID: 5322286662015815355}
   _playerCamera: {fileID: 4412293600245582168}
-  _noteBook: {fileID: 0}
 --- !u!114 &1035198397113733364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,6 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <PlayerCamera>k__BackingField: {fileID: 4412293600245582168}
+  <InteractionDistance>k__BackingField: 3
   _crosshairImage: {fileID: 0}
   _defaultCrosshair: {fileID: 21300000, guid: 28b087a90c799a8439d5b0ffef0de174, type: 3}
   _crosshairLock: {fileID: 21300000, guid: 138b192230c6c7b4abbf0dc0472a8d9f, type: 3}

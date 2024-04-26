@@ -326,7 +326,7 @@ Transform:
   - {fileID: 8028192366109274088}
   - {fileID: 7983631905012849924}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4427478798123150507
 GameObject:
@@ -1897,6 +1897,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 732012687914633572}
     m_Modifications:
+    - target: {fileID: 1106666183252947232, guid: 60f7cc05c1d69f344aaa9fbc1f2a9002,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1561758192020384455, guid: 60f7cc05c1d69f344aaa9fbc1f2a9002,
         type: 3}
       propertyPath: m_RootOrder
@@ -1956,6 +1961,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Armchair L
+      objectReference: {fileID: 0}
+    - target: {fileID: 3231238808648047987, guid: 60f7cc05c1d69f344aaa9fbc1f2a9002,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3931682694463239928, guid: 60f7cc05c1d69f344aaa9fbc1f2a9002,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6416209258147478532, guid: 60f7cc05c1d69f344aaa9fbc1f2a9002,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -1,7 +1,6 @@
+using Audio;
 using DataPersistance;
-using Effects;
 using Level.Spawners;
-using System.Collections;
 using TaskSystem.NoteBook;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -10,19 +9,23 @@ namespace Level
 {
 	public class DayFinisher : MonoBehaviour
 	{
-		[SerializeField] private string _menuSceneName = "Menu";
-		[SerializeField] private TimeClock _timeClock;
+		[Header("Effect")]
+		[SerializeField] private Animator _dissolveEffect;
+		[SerializeField] private string _dissolveEffectTrigger = "Show";
+		[SerializeField, Min(1f)] private float _dissolveEffectDelay = 1f;
 
-		[SerializeField] private DissolveEffect _dissolveEffect;
+		[Header("Scene Name")]
+		[SerializeField] private string _menuSceneName = "Menu";
+
+		[Header("Time Clock")]
+		[SerializeField] private TimeClock _timeClock;
 
 		private IDataService _dataService = new JsonDataService();
 
-		private WeekDay _currentWeekDay = WeekDay.Monday;
+		private WeekDay _currentWeekDay = WeekDay.Monday;	
 
 		private void Start()
 		{
-			_dissolveEffect.gameObject.SetActive(false);
-			
 			_timeClock.OnGameCompleted += FinishDayWork;
 
 			_timeClock.OnGameCompleted += IncreasePlayerDayProgress;
@@ -35,9 +38,11 @@ namespace Level
 		{
 			_timeClock.OnGameCompleted -= FinishDayWork;
 
-			_dissolveEffect.gameObject.SetActive(true);
+			AudioManager.Instance.PlaySound("Click", transform.position);
 
-			StartCoroutine(PlayDissolveEffect());
+			_dissolveEffect.SetTrigger(_dissolveEffectTrigger);
+
+			Invoke(nameof(LoadMenu), _dissolveEffectDelay);
 		}
 
 		#region Save & Load Systems
@@ -79,22 +84,12 @@ namespace Level
 			SaveDayProgress();
 		}
 
-		#endregion
-
-		private IEnumerator PlayDissolveEffect()
+		private void LoadMenu()
 		{
-			float dissolveEffectStrength = DissolveEffect.MinDissolveEffectStrength;
-
-			while (dissolveEffectStrength < DissolveEffect.MaxDissolveEffectStrength)
-			{
-				_dissolveEffect.ChangeEffectStrength(dissolveEffectStrength);
-
-				dissolveEffectStrength += Time.deltaTime;
-
-				yield return null;
-			}
-
-			SceneManager.LoadScene(_menuSceneName);
+			if (_dataService.SaveData(JsonDataService.LoadingInfoPath, _menuSceneName, true))
+				SceneManager.LoadScene(SceneLoader.LoadingSceneName);
 		}
+
+		#endregion
 	}
 }
