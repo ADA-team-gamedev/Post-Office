@@ -59,6 +59,11 @@ namespace Player
 		{
 			OnUpdateInteract();
 
+			
+		}
+
+		private void FixedUpdate()
+		{
 			ChangeCrossHair();
 		}
 
