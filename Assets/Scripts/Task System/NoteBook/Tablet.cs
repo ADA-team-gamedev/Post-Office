@@ -265,5 +265,16 @@ namespace TaskSystem.NoteBook
 
 			Gizmos.DrawWireSphere(tabletPosition + _openedPositionOffset, 0.01f);
 		}
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.NoteBook.performed -= OnNoteBook;
+				_playerInput.Player.NoteBook.canceled -= OnNoteBook;
+
+				_playerInput.Player.ScrollWheelY.performed -= OnTaskScroll;
+			}
+		}
 	}
 }

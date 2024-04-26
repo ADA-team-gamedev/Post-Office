@@ -58,8 +58,6 @@ namespace Player
 		private void Update()
 		{
 			OnUpdateInteract();
-
-			
 		}
 
 		private void FixedUpdate()

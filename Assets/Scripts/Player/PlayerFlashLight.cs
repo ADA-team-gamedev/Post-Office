@@ -114,5 +114,11 @@ namespace Player
 		}
 
 		#endregion
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+				_playerInput.Player.FlahsLight.performed -= UseFlashLight;
+		}
 	}
 }

@@ -116,5 +116,14 @@ namespace Player
 
 			_playerCamera.fieldOfView = _deffaultFOV;
 		}
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.Look.performed -= OnLook;
+				_playerInput.Player.Look.canceled -= OnLook;
+			}
+		}
 	}
 }

@@ -68,25 +68,13 @@ namespace Player
 
 			_playerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
 
-			_playerInput.Player.Hotbar1.performed += (context) =>
-			{
-				HotbarSlotChange(1);
-			};
+			_playerInput.Player.Hotbar1.performed += OnHotBar1Clicked;
 
-			_playerInput.Player.Hotbar2.performed += (context) =>
-			{
-				HotbarSlotChange(2);
-			};
+			_playerInput.Player.Hotbar2.performed += OnHotBar2Clicked;
 
-			_playerInput.Player.Hotbar3.performed += (context) =>
-			{
-				HotbarSlotChange(3);
-			};
+			_playerInput.Player.Hotbar3.performed += OnHotBar3Clicked;
 
-			_playerInput.Player.Hotbar4.performed += (context) =>
-			{
-				HotbarSlotChange(4);
-			};
+			_playerInput.Player.Hotbar4.performed += OnHotBar4Clicked;
 		}
 
 		private void Awake()
@@ -317,6 +305,26 @@ namespace Player
 			TryPickupObject();
 		}
 
+		private void OnHotBar1Clicked(InputAction.CallbackContext context)
+		{
+			HotbarSlotChange(1);
+		}
+
+		private void OnHotBar2Clicked(InputAction.CallbackContext context)
+		{
+			HotbarSlotChange(2);
+		}
+
+		private void OnHotBar3Clicked(InputAction.CallbackContext context)
+		{
+			HotbarSlotChange(3);
+		}
+
+		private void OnHotBar4Clicked(InputAction.CallbackContext context)
+		{
+			HotbarSlotChange(4);
+		}
+
 		private void OnDropItem(InputAction.CallbackContext context)
 		{
 			if (!context.performed)
@@ -379,6 +387,28 @@ namespace Player
 			}
 
 			Destroy(this);
+		}
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.PickUpItem.performed -= OnPickUpItem;
+
+				_playerInput.Player.DropItem.performed -= OnDropItem;
+
+				_playerInput.Player.UseItem.performed -= OnUseItem;
+
+				_playerInput.Player.ScrollWheelY.performed -= OnScrollWheelYChanged;
+
+				_playerInput.Player.Hotbar1.performed -= OnHotBar1Clicked;
+
+				_playerInput.Player.Hotbar2.performed -= OnHotBar2Clicked;
+
+				_playerInput.Player.Hotbar3.performed -= OnHotBar3Clicked;
+
+				_playerInput.Player.Hotbar4.performed -= OnHotBar4Clicked;
+			}
 		}
 	}
 }

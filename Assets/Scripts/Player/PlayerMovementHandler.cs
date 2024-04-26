@@ -438,5 +438,20 @@ namespace Player
 			
 			//Gizmos.DrawRay(new(playerBodyCenter, new(0, -(playerHalfHeight + 0.2f), 0)));
 		}
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.Move.performed -= OnMove;
+				_playerInput.Player.Move.canceled -= OnMove;
+
+				_playerInput.Player.Sprint.performed -= OnSprint;
+				_playerInput.Player.Sprint.canceled -= OnSprint;
+
+				_playerInput.Player.Crouch.performed -= OnCrouch;
+				_playerInput.Player.Crouch.canceled -= OnCrouch;
+			}
+		}
 	}
 }
