@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 namespace Level.Lights.Lamp
 {
-	public class FlickeringLamp : Lamp
+	public class FlickeringLamp : Lamp, IEvent
 	{
 		[Header("Lamp flashing event")]
 
@@ -117,6 +117,11 @@ namespace Level.Lights.Lamp
 			AnimationCurve scaledCurve = ScaleCurveToMatchDuration(randomCurve, flashingDelay);
 
 			StartCoroutine(LaunchFlashingAnimation(scaledCurve, flashingDelay));
+		}
+
+		public new void PlayEvent()
+		{
+			StartFlashingEvent();
 		}
 
 		protected virtual bool IsCanStartFlashingEvent()

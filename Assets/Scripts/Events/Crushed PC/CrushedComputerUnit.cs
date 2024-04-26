@@ -8,7 +8,7 @@ namespace Events.CrushedPC
 {
 	[SelectionBase]
 	[RequireComponent(typeof(BoxCollider))]
-	public class CrushedComputerUnit : MonoBehaviour, IInteractable
+	public class CrushedComputerUnit : MonoBehaviour, IInteractable, IEvent
     {
 		[Header("Sounds")]
 		[SerializeField] private string _pcErrorSound = "PC Error";
@@ -81,8 +81,13 @@ namespace Events.CrushedPC
 			}
 		}
 
+		public void PlayEvent()
+		{
+			CrushPC();
+		}
+
 		[ContextMenu(nameof(CrushPC))]
-		private void CrushPC()
+		public void CrushPC()
 		{
 			if (_isPCCrushed)
 				return;
@@ -158,6 +163,11 @@ namespace Events.CrushedPC
 
 			if (_maxEventCooldownDelay <= _minEventCooldownDelay)
 				_maxEventCooldownDelay = _minEventCooldownDelay;
+		}
+
+		void IEvent.PlayEvent()
+		{
+			throw new NotImplementedException();
 		}
 	}
 }

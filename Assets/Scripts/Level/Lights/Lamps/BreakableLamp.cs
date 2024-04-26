@@ -5,7 +5,7 @@ using Random = UnityEngine.Random;
 
 namespace Level.Lights.Lamp
 {
-	public class BreakableLamp : FlickeringLamp
+	public class BreakableLamp : FlickeringLamp, IEvent
 	{
 		public bool IsLampDestroyed { get; private set; } = false;
 
@@ -116,6 +116,11 @@ namespace Level.Lights.Lamp
 			SwitchLampState(false);
 
 			_electronicalSparkVF.gameObject.SetActive(true);
+		}
+
+		public new void PlayEvent()
+		{
+			BreakLamp();
 		}
 
 		protected override void OnValidate()

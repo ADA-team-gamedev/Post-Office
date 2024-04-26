@@ -6,9 +6,9 @@ namespace Level.Lights.Lamp
 {
 	[RequireComponent(typeof(BoxCollider))] //triger zone
 	[SelectionBase]
-	public class Lamp : MonoBehaviour
+	public class Lamp : MonoBehaviour, IEvent
 	{
-		[field: SerializeField] public bool IsLampEnabled { get; set; } = true;
+		[field: SerializeField] public bool IsLampEnabled { get; private set; } = true;
 
 		[SerializeField] private string _playerTag = "Player";
 
@@ -68,6 +68,11 @@ namespace Level.Lights.Lamp
 			MaterialPropertyBlock.SetColor(EmissionColor, currentEmissionColor);
 
 			LampRenderer.SetPropertyBlock(MaterialPropertyBlock);
+		}
+
+		public void PlayEvent()
+		{
+			SwitchLampState(IsLampEnabled);
 		}
 
 		protected virtual void OnValidate()
