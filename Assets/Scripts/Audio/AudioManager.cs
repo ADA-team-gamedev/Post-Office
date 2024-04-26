@@ -17,9 +17,13 @@ namespace Audio
 		private void Awake()
 		{
 			if (Instance == null)
-				Instance = this;		
+				Instance = this;
 			else
+			{
+#if UNITY_EDITOR
 				Debug.LogError($"{nameof(AudioManager)} Instance already exists!");
+#endif
+			}
 
 			FillAudioSource();
 
@@ -44,8 +48,9 @@ namespace Audio
 
 				if (_soundclips.ContainsValue(clip))
 				{
+#if UNITY_EDITOR
 					Debug.LogError($"{clip.Name} already exists in sound collection!");
-
+#endif
 					continue;
 				}
 				
@@ -133,9 +138,9 @@ namespace Audio
 		{
 			if (_soundclips.TryGetValue(clipName, out soundClip))
 				return true;
-
+#if UNITY_EDITOR
 			Debug.LogWarning($"No clip with name - ({clipName})");
-
+#endif
 			return false;
 		}
 
@@ -143,9 +148,9 @@ namespace Audio
 		{
 			if (_audioSources.TryGetValue(mixerGroup, out basedAudioSource))
 				return true;
-
+#if UNITY_EDITOR
 			Debug.LogWarning($"No audio source with {mixerGroup}");
-
+#endif
 			return false;
 		}
 	}

@@ -28,8 +28,9 @@ namespace TaskSystem.TaskGivers
 
 			if (lostItems.Count <= 0 || !TaskManager.Instance.TryAddNewTask(_lostItemsTask))
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning($"Can't add \"Find Lost Item\" task!");
-
+#endif
 				return;
 			}
 
@@ -60,6 +61,11 @@ namespace TaskSystem.TaskGivers
 				return;
 
 			task.Complete();
+		}
+
+		private void OnDestroy()
+		{
+			_lostItemSpawner.OnLostItemSpawned -= GiveLostItemQuest;
 		}
 	}
 }

@@ -70,9 +70,9 @@ namespace TaskSystem.NoteBook
 				return;
 
 			_isGameCompleted = true;
-
+#if UNITY_EDITOR
 			Debug.Log("The game is completed!");
-
+#endif
 			OnGameCompleted?.Invoke();
 		}
 

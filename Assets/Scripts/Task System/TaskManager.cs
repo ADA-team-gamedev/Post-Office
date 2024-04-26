@@ -41,9 +41,15 @@ namespace TaskSystem
 		private void Awake()
 		{
 			if (Instance == null)
+			{
 				Instance = this;
+			}
 			else
+			{
+#if UNITY_EDITOR
 				Debug.LogWarning($"{this} Instance already exists!");
+#endif
+			}
 
 			_tablet.SubcribeOnTaskManager();
 
@@ -71,8 +77,9 @@ namespace TaskSystem
 		{
 			if (index < 0 || index >= _tasks.Count)
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning($"Can't set task, as current with index[{index}]");
-
+#endif
 				return;
 			}
 
@@ -94,12 +101,14 @@ namespace TaskSystem
 		{
 			if (!TryGetTask(task.ID, out Task _))
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we try to add task automatically");
-
+#endif
 				if (!TryAddNewTask(task))
 				{
+#if UNITY_EDITOR
 					Debug.LogWarning($"Couldn't add this task({task.Name}!)");
-
+#endif
 					return;
 				}
 			}
@@ -120,8 +129,9 @@ namespace TaskSystem
 		{
 			if (IsContainsTask(task.ID))
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
-
+#endif
 				return false;
 			}
 
@@ -154,7 +164,17 @@ namespace TaskSystem
 			if (TaskCount > 0 && isCompleteTaskIsCurrent)
 				SetNewCurrentTask(0);
 
+#if UNITY_EDITOR
 			Debug.Log($"Task: {completedTask.Name} has been completed");
+#endif
+		}
+
+		private void OnDestroy()
+		{
+			foreach (var task in _tasks)
+			{
+				task.Value.OnCompleted -= CompleteTask;
+			}
 		}
 	}
 }

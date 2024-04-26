@@ -96,7 +96,14 @@ namespace Items
 			IsPicked = false;
 
 			AudioManager.Instance.PlaySound(_dropSound, transform.position);
-		}		
+		}
+
+		private void OnDestroy()
+		{
+			OnPickUpItem -= ItemIcon.HideIcon;
+
+			OnDropItem -= ItemIcon.ShowIcon;
+		}
 
 		#endregion
 	}

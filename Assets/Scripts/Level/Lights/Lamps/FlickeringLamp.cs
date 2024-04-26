@@ -89,7 +89,7 @@ namespace Level.Lights.Lamp
 				return;
 
 			base.TryInvokeLamp(other);
-		}
+		}	
 
 		[ContextMenu(nameof(StartFlashingEvent))]
 		public void StartFlashingEvent()

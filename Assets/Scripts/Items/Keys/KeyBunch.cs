@@ -46,8 +46,9 @@ namespace Items.Keys
 
 			if (IsContainsKey(key.KeyType))
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning($"Key {key.KeyType} is already contains in key bunch!");
-
+#endif
 				return false;
 			}
 

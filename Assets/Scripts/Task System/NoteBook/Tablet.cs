@@ -89,26 +89,17 @@ namespace TaskSystem.NoteBook
 
 			ChangeArrowState();
 
-			TaskManager.Instance.OnAddedNewTask += () =>
-			{
-				WriteHintText(_addedTaskHint, Color.green);
-			};
+			TaskManager.Instance.OnAddedNewTask += OnAddedTaskHint;
 
 			TaskManager.Instance.OnAddedNewTask += ChangeArrowState;
 
 			TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
 
-			TaskManager.Instance.OnNewCurrentTaskSet += (Task Task) =>
-			{
-				WriteHintText(_selectedNewTaskHint, Color.green);
-			};
+			TaskManager.Instance.OnNewCurrentTaskSet += OnNewCurrentTaskSetHint;
 
 			TaskManager.Instance.OnCurrentTaskCompleted += ClearNotebookTaskInfo;
 
-			TaskManager.Instance.OnCurrentTaskCompleted += () =>
-			{
-				WriteHintText(_completedTaskHint, Color.green);
-			};
+			TaskManager.Instance.OnCurrentTaskCompleted -= OnCurrentTaskCompletedHint;
 
 			TaskManager.Instance.OnTaskCompleted += ChangeArrowState;
 
@@ -189,6 +180,21 @@ namespace TaskSystem.NoteBook
 		#region Text Methods
 
 		#region Hint
+
+		private void OnAddedTaskHint()
+		{
+			WriteHintText(_addedTaskHint, Color.green);
+		}
+
+		private void OnNewCurrentTaskSetHint(Task taks)
+		{
+			WriteHintText(_selectedNewTaskHint, Color.green);
+		}
+
+		private void OnCurrentTaskCompletedHint()
+		{
+			WriteHintText(_completedTaskHint, Color.green);
+		}
 
 		private void ChangeArrowState()
 		{
@@ -275,6 +281,22 @@ namespace TaskSystem.NoteBook
 
 				_playerInput.Player.ScrollWheelY.performed -= OnTaskScroll;
 			}
+
+			_playerDeathController.OnDied -= DisableNoteBook;
+
+			TaskManager.Instance.OnAddedNewTask -= OnAddedTaskHint;
+
+			TaskManager.Instance.OnAddedNewTask -= ChangeArrowState;
+
+			TaskManager.Instance.OnNewCurrentTaskSet -= WriteTextInNoteBook;
+
+			TaskManager.Instance.OnNewCurrentTaskSet -= OnNewCurrentTaskSetHint;
+
+			TaskManager.Instance.OnCurrentTaskCompleted -= ClearNotebookTaskInfo;
+
+			TaskManager.Instance.OnCurrentTaskCompleted -= OnCurrentTaskCompletedHint;
+
+			TaskManager.Instance.OnTaskCompleted -= ChangeArrowState;
 		}
 	}
 }

@@ -56,5 +56,10 @@ namespace Items
         {
             TurnOn();
 		}
-    }
+
+		private void OnDestroy()
+		{
+			OnDropItem -= EnableOnDrop;
+		}
+	}
 }

@@ -164,10 +164,5 @@ namespace Events.CrushedPC
 			if (_maxEventCooldownDelay <= _minEventCooldownDelay)
 				_maxEventCooldownDelay = _minEventCooldownDelay;
 		}
-
-		void IEvent.PlayEvent()
-		{
-			throw new NotImplementedException();
-		}
 	}
 }

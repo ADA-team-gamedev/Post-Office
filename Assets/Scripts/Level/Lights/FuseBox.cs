@@ -189,5 +189,13 @@ namespace Level.Lights
 			if (_maxEnergyAmount <= 0)
 				_maxEnergyAmount++;
 		}
+
+		private void OnDestroy()
+		{
+			foreach (var fuseSwitch in generatorSwitches)
+			{
+				fuseSwitch.OnSwitchStateChanged -= CountNumberOfActivatedSwitches;
+			}
+		}
 	}
 }

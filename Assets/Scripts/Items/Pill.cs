@@ -26,19 +26,20 @@ namespace Items
                 if (!_isUsing)
                 {
                     _countOfUses--;
-
-                    Debug.Log($"{gameObject.name}s are used");
-
-					AudioManager.Instance.PlaySound("Use Pills", transform.position);
+#if UNITY_EDITOR
+					Debug.Log($"{gameObject.name}s are used");
+#endif
+                    AudioManager.Instance.PlaySound("Use Pills", transform.position);
 
 					StartCoroutine(RestoreeSanity());
                 }
             }
             else
             {
-                Debug.Log($"These {gameObject.name} pills are empty");
-
-				AudioManager.Instance.PlaySound("Pill Empty", transform.position);
+#if UNITY_EDITOR
+				Debug.Log($"These {gameObject.name} pills are empty");
+#endif
+                AudioManager.Instance.PlaySound("Pill Empty", transform.position);
 			}
         }
 

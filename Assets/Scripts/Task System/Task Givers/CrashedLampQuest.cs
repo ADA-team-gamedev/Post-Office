@@ -24,8 +24,9 @@ namespace TaskSystem.TaskGivers
 		{
 			if (_breakableLamps.Length <= 0 || !TaskManager.Instance.TryAddNewTask(_crashedLampTask))
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning("We can't add crashed lamp task!");
-
+#endif
 				return;
 			}
 
@@ -53,6 +54,14 @@ namespace TaskSystem.TaskGivers
 		private void FillLamps()
 		{
 			_breakableLamps = FindObjectsOfType<BreakableLamp>();
+		}
+
+		private void OnDestroy()
+		{
+			foreach (var lamp in _breakableLamps)
+			{
+				lamp.OnLampDestroyed -= GiveTaskToPlayer;
+			}
 		}
 	}
 }

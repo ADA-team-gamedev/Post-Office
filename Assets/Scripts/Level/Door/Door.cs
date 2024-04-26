@@ -110,7 +110,9 @@ namespace Level.Doors
 			}
 			else
 			{
+#if UNITY_EDITOR
 				Debug.Log("Player doesn't have right key to open this door");
+#endif
 			}
 
 			AudioManager.Instance.PlaySound(_closedDoor, transform.position, spatialBlend: 0.8f);

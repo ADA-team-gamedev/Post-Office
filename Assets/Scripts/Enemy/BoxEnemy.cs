@@ -205,7 +205,10 @@ namespace Enemy
 					Attacking();
 					break;
 				default:
+#if UNITY_EDITOR
 					Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
+
+#endif
 					break;
 			}
 		}
@@ -313,9 +316,9 @@ namespace Enemy
 
 				possiblePointsToMove.Remove(randomPoint);
 			}
-
+#if UNITY_EDITOR
 			Debug.LogError($"No reachable points in {points} collection!");
-
+#endif
 			pointToMove = Vector3.zero;
 
 			return false;
@@ -357,9 +360,15 @@ namespace Enemy
 			_animator.speed *= 1.5f;
 
 			if (TryMoveTo(_hiddenPoints, _runningSpeed, _fleeingAnimationSpeed))
+			{
 				_isFleeing = true;		
+			}
 			else
-				Debug.LogError($"Can't start fleeing because the {gameObject.name} doesn't have points to hide");		
+			{
+#if UNITY_EDITOR
+				Debug.LogError($"Can't start fleeing because the {gameObject.name} doesn't have points to hide");
+#endif
+			}
 		}
 
 		#endregion
@@ -384,7 +393,9 @@ namespace Enemy
 			}
 			else
 			{
+#if UNITY_EDITOR
 				Debug.Log($"Can't go to that point({point}), because i can't reach it!");
+#endif
 			}
 		}
 
@@ -420,8 +431,9 @@ namespace Enemy
 
 			if (!_fieldOfView.Target.TryGetComponent(out PlayerDeathController playerDeath))
 			{
+#if UNITY_EDITOR
 				Debug.LogError($"No {nameof(PlayerDeathController)} in the target({_fieldOfView.Target})");
-
+#endif
 				return;
 			}
 

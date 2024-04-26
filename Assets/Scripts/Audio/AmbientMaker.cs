@@ -63,8 +63,9 @@ namespace Audio
 		{
 			if (_musicClipsParameters.Count <= 0)
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning("No music clips!");
-
+#endif
 				yield break;
 			}
 
@@ -90,8 +91,9 @@ namespace Audio
 		{
 			if (_ambientSounds.Count <= 0)
 			{
+#if UNITY_EDITOR
 				Debug.LogWarning("No ambient clips!");
-
+#endif
 				yield break;
 			}	
 

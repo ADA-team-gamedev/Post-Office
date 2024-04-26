@@ -74,5 +74,10 @@ namespace Items
 					garageDoor.InteractRemotely();			
 			}
 		}
+
+		private void OnDestroy()
+		{
+			OnPickUpItem -= Completetask;
+		}
 	}
 }

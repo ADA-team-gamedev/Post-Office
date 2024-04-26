@@ -115,5 +115,12 @@ namespace Level.Lights
 		}
 
 		#endregion
+
+		private void OnDestroy()
+		{
+			OnSwitchEnabled.RemoveAllListeners();
+
+			OnSwitchDisabled.RemoveAllListeners();
+		}
 	}
 }

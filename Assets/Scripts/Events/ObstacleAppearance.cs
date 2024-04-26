@@ -92,8 +92,9 @@ namespace Events
 			{
 				if (!IsCanSpawnObstacle())
 				{
+#if UNITY_EDITOR
 					Debug.Log($"Player looking on obstacle which we want to spawn. We can't do that!");
-
+#endif
 					return;
 				}
 			}
@@ -110,8 +111,9 @@ namespace Events
 			{
 				if (!IsCanDiactivateObject())
 				{
+#if UNITY_EDITOR
 					Debug.Log($"Player looking on obstacle which we want to diactivate. We can't do that!");
-
+#endif
 					return;
 				}
 			}

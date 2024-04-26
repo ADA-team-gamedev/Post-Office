@@ -190,5 +190,19 @@ namespace TaskSystem.TaskGivers
 		}
 
 		#endregion
+
+		private void OnDestroy()
+		{
+			TaskManager.Instance.OnNewCurrentTaskSet -= ChangeQuestIconsState;
+
+			foreach (Item item in _neededItems)
+			{
+				item.ItemIcon.HideIcon();
+
+				item.OnPickUpItem -= item.ItemIcon.HideIcon;
+
+				item.OnDropItem -= OnItemDroped;
+			}
+		}
 	}
 }

@@ -22,5 +22,10 @@ namespace Items
 		{
 			OnPickUpItem -= OnPlayerFindItem;
 		}
+
+		private void OnDestroy()
+		{
+			OnPickUpItem -= OnPlayerFindItem;
+		}
 	}
 }

@@ -61,7 +61,9 @@ namespace Level.Lights.Lamp
 					BreakLamp();
 			}
 			else if (_lampDelayBeforeBreakingRemaining <= 0)
+			{
 				_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
+			}
 		}
 
 		protected override void TryInvokeLamp(Collider other)

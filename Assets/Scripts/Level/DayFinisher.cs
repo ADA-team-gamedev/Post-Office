@@ -53,7 +53,9 @@ namespace Level
 			if (_dataService.TryLoadData(out WeekDay weekDay, JsonDataService.WeekDayPath, true))
 				_currentWeekDay = weekDay;
 
+#if UNITY_EDITOR
 			Debug.Log($"Loaded current week day as {_currentWeekDay}");
+#endif
 
 			SaveDayProgress();
 		}
@@ -91,5 +93,12 @@ namespace Level
 		}
 
 		#endregion
+
+		private void OnDestroy()
+		{
+			_timeClock.OnGameCompleted -= FinishDayWork;
+
+			_timeClock.OnGameCompleted -= IncreasePlayerDayProgress;
+		}
 	}
 }

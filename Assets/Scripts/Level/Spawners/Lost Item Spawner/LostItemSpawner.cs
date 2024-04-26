@@ -35,9 +35,15 @@ namespace Level.Spawners.LostItemSpawner
 		private void Start()
 		{
 			if (TrySpawnLostItems(out Dictionary<Item, LostItemSticker> lostItems))
+			{
 				OnLostItemSpawned?.Invoke(lostItems);
+			}
 			else
+			{
+#if UNITY_EDITOR
 				Debug.LogWarning("Can't add task, because you don't set lost items!");
+#endif
+			}
 		}
 
 		private bool TrySpawnLostItems(out Dictionary<Item, LostItemSticker> lostItems)
