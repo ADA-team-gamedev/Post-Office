@@ -20,6 +20,8 @@ namespace TaskSystem.TaskGivers
 			_lostItemSpawner = lostItemSpawner;
 
 			_lostItemSpawner.OnLostItemSpawned += GiveLostItemQuest;
+
+			_lostItemSpawner.OnObjectDestroyed += OnLostItemSpawnerDestroyed;
 		}
 
 		private void GiveLostItemQuest(Dictionary<Item, LostItemSticker> lostItems)
@@ -61,6 +63,13 @@ namespace TaskSystem.TaskGivers
 				return;
 
 			task.Complete();
+		}
+
+		private void OnLostItemSpawnerDestroyed(LostItemSpawner lostItemSpawner)
+		{
+			lostItemSpawner.OnObjectDestroyed -= OnLostItemSpawnerDestroyed;
+
+			lostItemSpawner.OnLostItemSpawned -= GiveLostItemQuest;
 		}
 
 		private void OnDestroy()

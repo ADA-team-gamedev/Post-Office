@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TaskSystem.TaskGivers
 {
-    public class CrushedPCQuest : MonoBehaviour
+    public class CrashedPCQuest : MonoBehaviour
     {
 		[SerializeField] private TaskData _crushedPCTask;
 
@@ -15,6 +15,8 @@ namespace TaskSystem.TaskGivers
 
 			foreach (var computer in _crushedComputers)
 			{
+				computer.OnObjectDestroyed += OnComputerUnitDestroyed;
+
 				computer.OnPCCrushed += GiveTaskToPlayer;
 			}
 		}
@@ -48,6 +50,15 @@ namespace TaskSystem.TaskGivers
 		private void FillPC()
 		{
 			_crushedComputers = FindObjectsOfType<CrushedComputerUnit>();
+		}
+
+		private void OnComputerUnitDestroyed(CrushedComputerUnit computerUnit)
+		{
+			computerUnit.OnObjectDestroyed -= OnComputerUnitDestroyed;
+
+			computerUnit.OnPCCrushed -= GiveTaskToPlayer;
+
+			computerUnit.OnPCFixed -= OnPlayerFixPC;
 		}
 	}
 }

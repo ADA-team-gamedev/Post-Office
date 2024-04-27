@@ -40,6 +40,8 @@ namespace Level.Lights.Lamp
 		public event Action OnLampStartFlashing;
 		public event Action OnLampStopFlashing;
 
+		public new event Action<FlickeringLamp> OnObjectDestroyed;
+
 		protected override void Awake()
 		{
 			InitializeLamp();
@@ -209,6 +211,13 @@ namespace Level.Lights.Lamp
 
 			if (_minFlashingCooldownDelay > _maxFlashingCooldownDelay)
 				_minFlashingCooldownDelay = _maxFlashingCooldownDelay;
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

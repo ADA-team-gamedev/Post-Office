@@ -106,6 +106,8 @@ namespace Enemy
 
 			DisableAI();
 
+			_boxItem.OnObjectDetroyed += OnItemDestroyed;
+
 			_boxItem.OnPickUpItem += PickUpItem;
 
 			_boxItem.OnDropItem += DropItem;
@@ -549,6 +551,17 @@ namespace Enemy
 			IsPicked = false;
 
 			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
+		}
+
+		private void OnItemDestroyed(Item item)
+		{
+			_boxItem.OnObjectDetroyed -= OnItemDestroyed;
+
+			_boxItem.OnPickUpItem -= PickUpItem;
+
+			_boxItem.OnDropItem -= DropItem;
+
+			_boxItem.OnItemPickingPropertyChanged -= OnItemPickingPropertyChanged;
 		}
 
 		private void OnValidate()

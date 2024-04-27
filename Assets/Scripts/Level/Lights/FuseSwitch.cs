@@ -25,6 +25,8 @@ namespace Level.Lights
 
 		public event Action OnSwitchStateChanged;
 
+		public event Action<FuseSwitch> OnObjectDestroyed;
+
 		private FuseBox _generator;
 
 		private void Awake()
@@ -118,6 +120,8 @@ namespace Level.Lights
 
 		private void OnDestroy()
 		{
+			OnObjectDestroyed?.Invoke(this);
+
 			OnSwitchEnabled.RemoveAllListeners();
 
 			OnSwitchDisabled.RemoveAllListeners();

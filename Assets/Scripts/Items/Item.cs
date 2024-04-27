@@ -39,6 +39,8 @@ namespace Items
 
 		public Action OnItemPickingPropertyChanged {  get; set; }
 
+		public event Action<Item> OnObjectDetroyed;
+
 		private void Start()
 		{
 			InitializeItem();
@@ -100,6 +102,8 @@ namespace Items
 
 		private void OnDestroy()
 		{
+			OnObjectDetroyed?.Invoke(this);
+
 			OnPickUpItem -= ItemIcon.HideIcon;
 
 			OnDropItem -= ItemIcon.ShowIcon;

@@ -1,5 +1,6 @@
 using Audio;
 using Items.Icon;
+using System;
 using TaskSystem;
 using UnityEngine;
 using UnityEngine.Events;
@@ -35,6 +36,8 @@ namespace Level.Lights
 
 		public UnityEvent OnFuseDisabled;
 		public UnityEvent OnFuseEnabled;
+
+		public event Action<FuseBox> OnObjectDestroyed;
 
 		public float EnergyAmount
 		{
@@ -79,10 +82,14 @@ namespace Level.Lights
 
 			foreach (var fuseSwitch in generatorSwitches)
 			{
+				fuseSwitch.OnObjectDestroyed += OnSwitchObjectDestroyed;
+
 				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
 
 				fuseSwitch.OnSwitchEnabled.AddListener(CompleteTask);
 			}
+
+			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
 		}
 
 		private void Update()
@@ -184,6 +191,22 @@ namespace Level.Lights
 
 		#endregion
 
+		private void OnSwitchObjectDestroyed(FuseSwitch fuseSwitch)
+		{
+			fuseSwitch.OnObjectDestroyed -= OnSwitchObjectDestroyed;
+
+			fuseSwitch.OnSwitchStateChanged -= CountNumberOfActivatedSwitches;
+
+			fuseSwitch.OnSwitchEnabled.RemoveListener(CompleteTask);
+		}
+
+		private void OnTaskManagerDestroyed(TaskManager taskManager)
+		{
+			TaskManager.Instance.OnObjectDestroyed -= OnTaskManagerDestroyed;
+
+			TaskManager.Instance.OnNewCurrentTaskSet -= ChangeIconState;
+		}
+
 		private void OnValidate()
 		{
 			if (_maxEnergyAmount <= 0)
@@ -192,10 +215,11 @@ namespace Level.Lights
 
 		private void OnDestroy()
 		{
-			foreach (var fuseSwitch in generatorSwitches)
-			{
-				fuseSwitch.OnSwitchStateChanged -= CountNumberOfActivatedSwitches;
-			}
+			OnObjectDestroyed?.Invoke(this);
+
+			OnFuseDisabled.RemoveAllListeners();
+
+			OnFuseEnabled.RemoveAllListeners();
 		}
 	}
 }

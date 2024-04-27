@@ -29,6 +29,8 @@ namespace Level.Lights.Lamp
 
 		public event Action<bool> OnLampStateChanged;
 
+		public event Action<Lamp> OnObjectDestroyed;
+
 		protected virtual void Awake()
 		{
 			InitializeLamp();
@@ -81,6 +83,11 @@ namespace Level.Lights.Lamp
 
 			if (IsLampEnabled)
 				SwitchLampState(IsLampEnabled);
+		}
+
+		protected virtual void OnDestroy()
+		{
+			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

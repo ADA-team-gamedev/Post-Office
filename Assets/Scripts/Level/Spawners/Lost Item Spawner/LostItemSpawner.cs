@@ -30,6 +30,8 @@ namespace Level.Spawners.LostItemSpawner
 
 		public event Action<Dictionary<Item, LostItemSticker>> OnLostItemSpawned;
 
+		public event Action<LostItemSpawner> OnObjectDestroyed;
+
 		private const int _minLostItemAmount = 3;
 
 		private void Start()
@@ -129,6 +131,11 @@ namespace Level.Spawners.LostItemSpawner
 		{
 			if (_maxItemAmount > _lostItemStickersPosition.Count)
 				_maxItemAmount = _lostItemStickersPosition.Count;
+		}
+
+		private void OnDestroy()
+		{
+			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

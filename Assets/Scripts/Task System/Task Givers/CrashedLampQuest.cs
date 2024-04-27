@@ -16,6 +16,8 @@ namespace TaskSystem.TaskGivers
 
 			foreach (var lamp in _breakableLamps)
 			{
+				lamp.OnObjectDestroyed += OnLampObjectDestroyed;
+
 				lamp.OnLampDestroyed += GiveTaskToPlayer;
 			}
 		}
@@ -56,12 +58,11 @@ namespace TaskSystem.TaskGivers
 			_breakableLamps = FindObjectsOfType<BreakableLamp>();
 		}
 
-		private void OnDestroy()
+		private void OnLampObjectDestroyed(BreakableLamp breakableLamp)
 		{
-			foreach (var lamp in _breakableLamps)
-			{
-				lamp.OnLampDestroyed -= GiveTaskToPlayer;
-			}
+			breakableLamp.OnObjectDestroyed -= OnLampObjectDestroyed;
+
+			breakableLamp.OnLampDestroyed -= GiveTaskToPlayer;
 		}
 	}
 }

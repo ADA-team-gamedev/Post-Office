@@ -41,6 +41,8 @@ namespace Events.CrushedPC
 		public event Action OnPCCrushed;
 		public event Action OnPCFixed;
 
+		public event Action<CrushedComputerUnit> OnObjectDestroyed;
+
 		[Header("Fix Button")]
 		[SerializeField, Min(0.1f)] private float _buttonHoldingSpeed = 1f;
 		[SerializeField, Min(1f)] private float _holdingTimeToOffPC = 2f;
@@ -163,6 +165,11 @@ namespace Events.CrushedPC
 
 			if (_maxEventCooldownDelay <= _minEventCooldownDelay)
 				_maxEventCooldownDelay = _minEventCooldownDelay;
+		}
+
+		private void OnDestroy()
+		{
+			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

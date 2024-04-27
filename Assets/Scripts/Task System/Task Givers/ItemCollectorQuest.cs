@@ -38,6 +38,13 @@ namespace TaskSystem.TaskGivers
 		{
 			GetComponent<BoxCollider>().isTrigger = true;
 
+			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
+
+			foreach (var item in _neededItems)
+			{
+				item.OnObjectDetroyed += OnItemDestroyed;
+			}
+
 			if (_giveTaskOnStart)
 				GiveTaskToPlayer();
 		}
@@ -191,10 +198,24 @@ namespace TaskSystem.TaskGivers
 
 		#endregion
 
+		private void OnItemDestroyed(Item item)
+		{
+			item.OnObjectDetroyed -= OnItemDestroyed;
+
+			item.OnPickUpItem -= item.ItemIcon.HideIcon;
+
+			item.OnDropItem -= OnItemDroped;
+		}
+
+		private void OnTaskManagerDestroyed(TaskManager taskManager)
+		{
+			taskManager.OnObjectDestroyed -= OnTaskManagerDestroyed;
+
+			taskManager.OnNewCurrentTaskSet -= ChangeQuestIconsState;
+		}
+
 		private void OnDestroy()
 		{
-			TaskManager.Instance.OnNewCurrentTaskSet -= ChangeQuestIconsState;
-
 			foreach (Item item in _neededItems)
 			{
 				item.ItemIcon.HideIcon();

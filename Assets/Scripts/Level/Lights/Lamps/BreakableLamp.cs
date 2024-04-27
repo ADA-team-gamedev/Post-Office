@@ -25,6 +25,8 @@ namespace Level.Lights.Lamp
 		public event Action OnLampDestroyed;
 		public event Action OnLampFixed;
 
+		public new event Action<BreakableLamp> OnObjectDestroyed;
+
 		protected override void Awake()
 		{
 			InitializeLamp();
@@ -134,6 +136,13 @@ namespace Level.Lights.Lamp
 
 			if (_maxLampLifeDelayBeforeBreaking < _minLampLifeDelayBeforeBreaking)
 				_maxLampLifeDelayBeforeBreaking = _minLampLifeDelayBeforeBreaking;
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

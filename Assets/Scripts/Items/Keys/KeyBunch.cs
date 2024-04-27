@@ -28,15 +28,7 @@ namespace Items.Keys
 
 			OnPickUpItem += OnPlayerPickupBunch;
 
-			OnPickUpItem += (item) =>
-			{
-				PlayerInventory.Instance.OnItemPicked += OnPlayerPickUpItem;
-			};
-
-			OnDropItem += (item) =>
-			{
-				PlayerInventory.Instance.OnItemPicked -= OnPlayerPickUpItem;
-			};		
+			OnDropItem += OnPlayerDropBunch;
 		}
 
 		public bool TryAddKey(Key key)
@@ -63,6 +55,8 @@ namespace Items.Keys
 
 		private void OnPlayerPickupBunch(Item item)
 		{
+			PlayerInventory.Instance.OnItemPicked += OnPlayerPickUpItem;
+
 			bool addedKey = false;
 
 			for (int i = 0; i < PlayerInventory.InventorySlotsAmount; i++)
@@ -80,6 +74,11 @@ namespace Items.Keys
 
 			if (addedKey)
 				AudioManager.Instance.PlaySound("Pickup Key", transform.position);
+		}
+
+		private void OnPlayerDropBunch(Item item)
+		{
+			PlayerInventory.Instance.OnItemPicked -= OnPlayerPickUpItem;
 		}
 
 		private void OnPlayerPickUpItem(Item item)
@@ -123,6 +122,13 @@ namespace Items.Keys
 					Destroy(key.gameObject);
 				}
 			}
+		}	
+
+		private void OnDestroy()
+		{
+			OnPickUpItem -= OnPlayerPickupBunch;
+
+			OnDropItem -= OnPlayerDropBunch;
 		}
 	}
 }

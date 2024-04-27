@@ -28,6 +28,8 @@ namespace TaskSystem
 		public event Action<Task> OnNewCurrentTaskSet;
 		public event Action OnCurrentTaskCompleted;
 
+		public event Action<TaskManager> OnObjectDestroyed;
+
 		#endregion
 
 		[SerializeField] private List<TaskData> _taskDatas = new();
@@ -171,6 +173,8 @@ namespace TaskSystem
 
 		private void OnDestroy()
 		{
+			OnObjectDestroyed?.Invoke(this);
+
 			foreach (var task in _tasks)
 			{
 				task.Value.OnCompleted -= CompleteTask;
