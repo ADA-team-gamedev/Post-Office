@@ -25,7 +25,7 @@ namespace Coffee.UIExtensions
 		/// Gets material for effect.
 		/// </summary>
 		public Material effectMaterial { get { return m_EffectMaterial; } }
-
+#if UNITY_EDITOR
 		/// <summary>
 		/// Raises the validate event.
 		/// </summary>
@@ -36,7 +36,7 @@ namespace Coffee.UIExtensions
 			UnityEditor.EditorApplication.delayCall += () => UpdateMaterial(false);
 #endif
 		}
-
+#endif
 		/// <summary>
 		/// Raises the before serialize event.
 		/// </summary>
