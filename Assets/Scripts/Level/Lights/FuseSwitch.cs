@@ -25,6 +25,8 @@ namespace Level.Lights
 
 		public event Action OnSwitchStateChanged;
 
+		public event Action OnClickedOnSwitch;
+
 		public event Action<FuseSwitch> OnObjectDestroyed;
 
 		private FuseBox _generator;
@@ -66,6 +68,8 @@ namespace Level.Lights
 
 		public void StartInteract()
 		{
+			OnClickedOnSwitch?.Invoke();
+
 			if (IsEnabled)
 				DisableSwitch();
 			else
