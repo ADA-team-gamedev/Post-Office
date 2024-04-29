@@ -134,10 +134,12 @@ namespace Menu
 
 		public void OnExitToMenu()
 		{
-			string sceneToLoad = "Menu";
+			//string sceneToLoad = "Menu";
 
-			if (_dataService.SaveData(JsonDataService.LoadingInfoPath, sceneToLoad, true))
-				SceneManager.LoadScene(SceneLoader.LoadingSceneName);
+			//if (_dataService.SaveData(JsonDataService.LoadingInfoPath, sceneToLoad, true))
+			//	SceneManager.LoadScene(SceneLoader.LoadingSceneName);
+
+			SceneManager.LoadScene("Menu");
 		}
 
 		public void OnExitToDesktop()

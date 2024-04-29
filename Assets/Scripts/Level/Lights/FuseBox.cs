@@ -85,8 +85,6 @@ namespace Level.Lights
 				fuseSwitch.OnObjectDestroyed += OnSwitchObjectDestroyed;
 
 				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
-
-				fuseSwitch.OnSwitchEnabled.AddListener(CompleteTask);
 			}
 
 			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
@@ -168,6 +166,11 @@ namespace Level.Lights
 
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeIconState;
 
+			foreach (var fuseSwitch in generatorSwitches)
+			{
+				fuseSwitch.OnClickedOnSwitch += CompleteTask;
+			}
+
 			_isTaskAdded = true;
 		}
 
@@ -184,7 +187,7 @@ namespace Level.Lights
 
 				foreach (var fuseSwitch in generatorSwitches)
 				{
-					fuseSwitch.OnSwitchEnabled.RemoveListener(CompleteTask);
+					fuseSwitch.OnClickedOnSwitch -= CompleteTask;
 				}
 			}
 		}
@@ -197,7 +200,7 @@ namespace Level.Lights
 
 			fuseSwitch.OnSwitchStateChanged -= CountNumberOfActivatedSwitches;
 
-			fuseSwitch.OnSwitchEnabled.RemoveListener(CompleteTask);
+			fuseSwitch.OnClickedOnSwitch -= CompleteTask;
 		}
 
 		private void OnTaskManagerDestroyed(TaskManager taskManager)

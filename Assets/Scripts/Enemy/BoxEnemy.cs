@@ -326,7 +326,7 @@ namespace Enemy
 			return false;
 		}
 
-		public bool IsReachablePoint(Vector3 point)
+		private bool IsReachablePoint(Vector3 point)
 		{
 			NavMeshPath path = new();
 
@@ -456,9 +456,10 @@ namespace Enemy
 
 		private void PickUpItem(Item item)
 		{
-			DisableAI();
+			if (IsAIActivated)
+				_animator.SetTrigger(BecomeBoxTrigger);
 
-			_animator.SetTrigger(BecomeBoxTrigger);
+			DisableAI();	
 			
 			StartCoroutine(TransformFromInsectToBox(TranfromToBoxDelay));	
 		}
@@ -487,6 +488,8 @@ namespace Enemy
 			_isPatroling = false;
 			_isFleeing = false;
 			_isWaiting = false;
+
+			_isReachedHidenPoint = false;
 
 			_enemyState = EnemyState.None;
 		}	
