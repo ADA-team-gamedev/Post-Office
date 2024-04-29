@@ -489,6 +489,8 @@ namespace Enemy
 			_isFleeing = false;
 			_isWaiting = false;
 
+			_isReachedHidenPoint = false;
+
 			_enemyState = EnemyState.None;
 		}	
 

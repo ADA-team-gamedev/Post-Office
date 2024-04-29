@@ -1,3 +1,4 @@
+using Items;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace Level.Spawners
 
         [SerializeField] private List<Transform> _deffaultPointsToPlace;
 
+		private List<Transform> _usedSpecificPoints = new();
+
 		private void Start()
 		{
             PlaceItems();
@@ -18,53 +21,121 @@ namespace Level.Spawners
 
         private void PlaceItems()
         {
-            if (_itemsToSpawn.Length <= 0 || _deffaultPointsToPlace.Count <= 0)
+            if (_itemsToSpawn.Length <= 0)
             {
 #if UNITY_EDITOR
-                Debug.Log("No Items or Place for items to spawn!");
+                Debug.LogWarning("No Items to place!");
 #endif
                 return;
             }
 
-            for (int i = 0; i < _itemsToSpawn.Length && _deffaultPointsToPlace.Count > 0; i++)
-            {
-                PlaceItem item = _itemsToSpawn[i];
-
-				if (item.PlaceInSpecificPlaces)
+			foreach (PlaceItem item in _itemsToSpawn)
+			{
+				if (item.PlaceInSpecificPlace)
 				{
 					if (item.SpecificPlacePoints.Count <= 0)
 					{
 #if UNITY_EDITOR
-						Debug.Log("Item must be placed in specific points but item doesn't have them!");
+						Debug.LogWarning("Item must be placed in specific points but item doesn't have them!");
 #endif
 						continue;
 					}
 
-					int randomIndex = Random.Range(0, item.SpecificPlacePoints.Count);
-
-					item.ItemToPlace.position = item.SpecificPlacePoints[randomIndex].position;
+					PlaceItemInSpecificPlace(item);
 				}
 				else
 				{
-					int randomIndex = Random.Range(0, _deffaultPointsToPlace.Count);
+					if (_deffaultPointsToPlace.Count <= 0)
+					{
+#if UNITY_EDITOR
+						Debug.LogWarning("No deffault points to place!");
+#endif
+						continue;
+					}
 
-					Transform point = _deffaultPointsToPlace[randomIndex];
-
-					item.ItemToPlace.position = point.position;
-
-					_deffaultPointsToPlace.Remove(point);
+					PlaceItemInDeffaultPlace(item);
 				}
+
+				if (item.RotateRandomly)
+				{
+					Vector3 deffaultEulerRotation = item.ItemToPlace.gameObject.transform.rotation.eulerAngles;
+
+					float newYAngle = Random.Range(0, 360);
+
+					item.ItemToPlace.gameObject.transform.rotation = Quaternion.Euler(deffaultEulerRotation.x, newYAngle, deffaultEulerRotation.z);
+				}
+
+				item.ItemToPlace.ItemIcon.ShowIcon(item.ItemToPlace);
 			}
         }
+
+		private void PlaceItemInSpecificPlace(PlaceItem item)
+		{
+			for (int i = 0; i < item.SpecificPlacePoints.Count; i++)
+			{
+				int randomIndex = Random.Range(0, item.SpecificPlacePoints.Count);
+				
+				Transform point = item.SpecificPlacePoints[randomIndex];
+				
+				if (_usedSpecificPoints.Contains(point))
+				{
+#if UNITY_EDITOR
+					Debug.LogWarning($"{item} has specific point which we already used to spawn another one!");
+#endif
+					item.RemoveSpecificPoint(point);
+
+					continue;
+				}
+
+				item.ItemToPlace.transform.position = point.position;
+
+				_usedSpecificPoints.Add(point);
+
+				break;
+			}
+		}
+
+		private void PlaceItemInDeffaultPlace(PlaceItem item)
+		{
+			for (int i = 0; i < _deffaultPointsToPlace.Count; i++)
+			{
+				int randomIndex = Random.Range(0, _deffaultPointsToPlace.Count);
+
+				Transform point = _deffaultPointsToPlace[randomIndex];
+				
+				if (_usedSpecificPoints.Contains(point))
+				{
+#if UNITY_EDITOR
+					Debug.LogWarning($"{item} want to be place on specific point({point}) which we already used to spawn another one!");
+#endif
+					_deffaultPointsToPlace.Remove(point);
+
+					continue;
+				}
+				
+				item.ItemToPlace.transform.position = point.position;
+
+				_deffaultPointsToPlace.Remove(point);
+				
+				break;
+			}
+		}
 	}
 
     [Serializable]
     public class PlaceItem
     {
-		[field: SerializeField] public bool PlaceInSpecificPlaces { get; private set; } = true;
+		[field: SerializeField] public bool PlaceInSpecificPlace { get; private set; } = true;
 
-        [field: SerializeField] public Transform ItemToPlace { get; private set; }
+		[field: SerializeField] public bool RotateRandomly { get; private set; } = true;
 
-        [field: SerializeField] public List<Transform> SpecificPlacePoints { get; private set; }
+        [field: SerializeField] public Item ItemToPlace { get; private set; }
+
+		[SerializeField] private List<Transform> _specificPlacePoints;
+
+		public IReadOnlyList<Transform> SpecificPlacePoints => _specificPlacePoints;
+
+		public void RemoveSpecificPoint(Transform point)
+			=> _specificPlacePoints.Remove(point);
 	}
 }
