@@ -108,7 +108,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 6135
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -382,6 +382,7 @@ MonoBehaviour:
   _maxSanityValue: 100
   _sanityDecreaseSpeed: 0.1
   _sanityVolume: {fileID: 0}
+  _sanityPercentText: {fileID: 0}
   _slider: {fileID: 0}
 --- !u!114 &3266096912257546959
 MonoBehaviour:

@@ -1,5 +1,4 @@
 using DataPersistance;
-using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Audio;
@@ -113,7 +112,7 @@ namespace Menu
 		public void ResolutionButton(int index)
 		{
 			index = Mathf.Clamp(index, -1, 1);
-
+			
 			_optionData.SelectedScreenResolutionIndex += index;
 		}
 

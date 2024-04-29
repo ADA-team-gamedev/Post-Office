@@ -128,7 +128,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 1
   ViewedRadius: 8
-  InstantDetectionRadius: 1.5
+  InstantDetectionRadius: 2
   ViewedAngle: 90
 --- !u!195 &704981538680014075
 NavMeshAgent:
@@ -177,11 +177,14 @@ MonoBehaviour:
   _patrolPhaseStartSanityPercent: 0.954
   _attackPhaseStartSanityPercent: 0.1
   <TranfromToEnemyDelay>k__BackingField: 5
+  <TranfromToBoxDelay>k__BackingField: 1.5
   _animator: {fileID: 5533283043407564172}
   BecomeInsectTrigger: BecomeInsect
   BecomeBoxTrigger: BecomeBox
   IsMoving: IsMoving
   _killerBoxJumpScare: {fileID: 0}
+  _patrolingAnimationSpeed: 1
+  _fleeingAnimationSpeed: 1
   _patrolPoints: []
   _hiddenPoints: []
 --- !u!1001 &6935327651172392044

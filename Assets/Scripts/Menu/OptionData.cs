@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEngine;
 
 namespace Menu
@@ -102,8 +103,6 @@ namespace Menu
 		private int _selectedFrameRates = 4;
 
 		public bool VSyncCountEnable { get; set; } = false;
-
-		public float ScreenBrightness { get; set; } = 1;
 
 		#endregion
 
