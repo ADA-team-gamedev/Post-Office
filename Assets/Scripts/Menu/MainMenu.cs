@@ -11,6 +11,8 @@ namespace Menu
 		[Header("Menus")]
 		[SerializeField] private GameObject _settingsWindow;
 
+		[SerializeField] private GameObject _splashWarningScreen;
+
 		[Header("Buttons")]
 		[SerializeField] private Button _resumeButton;
 
@@ -20,8 +22,14 @@ namespace Menu
 
 		private const string _tutorialMapName = "Tutorial";
 
+		private static bool _isShowedSplashScreen = false;
+
 		private void Start()
 		{
+			_splashWarningScreen.SetActive(!_isShowedSplashScreen);
+
+			_isShowedSplashScreen = !_isShowedSplashScreen;
+
 			_settingsWindow.SetActive(false);
 
 			Cursor.lockState = CursorLockMode.None;
@@ -41,7 +49,7 @@ namespace Menu
 		public void OnNewGameButton(string sceneToLoad)
 		{
 			WeekDay weekDay = WeekDay.Monday;
-
+			
 			if (_dataService.SaveData(JsonDataService.WeekDayPath, weekDay, true))
 				OnLoadScene(sceneToLoad);		
 		}
