@@ -26,9 +26,12 @@ namespace Menu
 
 		private void Start()
 		{
-			_splashWarningScreen.SetActive(!_isShowedSplashScreen);
+            if (!_isShowedSplashScreen)
+            {
+				_splashWarningScreen.SetActive(true);
 
-			_isShowedSplashScreen = !_isShowedSplashScreen;
+				_isShowedSplashScreen = true;
+			}
 
 			_settingsWindow.SetActive(false);
 
