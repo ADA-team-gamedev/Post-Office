@@ -3,7 +3,12 @@ guid: 4408cf9d44fb2464498ea9873afd281e
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: lechucititas_u1_v1
+    second: {fileID: 2100000, guid: 205c26659c1de5241b433b07c2d47950, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
