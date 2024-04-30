@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8859739760796948438}
+  - component: {fileID: 580495655000862957}
   m_Layer: 0
   m_Name: Unfolded 4
   m_TagString: Untagged
@@ -29,13 +30,34 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1058688185469343445}
-  - {fileID: 2470454231509772322}
+  - {fileID: 7156725878716024147}
   - {fileID: 1984717947989578193}
-  - {fileID: 4106232846274072746}
+  - {fileID: 8783523716857593307}
   - {fileID: 8434848053718644364}
   m_Father: {fileID: 0}
-  m_RootOrder: 23
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &580495655000862957
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2637980647570671714}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.091829, y: 0.05015793, z: 2.187548}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &2470454231509772321
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -134,7 +156,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd9029b18318b904faa6ef9d80f4b844, type: 3}
---- !u!4 &2470454231509772322 stripped
+--- !u!4 &7156725878716024147 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4690812699619552626, guid: cd9029b18318b904faa6ef9d80f4b844,
     type: 3}
@@ -342,7 +364,7 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cd9029b18318b904faa6ef9d80f4b844, type: 3}
---- !u!4 &4106232846274072746 stripped
+--- !u!4 &8783523716857593307 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4690812699619552626, guid: cd9029b18318b904faa6ef9d80f4b844,
     type: 3}

@@ -85,6 +85,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7100961388692439849}
+  - component: {fileID: 2635539125935116056}
   m_Layer: 0
   m_Name: Pile 1
   m_TagString: Untagged
@@ -108,6 +109,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &2635539125935116056
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2576872123447159335}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.93637085, y: 0.43423998, z: 0.8805313}
+  m_Center: {x: -0.00018310547, y: -0.61145145, z: -0.006225586}
 --- !u!1 &3216374783315133209
 GameObject:
   m_ObjectHideFlags: 0
