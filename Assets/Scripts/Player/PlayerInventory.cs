@@ -1,5 +1,6 @@
 using Enemy;
 using Items;
+using Items.Keys;
 using System;
 using System.Collections.Generic;
 using TaskSystem.NoteBook;
@@ -103,9 +104,6 @@ namespace Player
 
 		private void TryPickupObject()
 		{
-			if (_inventory.Count >= InventorySlotsAmount)
-				return;
-
 			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked) //for box animation
 				return;
 
@@ -113,6 +111,18 @@ namespace Player
 			{
 				if (hit.collider.TryGetComponent(out Item item) && item.CanBePicked)
 				{
+					if (item.TryGetComponent(out Items.Keys.Key key) && TryGetItem(out KeyBunch keyBunch))
+					{
+						keyBunch.AddKey(key);
+
+						ChangeSelectedSlotOnItem(keyBunch);
+
+						return;
+					}
+
+					if (_inventory.Count >= InventorySlotsAmount)
+						return;
+					
 					_currentObjectTransform = hit.transform;
 					_currentObjectRigidbody = hit.rigidbody;
 					_currentObjectCollider = hit.collider;
@@ -121,9 +131,9 @@ namespace Player
 
 					item.OnPickUpItem?.Invoke(item);
 
-					AddItem(item);
-
 					OnItemPicked?.Invoke(item);
+
+					AddItem(item);
 				}
 			}
 		}
@@ -260,9 +270,6 @@ namespace Player
 
 			_currentSlotIndex = _inventory.Count - 1;
 
-			//if (_inventory.Count != 1 && !_changeItemWhenPickup)
-			//	_currentSlotIndex--;
-
 			ChangeSelectedSlot();
 		}
 
@@ -274,6 +281,17 @@ namespace Player
 				_currentSlotIndex = _inventory.Count - 1;
 			else if (_currentSlotIndex > 0)
 				_currentSlotIndex--;
+
+			ChangeSelectedSlot();
+		}
+
+		private void ChangeSelectedSlotOnItem<T>(T item) where T : Item
+		{
+			for (int i = 0; i < _inventory.Count; i++)
+			{
+				if (Equals(_inventory[i], item))
+					_currentSlotIndex = i;
+			}
 
 			ChangeSelectedSlot();
 		}
