@@ -170,6 +170,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ZoomMapIn"",
+                    ""type"": ""Button"",
+                    ""id"": ""0ef931b9-044a-4bd1-a210-ac9e484910e9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ZoomMapOut"",
+                    ""type"": ""Button"",
+                    ""id"": ""87f4762f-c241-4c2f-ace5-1ed570240546"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -458,6 +476,50 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""action"": ""Hotbar 4"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e83878ce-5e84-4327-9dd1-ee55db82dd4d"",
+                    ""path"": ""<Keyboard>/equals"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapIn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dbca861b-ea00-48e3-bac7-86ba275e3701"",
+                    ""path"": ""<Keyboard>/numpadPlus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapIn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fab46d2c-3c3a-4ff6-a3c6-b413a2585eda"",
+                    ""path"": ""<Keyboard>/minus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapOut"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""61ce3075-891c-4510-924b-644229a6abe8"",
+                    ""path"": ""<Keyboard>/numpadMinus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapOut"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -538,6 +600,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_FlahsLight = m_Player.FindAction("FlahsLight", throwIfNotFound: true);
         m_Player_AnyKey = m_Player.FindAction("AnyKey", throwIfNotFound: true);
         m_Player_NoteBook = m_Player.FindAction("NoteBook", throwIfNotFound: true);
+        m_Player_ZoomMapIn = m_Player.FindAction("ZoomMapIn", throwIfNotFound: true);
+        m_Player_ZoomMapOut = m_Player.FindAction("ZoomMapOut", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -618,6 +682,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_FlahsLight;
     private readonly InputAction m_Player_AnyKey;
     private readonly InputAction m_Player_NoteBook;
+    private readonly InputAction m_Player_ZoomMapIn;
+    private readonly InputAction m_Player_ZoomMapOut;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -638,6 +704,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @FlahsLight => m_Wrapper.m_Player_FlahsLight;
         public InputAction @AnyKey => m_Wrapper.m_Player_AnyKey;
         public InputAction @NoteBook => m_Wrapper.m_Player_NoteBook;
+        public InputAction @ZoomMapIn => m_Wrapper.m_Player_ZoomMapIn;
+        public InputAction @ZoomMapOut => m_Wrapper.m_Player_ZoomMapOut;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -695,6 +763,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @NoteBook.started += instance.OnNoteBook;
             @NoteBook.performed += instance.OnNoteBook;
             @NoteBook.canceled += instance.OnNoteBook;
+            @ZoomMapIn.started += instance.OnZoomMapIn;
+            @ZoomMapIn.performed += instance.OnZoomMapIn;
+            @ZoomMapIn.canceled += instance.OnZoomMapIn;
+            @ZoomMapOut.started += instance.OnZoomMapOut;
+            @ZoomMapOut.performed += instance.OnZoomMapOut;
+            @ZoomMapOut.canceled += instance.OnZoomMapOut;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -747,6 +821,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @NoteBook.started -= instance.OnNoteBook;
             @NoteBook.performed -= instance.OnNoteBook;
             @NoteBook.canceled -= instance.OnNoteBook;
+            @ZoomMapIn.started -= instance.OnZoomMapIn;
+            @ZoomMapIn.performed -= instance.OnZoomMapIn;
+            @ZoomMapIn.canceled -= instance.OnZoomMapIn;
+            @ZoomMapOut.started -= instance.OnZoomMapOut;
+            @ZoomMapOut.performed -= instance.OnZoomMapOut;
+            @ZoomMapOut.canceled -= instance.OnZoomMapOut;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -846,6 +926,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnFlahsLight(InputAction.CallbackContext context);
         void OnAnyKey(InputAction.CallbackContext context);
         void OnNoteBook(InputAction.CallbackContext context);
+        void OnZoomMapIn(InputAction.CallbackContext context);
+        void OnZoomMapOut(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

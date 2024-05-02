@@ -38,7 +38,7 @@ namespace Level
 		{
 			_timeClock.OnGameCompleted -= FinishDayWork;
 
-			AudioManager.Instance.PlaySound("Click", transform.position);
+			AudioManager.Instance.PlaySound("Prosper", transform.position);
 
 			_dissolveEffect.SetTrigger(_dissolveEffectTrigger);
 
@@ -88,8 +88,7 @@ namespace Level
 
 		private void LoadMenu()
 		{
-			if (_dataService.SaveData(JsonDataService.LoadingInfoPath, _menuSceneName, true))
-				SceneManager.LoadScene(SceneLoader.LoadingSceneName);
+			SceneManager.LoadScene(_menuSceneName);
 		}
 
 		#endregion

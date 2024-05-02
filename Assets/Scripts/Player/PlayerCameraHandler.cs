@@ -105,9 +105,15 @@ namespace Player
 			_playerCamera.fieldOfView = Mathf.Lerp(_playerCamera.fieldOfView, _sprintFOV, _sprintFOVStepTime * Time.deltaTime);
 		}
 
-		private void DisableCamera()
+		public void DisableCamera()
 		{
 			//Destroy(this);
+
+			if (_playerInput != null)
+			{
+				_playerInput.Player.Look.performed -= OnLook;
+				_playerInput.Player.Look.canceled -= OnLook;
+			}
 		}
 
 		private void OnValidate()

@@ -18,6 +18,10 @@ namespace Events.CrushedPC
 
 		#region Event Start
 
+		[SerializeField] private bool _crushOnStart = false;
+
+		[SerializeField] private bool _repeaitingEvent = false;
+
 		[Header("Object")]
 		[SerializeField] private GameObject _screenError;
 
@@ -35,6 +39,8 @@ namespace Events.CrushedPC
 		private float _eventCooldownRemaining = 0;
 
 		private bool _isPCCrushed = false;
+
+		private bool _isPCCrushedOnce = false;
 
 		#endregion
 
@@ -54,6 +60,9 @@ namespace Events.CrushedPC
 			_screenError.SetActive(false);
 
 			_timeSinceGameStartToStartEvent = Random.Range(_minTimeSinceGameStartToStartEvent, _maxTimeSinceGameStartToStartEvent);
+
+			if (_crushOnStart)
+				CrushPC();
 		}
 
 		private void Update()
@@ -63,6 +72,9 @@ namespace Events.CrushedPC
 
 		private void TryStartEvent()
 		{
+			if (!_repeaitingEvent && _isPCCrushedOnce)
+				return;
+
 			if (_isPCCrushed || !IsCanStartEvent())
 				return;
 
@@ -95,6 +107,8 @@ namespace Events.CrushedPC
 				return;
 
 			_isPCCrushed = true;
+
+			_isPCCrushedOnce = true;
 
 			OnPCCrushed?.Invoke();
 

@@ -31,7 +31,22 @@ namespace Items.Keys
 			OnDropItem += OnPlayerDropBunch;
 		}
 
-		public bool TryAddKey(Key key)
+		public void AddKey(Key key)
+		{
+			if (!TryAddKey(key))
+			{
+#if UNITY_EDITOR
+				Debug.LogWarning("Can't add key!");
+#endif
+				return;
+			}
+
+			Destroy(key.gameObject);
+
+			AudioManager.Instance.PlaySound("Pickup Key", transform.position);
+		}
+
+		private bool TryAddKey(Key key)
 		{
 			if (_keyModels.Length <= 0 || _keyTypes.Count >= _keyModels.Length)
 				return false;
