@@ -20,10 +20,14 @@ namespace Player
 
 		[SerializeField][Range(0.01f, 10)] private float _sanityDecreaseSpeed = 1f;
 
+		[SerializeField] private bool _canDieFromLowSanity = true;
+
 		[SerializeField][Min(5)] private float _playerSanityToStartHeatBeat = 5f;
 
 		[SerializeField] private Animator _playerSanityDeathAnimator;
 		[SerializeField] private string _playerSanityDeathTrigger = "Sanity Die";
+
+		private bool _canPlayHeartBeatSound = true;
 
 		/// <summary>
 		/// Return percent from 0.01 to 1
@@ -89,7 +93,10 @@ namespace Player
 
 			OnSanityValueChanged += OnWriteSanityPercentText;
 
-			OnSanityValueChanged += OnPlayerNearDeath;
+			_playerSanityDeathAnimator.enabled = false;
+
+			if (_canDieFromLowSanity)
+				OnSanityValueChanged += OnPlayerNearDeath;
 
 			StartCoroutine(LoseSanity());
 		}
@@ -130,15 +137,23 @@ namespace Player
 		private void OnPlayerNearDeath(float sanityValue)
 		{
 			if (sanityValue > _playerSanityToStartHeatBeat)
-				return;
-
-			if (sanityValue > 0)
 			{
-				AudioManager.Instance.PlaySound("HeatBeat");
+				_canPlayHeartBeatSound = true;
+
+				return;
 			}
-			else
+
+			if (_canPlayHeartBeatSound && sanityValue > 0 && sanityValue < _playerSanityToStartHeatBeat)
+			{
+				AudioManager.Instance.PlaySound("HeartBeat");
+
+				_canPlayHeartBeatSound = false;
+			}
+			else if (sanityValue <= 0)
 			{
 				_playerInput.Player.Disable();
+
+				_playerSanityDeathAnimator.enabled = true;
 
 				_playerSanityDeathAnimator.SetTrigger(_playerSanityDeathTrigger);
 

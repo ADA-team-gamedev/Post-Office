@@ -76,8 +76,8 @@ namespace Level.Lights
 
 		private void Start()
 		{
-			_energyAmount = _maxEnergyAmount;	
-
+			_energyAmount = _maxEnergyAmount;
+			
 			CountNumberOfActivatedSwitches();
 
 			foreach (var fuseSwitch in generatorSwitches)
