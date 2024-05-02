@@ -225,6 +225,8 @@ namespace Player
 				_isSprintOnCooldown = true;
 
 				MovementState = MovementState.Walking;
+
+				AudioManager.Instance.PlaySound("OutOfBreath");
 			}
 		}
 
