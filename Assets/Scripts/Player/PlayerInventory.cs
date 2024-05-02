@@ -39,6 +39,13 @@ namespace Player
 
 		#region Inventory fields
 
+		[Header("Animation")]
+		[SerializeField] private bool _playChangeItemAnimation = true;
+
+		[SerializeField] private Animator _itemChangeAnimator;
+
+		[SerializeField] private string _itemChangeTriggerName = "ItemChange";
+
 		public const byte InventorySlotsAmount = 4;
 
 		private int _currentSlotIndex = -1;
@@ -99,7 +106,7 @@ namespace Player
 			if (_inventory.Count >= InventorySlotsAmount)
 				return;
 
-			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked)
+			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked) //for box animation
 				return;
 
 			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit, _pickupRange, _itemLayer))
@@ -283,6 +290,9 @@ namespace Player
 			}
 
 			var currentItem = _inventory[_currentSlotIndex];
+
+			if (_playChangeItemAnimation)
+				_itemChangeAnimator.SetTrigger(_itemChangeTriggerName);
 
 			if (currentItem)
 				currentItem.gameObject.SetActive(true);
