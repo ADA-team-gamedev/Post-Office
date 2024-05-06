@@ -51,6 +51,14 @@ namespace Level.Lights.Lamp
 			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
 		}
 
+		protected override void SwitchLampState(bool isEnabled)
+		{
+			if (IsLampDestroyed)
+				return;
+
+			base.SwitchLampState(isEnabled);
+		}
+
 		private void TryBreakLamp()
 		{
 			if (!IsLampDestroyed)
