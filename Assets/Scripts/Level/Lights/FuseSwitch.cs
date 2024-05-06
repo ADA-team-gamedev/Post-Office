@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Level.Lights
 {
-	public class FuseSwitch : MonoBehaviour, IInteractable
+	public class FuseSwitch : DestructiveBehaviour<FuseSwitch>, IInteractable
 	{
 		[field: SerializeField] public bool IsEnabled { get; private set; } = false;
 
@@ -26,8 +26,6 @@ namespace Level.Lights
 		public event Action OnSwitchStateChanged;
 
 		public event Action OnClickedOnSwitch;
-
-		public event Action<FuseSwitch> OnObjectDestroyed;
 
 		private FuseBox _generator;
 
@@ -122,9 +120,9 @@ namespace Level.Lights
 
 		#endregion
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
-			OnObjectDestroyed?.Invoke(this);
+			base.OnDestroy();
 
 			OnSwitchEnabled.RemoveAllListeners();
 

@@ -106,7 +106,7 @@ namespace Enemy
 
 			DisableAI();
 
-			_boxItem.OnObjectDetroyed += OnItemDestroyed;
+			_boxItem.OnObjectDestroyed += OnItemDestroyed;
 
 			_boxItem.OnPickUpItem += PickUpItem;
 
@@ -558,7 +558,7 @@ namespace Enemy
 
 		private void OnItemDestroyed(Item item)
 		{
-			_boxItem.OnObjectDetroyed -= OnItemDestroyed;
+			_boxItem.OnObjectDestroyed -= OnItemDestroyed;
 
 			_boxItem.OnPickUpItem -= PickUpItem;
 

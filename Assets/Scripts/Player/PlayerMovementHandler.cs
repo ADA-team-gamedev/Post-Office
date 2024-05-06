@@ -123,7 +123,7 @@ namespace Player
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDied += DisableMovement;
+			//_playerDeathController.OnDied += DisableMovement;
 
 			_playerSpeed = _playerWalkSpeed;
 

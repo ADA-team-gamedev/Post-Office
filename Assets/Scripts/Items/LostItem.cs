@@ -23,8 +23,10 @@ namespace Items
 			OnPickUpItem -= OnPlayerFindItem;
 		}
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
+			base.OnDestroy();
+
 			OnPickUpItem -= OnPlayerFindItem;
 		}
 	}

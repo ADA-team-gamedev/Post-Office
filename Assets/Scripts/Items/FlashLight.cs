@@ -57,8 +57,10 @@ namespace Items
             TurnOn();
 		}
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
+            base.OnDestroy();
+
 			OnDropItem -= EnableOnDrop;
 		}
 	}

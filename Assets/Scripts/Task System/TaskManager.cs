@@ -7,7 +7,7 @@ using Zenject;
 
 namespace TaskSystem
 {
-	public class TaskManager : MonoBehaviour
+	public class TaskManager : DestructiveBehaviour<TaskManager>
 	{
 		#region Task System
 
@@ -27,8 +27,6 @@ namespace TaskSystem
 
 		public event Action<Task> OnNewCurrentTaskSet;
 		public event Action OnCurrentTaskCompleted;
-
-		public event Action<TaskManager> OnObjectDestroyed;
 
 		#endregion
 
@@ -52,7 +50,7 @@ namespace TaskSystem
 				Debug.LogWarning($"{this} Instance already exists!");
 #endif
 			}
-
+			
 			_tablet.SubcribeOnTaskManager();
 
 			foreach (var taskData in _taskDatas)
@@ -171,10 +169,10 @@ namespace TaskSystem
 #endif
 		}
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
-			OnObjectDestroyed?.Invoke(this);
-
+			base.OnDestroy();
+			
 			foreach (var task in _tasks)
 			{
 				task.Value.OnCompleted -= CompleteTask;

@@ -30,6 +30,8 @@ namespace Level
 
 			_timeClock.OnGameCompleted += IncreasePlayerDayProgress;
 
+			_timeClock.OnObjectDestroyed += OnTimeClockDetoryed;
+
 			LoadDayProgress();
 		}
 
@@ -93,11 +95,13 @@ namespace Level
 
 		#endregion
 
-		private void OnDestroy()
+		private void OnTimeClockDetoryed(TimeClock timeClock)
 		{
-			_timeClock.OnGameCompleted -= FinishDayWork;
+			timeClock.OnObjectDestroyed -= OnTimeClockDetoryed;
 
-			_timeClock.OnGameCompleted -= IncreasePlayerDayProgress;
+			timeClock.OnGameCompleted -= FinishDayWork;
+
+			timeClock.OnGameCompleted -= IncreasePlayerDayProgress;
 		}
 	}
 }

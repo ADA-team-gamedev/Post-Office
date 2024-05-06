@@ -14,16 +14,13 @@ namespace Items
 			{
 				Debug.DrawRay(_playerInteractor.PlayerCamera.transform.position, _playerInteractor.PlayerCamera.transform.forward * _playerInteractor.InteractionDistance);
 
-				if (hit.transform.parent)
+				if (hit.transform.parent && hit.transform.parent.TryGetComponent(out BreakableLamp lamp) && lamp.IsLampDestroyed)
 				{
-					if (hit.transform.parent.TryGetComponent(out BreakableLamp lamp) && lamp.IsLampDestroyed)
-					{
-						lamp.RepairLamp();
+					lamp.RepairLamp();
 
-						PlayerInventory.Instance.DropItem();
+					PlayerInventory.Instance.DropItem();
 
-						Destroy(gameObject);
-					}
+					Destroy(gameObject);		
 				}			
 			}
 		}

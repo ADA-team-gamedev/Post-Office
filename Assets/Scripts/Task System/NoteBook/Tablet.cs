@@ -8,7 +8,7 @@ using Zenject;
 
 namespace TaskSystem.NoteBook
 {
-	public class Tablet : MonoBehaviour
+	public class Tablet : DestructiveBehaviour<Tablet>
 	{
 		#region Text
 
@@ -93,6 +93,8 @@ namespace TaskSystem.NoteBook
 			_minCameraMapSize = _miniMapCamera.orthographicSize * _minCameraSizeInPercent;
 
 			_maxCameraMapSize = _miniMapCamera.orthographicSize * _maxCameraSizeInPercent;
+
+			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
 		}
 
 		private void Update()
@@ -346,7 +348,26 @@ namespace TaskSystem.NoteBook
 			Gizmos.DrawWireSphere(tabletPosition + _openedPositionOffset, 0.01f);
 		}
 
-		private void OnDestroy()
+		private void OnTaskManagerDestroyed(TaskManager taskManager)
+		{
+			taskManager.OnObjectDestroyed -= OnTaskManagerDestroyed;
+
+			taskManager.OnAddedNewTask -= OnAddedTaskHint;
+
+			taskManager.OnAddedNewTask -= ChangeArrowState;
+
+			taskManager.OnNewCurrentTaskSet -= WriteTextInNoteBook;
+
+			taskManager.OnNewCurrentTaskSet -= OnNewCurrentTaskSetHint;
+
+			taskManager.OnCurrentTaskCompleted -= ClearNotebookTaskInfo;
+
+			taskManager.OnCurrentTaskCompleted -= OnCurrentTaskCompletedHint;
+
+			taskManager.OnTaskCompleted -= ChangeArrowState;
+		}
+
+		protected override void OnDestroy()
 		{
 			if (_playerInput != null)
 			{
@@ -360,21 +381,7 @@ namespace TaskSystem.NoteBook
 				_playerInput.Player.ZoomMapOut.performed -= OnZoomValueChanged;
 			}
 
-			_playerDeathController.OnDied -= DisableNoteBook;
-
-			TaskManager.Instance.OnAddedNewTask -= OnAddedTaskHint;
-
-			TaskManager.Instance.OnAddedNewTask -= ChangeArrowState;
-
-			TaskManager.Instance.OnNewCurrentTaskSet -= WriteTextInNoteBook;
-
-			TaskManager.Instance.OnNewCurrentTaskSet -= OnNewCurrentTaskSetHint;
-
-			TaskManager.Instance.OnCurrentTaskCompleted -= ClearNotebookTaskInfo;
-
-			TaskManager.Instance.OnCurrentTaskCompleted -= OnCurrentTaskCompletedHint;
-
-			TaskManager.Instance.OnTaskCompleted -= ChangeArrowState;
+			_playerDeathController.OnDied -= DisableNoteBook;	
 		}
 	}
 }

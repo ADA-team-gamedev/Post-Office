@@ -75,8 +75,10 @@ namespace Items
 			}
 		}
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
+			base.OnDestroy();
+
 			OnPickUpItem -= Completetask;
 		}
 	}

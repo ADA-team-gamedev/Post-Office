@@ -114,6 +114,8 @@ namespace Player
 				_playerInput.Player.Look.performed -= OnLook;
 				_playerInput.Player.Look.canceled -= OnLook;
 			}
+
+			_playerDeathController.OnDied -= DisableCamera;
 		}
 
 		private void OnValidate()

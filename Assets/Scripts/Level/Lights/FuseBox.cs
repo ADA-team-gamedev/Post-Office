@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 namespace Level.Lights
 {
-	public class FuseBox : MonoBehaviour
+	public class FuseBox : DestructiveBehaviour<FuseBox>
 	{
 		public bool IsEnabled { get; private set; } = true;
 
@@ -36,8 +36,6 @@ namespace Level.Lights
 
 		public UnityEvent OnFuseDisabled;
 		public UnityEvent OnFuseEnabled;
-
-		public event Action<FuseBox> OnObjectDestroyed;
 
 		public float EnergyAmount
 		{
@@ -216,9 +214,9 @@ namespace Level.Lights
 				_maxEnergyAmount++;
 		}
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
-			OnObjectDestroyed?.Invoke(this);
+			base.OnDestroy();
 
 			OnFuseDisabled.RemoveAllListeners();
 

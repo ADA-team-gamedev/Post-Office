@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 namespace Level.Lights.Lamp
 {
-	public class FlickeringLamp : Lamp, IEvent
+	public class FlickeringLamp : Lamp, IEvent 
 	{
 		[Header("Lamp flashing event")]
 
@@ -39,8 +39,6 @@ namespace Level.Lights.Lamp
 
 		public event Action OnLampStartFlashing;
 		public event Action OnLampStopFlashing;
-
-		public new event Action<FlickeringLamp> OnObjectDestroyed;
 
 		protected override void Awake()
 		{
@@ -216,8 +214,6 @@ namespace Level.Lights.Lamp
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
-
-			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Player
 {
-    public class PlayerDeathController : MonoBehaviour
+    public class PlayerDeathController : DestructiveBehaviour<PlayerDeathController>
     {
         [SerializeField][Range(1f, 10f)] private float _afterDeathDelay = 5f;
 
@@ -15,13 +15,13 @@ namespace Player
 
         public event Action OnDied;
 
-        public void Die()
+		public void Die()
         {
             if (!IsAlive)
                 return;
-
-            Debug.Log("The player has died");
-
+#if UNITY_EDITOR
+            Debug.Log("The player has died!");
+#endif
             IsAlive = false;
 
             OnDied?.Invoke();
@@ -35,5 +35,5 @@ namespace Player
 
             _dayFinisher.FinishDayWork();
 		}
-    }
+	}
 }

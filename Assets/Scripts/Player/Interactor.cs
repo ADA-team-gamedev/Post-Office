@@ -152,6 +152,8 @@ namespace Player
 		private void DisableInteractor()
 		{
 			Destroy(this);
+
+			_playerDeathController.OnDied -= DisableInteractor;
 		}
 
 		private void OnDrawGizmosSelected()

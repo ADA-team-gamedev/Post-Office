@@ -7,7 +7,7 @@ namespace Items
 {
 	[RequireComponent(typeof(Rigidbody))]
 	[RequireComponent(typeof(Collider))]
-	public class Item : MonoBehaviour
+	public class Item : DestructiveBehaviour<Item>
 	{
 		[field: Header("Item")]
 
@@ -38,8 +38,6 @@ namespace Items
 		public Action<Item> OnDropItem { get; set; }
 
 		public Action OnItemPickingPropertyChanged {  get; set; }
-
-		public event Action<Item> OnObjectDetroyed;
 
 		private void Start()
 		{
@@ -100,13 +98,15 @@ namespace Items
 			AudioManager.Instance.PlaySound(_dropSound, transform.position);
 		}
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
-			OnObjectDetroyed?.Invoke(this);
-
+			base.OnDestroy(); 
+			
 			OnPickUpItem -= ItemIcon.HideIcon;
 
 			OnDropItem -= ItemIcon.ShowIcon;
+
+			ItemIcon.HideIcon();
 		}
 
 		#endregion

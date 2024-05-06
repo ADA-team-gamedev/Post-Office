@@ -139,8 +139,10 @@ namespace Items.Keys
 			}
 		}	
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
+			base.OnDestroy();
+
 			OnPickUpItem -= OnPlayerPickupBunch;
 
 			OnDropItem -= OnPlayerDropBunch;

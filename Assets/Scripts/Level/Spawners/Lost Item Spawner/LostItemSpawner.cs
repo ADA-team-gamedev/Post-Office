@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 namespace Level.Spawners.LostItemSpawner
 {
-    public class LostItemSpawner : MonoBehaviour
+    public class LostItemSpawner : DestructiveBehaviour<LostItemSpawner>
     {
 		[Header("Sticker")]
 
@@ -29,8 +29,6 @@ namespace Level.Spawners.LostItemSpawner
 		[SerializeField] private List<Transform> _lostItemSpawnPoints;
 
 		public event Action<Dictionary<Item, LostItemSticker>> OnLostItemSpawned;
-
-		public event Action<LostItemSpawner> OnObjectDestroyed;
 
 		private const int _minLostItemAmount = 3;
 
@@ -131,11 +129,6 @@ namespace Level.Spawners.LostItemSpawner
 		{
 			if (_maxItemAmount > _lostItemStickersPosition.Count)
 				_maxItemAmount = _lostItemStickersPosition.Count;
-		}
-
-		private void OnDestroy()
-		{
-			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

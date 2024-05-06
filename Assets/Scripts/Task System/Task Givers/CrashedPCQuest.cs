@@ -3,11 +3,11 @@ using UnityEngine;
 
 namespace TaskSystem.TaskGivers
 {
-    public class CrashedPCQuest : MonoBehaviour
-    {
+    public class CrashedPCQuest : DestructiveBehaviour<CrashedPCQuest>
+	{
 		[SerializeField] private TaskData _crushedPCTask;
 
-        private CrushedComputerUnit[] _crushedComputers;
+        private CrashedComputerUnit[] _crushedComputers;
 
 		private void Start()
 		{
@@ -15,7 +15,7 @@ namespace TaskSystem.TaskGivers
 
 			foreach (var computer in _crushedComputers)
 			{
-				computer.OnObjectDestroyed += OnComputerUnitDestroyed;
+				computer.OnObjectDestroyed += OnComputerUnitsDestroyed;
 
 				computer.OnPCCrushed += GiveTaskToPlayer;
 			}
@@ -49,16 +49,16 @@ namespace TaskSystem.TaskGivers
 
 		private void FillPC()
 		{
-			_crushedComputers = FindObjectsOfType<CrushedComputerUnit>();
+			_crushedComputers = FindObjectsOfType<CrashedComputerUnit>();
 		}
 
-		private void OnComputerUnitDestroyed(CrushedComputerUnit computerUnit)
+		private void OnComputerUnitsDestroyed(CrashedComputerUnit computerUnit)
 		{
-			computerUnit.OnObjectDestroyed -= OnComputerUnitDestroyed;
+			computerUnit.OnObjectDestroyed -= OnComputerUnitsDestroyed;
 
 			computerUnit.OnPCCrushed -= GiveTaskToPlayer;
 
-			computerUnit.OnPCFixed -= OnPlayerFixPC;
+			computerUnit.OnPCFixed -= OnPlayerFixPC;			
 		}
 	}
 }

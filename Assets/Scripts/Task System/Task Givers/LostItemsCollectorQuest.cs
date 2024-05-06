@@ -6,7 +6,7 @@ using Zenject;
 
 namespace TaskSystem.TaskGivers
 {
-	public class LostItemsCollectorQuest : MonoBehaviour
+	public class LostItemsCollectorQuest : DestructiveBehaviour<LostItemsCollectorQuest>
 	{
 		[SerializeField] private TaskData _lostItemsTask;
 
@@ -70,11 +70,6 @@ namespace TaskSystem.TaskGivers
 			lostItemSpawner.OnObjectDestroyed -= OnLostItemSpawnerDestroyed;
 
 			lostItemSpawner.OnLostItemSpawned -= GiveLostItemQuest;
-		}
-
-		private void OnDestroy()
-		{
-			_lostItemSpawner.OnLostItemSpawned -= GiveLostItemQuest;
 		}
 	}
 }

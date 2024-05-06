@@ -6,7 +6,7 @@ namespace Level.Lights.Lamp
 {
 	[RequireComponent(typeof(BoxCollider))] //triger zone
 	[SelectionBase]
-	public class Lamp : MonoBehaviour, IEvent
+	public class Lamp : DestructiveBehaviour<Lamp>, IEvent 
 	{
 		[field: SerializeField] public bool IsLampEnabled { get; private set; } = true;
 
@@ -28,8 +28,6 @@ namespace Level.Lights.Lamp
 		[SerializeField] private UnityEvent OnStay;
 
 		public event Action<bool> OnLampStateChanged;
-
-		public event Action<Lamp> OnObjectDestroyed;
 
 		protected virtual void Awake()
 		{
@@ -85,9 +83,9 @@ namespace Level.Lights.Lamp
 				SwitchLampState(IsLampEnabled);
 		}
 
-		protected virtual void OnDestroy()
+		protected override void OnDestroy()
 		{
-			OnObjectDestroyed?.Invoke(this);
+			base.OnDestroy();
 		}
 	}
 }

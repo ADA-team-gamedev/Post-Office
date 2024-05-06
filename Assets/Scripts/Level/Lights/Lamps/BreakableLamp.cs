@@ -25,8 +25,6 @@ namespace Level.Lights.Lamp
 		public event Action OnLampDestroyed;
 		public event Action OnLampFixed;
 
-		public new event Action<BreakableLamp> OnObjectDestroyed;
-
 		protected override void Awake()
 		{
 			InitializeLamp();
@@ -141,8 +139,6 @@ namespace Level.Lights.Lamp
 		protected override void OnDestroy()
 		{
 			base.OnDestroy();
-
-			OnObjectDestroyed?.Invoke(this);
 		}
 	}
 }

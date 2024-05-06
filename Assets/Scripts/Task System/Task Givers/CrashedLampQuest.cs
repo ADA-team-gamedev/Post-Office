@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace TaskSystem.TaskGivers
 {
-	public class CrashedLampQuest : MonoBehaviour
+	public class CrashedLampQuest : DestructiveBehaviour<CrashedLampQuest>
 	{
 		[Header("Task")]
 		[SerializeField] private TaskData _crashedLampTask;
@@ -58,8 +58,18 @@ namespace TaskSystem.TaskGivers
 			_breakableLamps = FindObjectsOfType<BreakableLamp>();
 		}
 
-		private void OnLampObjectDestroyed(BreakableLamp breakableLamp)
+		private void OnLampObjectDestroyed(Lamp lamp)
 		{
+			if (lamp is not BreakableLamp)
+			{
+#if UNITY_EDITOR
+				Debug.LogWarning($"You subscribe breakableLamp method to Lamp, not BreakableLamp!");
+#endif
+				return;
+			}
+
+			BreakableLamp breakableLamp = (BreakableLamp)lamp;
+
 			breakableLamp.OnObjectDestroyed -= OnLampObjectDestroyed;
 
 			breakableLamp.OnLampDestroyed -= GiveTaskToPlayer;

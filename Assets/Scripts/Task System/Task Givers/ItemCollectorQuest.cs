@@ -8,7 +8,7 @@ using Zenject;
 namespace TaskSystem.TaskGivers
 {
 	[RequireComponent(typeof(BoxCollider))]
-	public class ItemCollectorQuest : MonoBehaviour
+	public class ItemCollectorQuest : DestructiveBehaviour<ItemCollectorQuest>
 	{
 		[Header("Task")]
 		[SerializeField] private string _playerTag = "Player";
@@ -42,7 +42,7 @@ namespace TaskSystem.TaskGivers
 
 			foreach (var item in _neededItems)
 			{
-				item.OnObjectDetroyed += OnItemDestroyed;
+				item.OnObjectDestroyed += OnItemDestroyed;
 			}
 
 			if (_giveTaskOnStart)
@@ -200,7 +200,7 @@ namespace TaskSystem.TaskGivers
 
 		private void OnItemDestroyed(Item item)
 		{
-			item.OnObjectDetroyed -= OnItemDestroyed;
+			item.OnObjectDestroyed -= OnItemDestroyed;
 
 			item.OnPickUpItem -= item.ItemIcon.HideIcon;
 
@@ -214,8 +214,10 @@ namespace TaskSystem.TaskGivers
 			taskManager.OnNewCurrentTaskSet -= ChangeQuestIconsState;
 		}
 
-		private void OnDestroy()
+		protected override void OnDestroy()
 		{
+			base.OnDestroy();
+
 			foreach (Item item in _neededItems)
 			{
 				item.ItemIcon.HideIcon();

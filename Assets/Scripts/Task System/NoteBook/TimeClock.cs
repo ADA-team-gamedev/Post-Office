@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace TaskSystem.NoteBook
 {
-	public class TimeClock : MonoBehaviour
+	public class TimeClock : DestructiveBehaviour<TimeClock>
 	{
 		[Header("Clock settings")]
 		[SerializeField] private TextMeshProUGUI _clockText;

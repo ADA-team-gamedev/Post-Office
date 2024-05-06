@@ -165,13 +165,13 @@ namespace Player
 
 		private void DisableSanity()
 		{
+			_playerDeathController.OnDied -= DisableSanity;
+
 			Destroy(this);
 		}
 
 		private void OnDestroy()
 		{
-			_playerDeathController.OnDied -= DisableSanity;
-
 			OnSanityValueChanged -= OnWriteSanityPercentText;
 
 			OnSanityValueChanged -= OnPlayerNearDeath;
