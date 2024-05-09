@@ -29,7 +29,7 @@ namespace Level.Lights
 		[SerializeField] private Icon _fuseIconForTask;
 
 		[Header("Switches")]
-		[SerializeField] private FuseSwitch[] generatorSwitches;
+		[SerializeField] private FuseSwitch[] _switches;
 
 		[Header("Events")]
 		[Space(5)]
@@ -48,9 +48,9 @@ namespace Level.Lights
 				if (value >= _maxEnergyAmount)
 				{
 					_energyAmount = _maxEnergyAmount;
-
+#if UNITY_EDITOR
 					Debug.Log("Generator has charged");
-
+#endif
 					EnableFuse();
 				}
 				else if (value <= 0)
@@ -58,9 +58,9 @@ namespace Level.Lights
 					_energyAmount = 0;
 
 					IsEnabled = false;
-
+#if UNITY_EDITOR
 					Debug.Log("Generator has disabled");
-
+#endif
 					DisableFuse();
 				}
 				else
@@ -77,11 +77,11 @@ namespace Level.Lights
 			_energyAmount = _maxEnergyAmount;
 			
 			CountNumberOfActivatedSwitches();
-
-			foreach (var fuseSwitch in generatorSwitches)
+			
+			foreach (var fuseSwitch in _switches)
 			{
 				fuseSwitch.OnObjectDestroyed += OnSwitchObjectDestroyed;
-
+				
 				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
 			}
 
@@ -115,7 +115,7 @@ namespace Level.Lights
 		{
 			_activatedSwitchesCount = 0;
 
-			foreach (var switches in generatorSwitches)
+			foreach (var switches in _switches)
 			{
 				if (switches.IsEnabled)
 					_activatedSwitchesCount++;
@@ -124,12 +124,14 @@ namespace Level.Lights
 
 		private void DisableFuse()
 		{
-			foreach (var switches in generatorSwitches)
+			foreach (var switches in _switches)
 				switches.DisableSwitch();
 
 			OnFuseDisabled?.Invoke();
 
 			AudioManager.Instance.PlaySound("Fuse Off", transform.position, spatialBlend: 0.5f);
+
+			EnergyAmount = _maxEnergyAmount; //if we want to wait, until fuse box charging to 100%, delete this line
 
 			GiveTask();	
 		}
@@ -164,7 +166,7 @@ namespace Level.Lights
 
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeIconState;
 
-			foreach (var fuseSwitch in generatorSwitches)
+			foreach (var fuseSwitch in _switches)
 			{
 				fuseSwitch.OnClickedOnSwitch += CompleteTask;
 			}
@@ -183,7 +185,7 @@ namespace Level.Lights
 
 				_isTaskCompleted = true;
 
-				foreach (var fuseSwitch in generatorSwitches)
+				foreach (var fuseSwitch in _switches)
 				{
 					fuseSwitch.OnClickedOnSwitch -= CompleteTask;
 				}
