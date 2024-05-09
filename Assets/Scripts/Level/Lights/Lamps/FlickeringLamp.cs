@@ -91,7 +91,7 @@ namespace Level.Lights.Lamp
 			base.TryInvokeLamp(other);
 		}	
 
-		[ContextMenu(nameof(StartFlashingEvent))]
+		[ContextMenu("Start Flashing")]
 		public void StartFlashingEvent()
 		{
 			if (_isFlashing)

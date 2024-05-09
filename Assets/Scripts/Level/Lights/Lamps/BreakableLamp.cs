@@ -117,13 +117,13 @@ namespace Level.Lights.Lamp
 
 			AudioManager.Instance.PlaySound(_lampCrushSoundName, transform.position, spatialBlend: 1f);
 
+			SwitchLampState(false);
+
 			OnLampDestroyed?.Invoke();
 
 			IsLampDestroyed = true;
 
 			LampRenderer.gameObject.SetActive(false);
-
-			SwitchLampState(false);
 
 			_electronicalSparkVF.gameObject.SetActive(true);
 		}

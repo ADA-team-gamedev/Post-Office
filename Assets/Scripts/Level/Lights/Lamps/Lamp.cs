@@ -52,6 +52,11 @@ namespace Level.Lights.Lamp
 			OnStay.Invoke();
 		}
 
+		public void SwitchLamp(bool isEnabled)
+		{
+			SwitchLampState(isEnabled);
+		}
+
 		protected virtual void SwitchLampState(bool isEnabled)
 		{
 			if (!gameObject.activeInHierarchy)
