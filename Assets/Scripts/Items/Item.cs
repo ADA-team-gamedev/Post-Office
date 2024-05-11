@@ -40,12 +40,12 @@ namespace Items
 
 		public Action OnItemPickingPropertyChanged {  get; set; }
 
-		private void Start()
+		protected virtual void Start()
 		{
 			InitializeItem();
 		}
 
-		private void Update()
+		protected virtual void Update()
 		{
 			ItemIcon.RotateIconToObject();
 		}

@@ -6,9 +6,9 @@ namespace Items
 	{
 		[field: SerializeField] public Texture StikckerTexture { get; private set; }
 
-		private void Start()
+		protected override void Start()
 		{
-			InitializeItem();
+			base.Start();
 		}
 
 		protected override void InitializeItem()
