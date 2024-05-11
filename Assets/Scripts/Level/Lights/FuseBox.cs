@@ -64,7 +64,9 @@ namespace Level.Lights
 					DisableFuse();
 				}
 				else
+				{
 					_energyAmount = value;
+				}
 			}
 		}
 
