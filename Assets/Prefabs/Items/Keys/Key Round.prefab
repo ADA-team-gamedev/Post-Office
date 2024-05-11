@@ -104,7 +104,9 @@ MonoBehaviour:
     <IconTargetToLook>k__BackingField: {fileID: 0}
     <EnableOnStart>k__BackingField: 0
     <ChangeIconStateAutomatically>k__BackingField: 0
-  <DoorKeyType>k__BackingField: 0
+  <KeyType>k__BackingField: 0
+  _keyLabelData: {fileID: 11400000, guid: 438db9d32c3639c40a18da3090cf15fe, type: 2}
+  _labelRenderer: {fileID: 5342229354659768974}
 --- !u!1001 &8480836406233775132
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -243,6 +245,12 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5dd5a1ab6047d4848b7668734815016f, type: 3}
+--- !u!23 &5342229354659768974 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 4580884901501032082, guid: 5dd5a1ab6047d4848b7668734815016f,
+    type: 3}
+  m_PrefabInstance: {fileID: 8480836406233775132}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6277317231394308158 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2498504952586042402, guid: 5dd5a1ab6047d4848b7668734815016f,

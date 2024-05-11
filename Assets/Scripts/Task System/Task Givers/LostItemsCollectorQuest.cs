@@ -3,6 +3,7 @@ using Level.Spawners.LostItemSpawner;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using UnityEngine.Modification;
 
 namespace TaskSystem.TaskGivers
 {

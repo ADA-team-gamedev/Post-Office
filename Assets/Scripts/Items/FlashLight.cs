@@ -12,9 +12,9 @@ namespace Items
 
         public bool IsWorking { get; private set; } = false;
 
-        private void Start()
+		protected override void Start()
         {
-            InitializeItem();
+			base.Start();
 		}
 
 		protected override void InitializeItem()

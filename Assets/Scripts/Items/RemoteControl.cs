@@ -15,9 +15,9 @@ namespace Items
 
 		[SerializeField] private TaskData _findRemoteControlTask;
 
-		private void Start()
+		protected override void Start()
 		{
-			InitializeItem();
+			base.Start();
 		}
 
 		protected override void InitializeItem()
@@ -29,11 +29,6 @@ namespace Items
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeItemIconState;
 
 			TaskManager.Instance.TryAddNewTask(_findRemoteControlTask);
-		}
-
-		private void Update()
-		{
-			ItemIcon.RotateIconToObject();
 		}
 
 		private void ChangeItemIconState(Task currentTask)
