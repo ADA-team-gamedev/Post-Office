@@ -61,7 +61,7 @@ namespace Level.Doors
 
 		[field: SerializeField] public bool IsClosed { get; private set; } = true;
 
-		[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
+		[field: SerializeField] public DoorKeyType DoorKeyType { get; private set; }
 
 		#endregion
 
