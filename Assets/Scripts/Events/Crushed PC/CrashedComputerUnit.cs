@@ -19,7 +19,7 @@ namespace Events.CrushedPC
 
 		#region Event Start
 
-		[SerializeField] private bool _crushOnStart = false;
+		[SerializeField] private bool _crashOnStart = false;
 
 		[SerializeField] private bool _repeaitingEvent = false;
 
@@ -39,13 +39,15 @@ namespace Events.CrushedPC
 		[SerializeField, Delayed, Min(0)] private float _maxEventCooldownDelay = 60;
 		private float _eventCooldownRemaining = 0;
 
-		private bool _isPCCrushed = false;
+		private bool _isPCCrashed = false;
 
-		private bool _isPCCrushedOnce = false;
+		private bool _isPCCrashedOnce = false;
 
 		#endregion
 
-		public event Action OnPCCrushed;
+		public bool IsPCEnabled { get; private set; } = true;
+
+		public event Action OnPCCrashed;
 		public event Action OnPCFixed;
 
 		[Header("Fix Button")]
@@ -60,7 +62,7 @@ namespace Events.CrushedPC
 
 			_timeSinceGameStartToStartEvent = Random.Range(_minTimeSinceGameStartToStartEvent, _maxTimeSinceGameStartToStartEvent);
 
-			if (_crushOnStart)
+			if (_crashOnStart)
 				CrushPC();
 		}
 
@@ -71,10 +73,10 @@ namespace Events.CrushedPC
 
 		private void TryStartEvent()
 		{
-			if (!_repeaitingEvent && _isPCCrushedOnce)
+			if (!_repeaitingEvent && _isPCCrashedOnce)
 				return;
 
-			if (_isPCCrushed || !IsCanStartEvent())
+			if (_isPCCrashed || !IsCanStartEvent())
 				return;
 
 			if (_eventCooldownRemaining <= 0)
@@ -99,17 +101,19 @@ namespace Events.CrushedPC
 			CrushPC();
 		}
 
+		#region PC fix
+
 		[ContextMenu(nameof(CrushPC))]
 		public void CrushPC()
 		{
-			if (_isPCCrushed)
+			if (_isPCCrashed)
 				return;
 
-			_isPCCrushed = true;
+			_isPCCrashed = true;
 
-			_isPCCrushedOnce = true;
+			_isPCCrashedOnce = true;
 
-			OnPCCrushed?.Invoke();
+			OnPCCrashed?.Invoke();
 
 			_screenError.SetActive(true);
 
@@ -119,12 +123,12 @@ namespace Events.CrushedPC
 		[ContextMenu(nameof(FixPC))]
 		private void FixPC()
 		{
-			if (!_isPCCrushed)
+			if (!_isPCCrashed)
 				return;
 
 			AudioManager.Instance.PlaySound(_endHoldingButton, transform.position, spatialBlend: 1f);
 
-			_isPCCrushed = false;
+			_isPCCrashed = false;
 
 			OnPCFixed?.Invoke();
 
@@ -133,6 +137,18 @@ namespace Events.CrushedPC
 			_eventCooldownRemaining = Random.Range(_minEventCooldownDelay, _maxEventCooldownDelay);
 
 			StopInteract();
+		}
+
+		#endregion
+
+		public void DisableCpmputer()
+		{
+			_screenError.SetActive(false);
+		}
+
+		public void EnableComputer()
+		{
+			_screenError.SetActive(_isPCCrashed);
 		}
 
 		private bool IsCanStartEvent()
@@ -147,7 +163,7 @@ namespace Events.CrushedPC
 
 		public void StartInteract()
 		{
-			if (!_isPCCrushed)
+			if (!_isPCCrashed)
 				return;
 
 			AudioManager.Instance.PlaySound(_startHoldingButton, transform.position, spatialBlend: 1f);
@@ -155,7 +171,7 @@ namespace Events.CrushedPC
 
 		public void UpdateInteract()
 		{
-			if (!_isPCCrushed)
+			if (!_isPCCrashed || !IsPCEnabled)
 				return;
 
 			_buttonHoldingTime += Time.deltaTime * _buttonHoldingSpeed;

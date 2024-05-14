@@ -18,7 +18,7 @@ namespace TaskSystem.TaskGivers
 			{
 				computer.OnObjectDestroyed += OnComputerUnitsDestroyed;
 
-				computer.OnPCCrushed += GiveTaskToPlayer;
+				computer.OnPCCrashed += GiveTaskToPlayer;
 			}
 		}
 
@@ -29,7 +29,7 @@ namespace TaskSystem.TaskGivers
 
 			foreach (var computer in _crushedComputers)
 			{
-				computer.OnPCCrushed -= GiveTaskToPlayer;
+				computer.OnPCCrashed -= GiveTaskToPlayer;
 
 				computer.OnPCFixed += OnPlayerFixPC;
 			}	
@@ -57,7 +57,7 @@ namespace TaskSystem.TaskGivers
 		{
 			computerUnit.OnObjectDestroyed -= OnComputerUnitsDestroyed;
 
-			computerUnit.OnPCCrushed -= GiveTaskToPlayer;
+			computerUnit.OnPCCrashed -= GiveTaskToPlayer;
 
 			computerUnit.OnPCFixed -= OnPlayerFixPC;			
 		}

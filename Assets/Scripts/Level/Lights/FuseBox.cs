@@ -1,4 +1,5 @@
 using Audio;
+using Events.CrushedPC;
 using Items.Icon;
 using Level.Lights.Lamps;
 using System;
@@ -79,16 +80,9 @@ namespace Level.Lights
 
 			_lamps = FindObjectsOfType<Lamp>();
 
-			foreach (var fuseSwitch in _switches)
-			{
-				fuseSwitch.OnObjectDestroyed += OnSwitchObjectDestroyed;
-				
-				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
+			SubscribePcOnFuseEvents();
 
-				OnFuseEnabled.AddListener(fuseSwitch.EnableSwitch);
-
-				OnFuseDisabled.AddListener(fuseSwitch.DisableSwitch);
-			}		
+			SubscribeFuseSwitchOnFuseEvents();		
 
 			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
 		}
@@ -231,6 +225,32 @@ namespace Level.Lights
 			fuseSwitch.OnSwitchStateChanged -= CountNumberOfActivatedSwitches;
 
 			fuseSwitch.OnClickedOnSwitch -= CompleteTask;
+		}
+
+		private void SubscribeFuseSwitchOnFuseEvents()
+		{
+			foreach (var fuseSwitch in _switches)
+			{
+				fuseSwitch.OnObjectDestroyed += OnSwitchObjectDestroyed;
+
+				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
+
+				OnFuseEnabled.AddListener(fuseSwitch.EnableSwitch);
+
+				OnFuseDisabled.AddListener(fuseSwitch.DisableSwitch);
+			}
+		}
+
+		private void SubscribePcOnFuseEvents()
+		{
+			CrashedComputerUnit[] computerUnits = FindObjectsOfType<CrashedComputerUnit>();
+
+			foreach (var computerUnit in computerUnits)
+			{
+				OnFuseEnabled.AddListener(computerUnit.EnableComputer);
+
+				OnFuseDisabled.AddListener(computerUnit.DisableCpmputer);
+			}
 		}
 
 		private void OnTaskManagerDestroyed(TaskManager taskManager)
