@@ -11,7 +11,7 @@ namespace Level.Lights
 	{
 		[field: SerializeField] public bool IsEnabled { get; private set; } = false;
 
-		[Header("Switch Animation")]
+		[Header("Switch Aniamtion")]
 
 		[SerializeField] private float _newSwitchYPosition = -1f;
 
@@ -70,15 +70,9 @@ namespace Level.Lights
 			OnClickedOnSwitch?.Invoke();
 
 			if (IsEnabled)
-			{
 				DisableSwitch();
-			}
 			else
-			{
 				EnableSwitch();
-
-				_generator.EnableFuse();
-			}
 
 			AudioManager.Instance.PlaySound("Fuse Switch Change", transform.position, spatialBlend: 1);
 		}
@@ -102,8 +96,8 @@ namespace Level.Lights
 			IsEnabled = false;
 
 			OnSwitchStateChanged?.Invoke();
-			
-			OnSwitchDisabled?.Invoke();
+
+			OnSwitchDisabled.Invoke();
 
 			_generator.OnFuseEnabled.RemoveListener(ActiveSwitchLater);
 		}
@@ -115,7 +109,7 @@ namespace Level.Lights
 			OnSwitchStateChanged?.Invoke();
 
 			if (_generator.IsEnabled)
-				OnSwitchEnabled?.Invoke();		
+				OnSwitchEnabled.Invoke();
 			else
 				_generator.OnFuseEnabled.AddListener(ActiveSwitchLater);
 		}

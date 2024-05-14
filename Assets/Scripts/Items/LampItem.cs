@@ -1,4 +1,4 @@
-using Level.Lights.Lamps;
+using Level.Lights.Lamp;
 using Player;
 using UnityEngine;
 

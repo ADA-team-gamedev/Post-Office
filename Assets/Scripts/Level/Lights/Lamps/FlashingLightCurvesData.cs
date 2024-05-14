@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Level.Lights.Lamps
+namespace Level.Lights.Lamp
 {
 	[CreateAssetMenu]
 	public class FlashingLightCurvesData : ScriptableObject

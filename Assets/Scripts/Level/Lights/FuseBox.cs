@@ -1,12 +1,10 @@
 using Audio;
 using Items.Icon;
-using Level.Lights.Lamps;
 using System;
 using TaskSystem;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Modification;
-using static UnityEngine.InputSystem.Controls.AxisControl;
 
 namespace Level.Lights
 {
@@ -34,8 +32,6 @@ namespace Level.Lights
 		[Header("Switches")]
 		[SerializeField] private FuseSwitch[] _switches;
 
-		private Lamp[] _lamps;
-
 		[Header("Events")]
 		[Space(5)]
 
@@ -53,11 +49,19 @@ namespace Level.Lights
 				if (value >= _maxEnergyAmount)
 				{
 					_energyAmount = _maxEnergyAmount;
+#if UNITY_EDITOR
+					Debug.Log("Generator has charged");
+#endif
+					EnableFuse();
 				}
 				else if (value <= 0)
 				{
 					_energyAmount = 0;
 
+					IsEnabled = false;
+#if UNITY_EDITOR
+					Debug.Log("Generator has disabled");
+#endif
 					DisableFuse();
 				}
 				else
@@ -76,19 +80,13 @@ namespace Level.Lights
 			_energyAmount = _maxEnergyAmount;
 			
 			CountNumberOfActivatedSwitches();
-
-			_lamps = FindObjectsOfType<Lamp>();
-
+			
 			foreach (var fuseSwitch in _switches)
 			{
 				fuseSwitch.OnObjectDestroyed += OnSwitchObjectDestroyed;
 				
 				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
-
-				OnFuseEnabled.AddListener(fuseSwitch.EnableSwitch);
-
-				OnFuseDisabled.AddListener(fuseSwitch.DisableSwitch);
-			}		
+			}
 
 			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
 		}
@@ -127,50 +125,25 @@ namespace Level.Lights
 			}
 		}
 
-		[ContextMenu(nameof(DisableFuse))]
 		private void DisableFuse()
 		{
-			if (!Application.IsPlaying(this) || !IsEnabled)
-				return;
-
-#if UNITY_EDITOR
-			Debug.Log("Generator has disabled");
-#endif
-
-			IsEnabled = false;
+			foreach (var switches in _switches)
+				switches.DisableSwitch();
 
 			OnFuseDisabled?.Invoke();
 
-			foreach (var lamp in _lamps)
-			{
-				lamp.CanBeEnabled = false;
-			}
-
 			AudioManager.Instance.PlaySound("Fuse Off", transform.position, spatialBlend: 0.5f);
 
-			EnergyAmount = _maxEnergyAmount; //if we want to wait, until fuse box charging to 100%, delete this line and add enable to max energy amount property set
+			EnergyAmount = _maxEnergyAmount; //if we want to wait, until fuse box charging to 100%, delete this line
 
 			GiveTask();	
 		}
 
-		[ContextMenu(nameof(EnableFuse))]
-		public void EnableFuse()
+		private void EnableFuse()
 		{
-			if (!Application.IsPlaying(this) || IsEnabled)
-				return;
-
-#if UNITY_EDITOR
-			Debug.Log("Generator has enabled");
-#endif
-
 			IsEnabled = true;
 
-			foreach (var lamp in _lamps)
-			{
-				lamp.CanBeEnabled = true;
-			}
-
-			OnFuseEnabled?.Invoke();			
+			OnFuseEnabled?.Invoke();
 		}
 
 		#region Logic for task

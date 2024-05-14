@@ -3,7 +3,7 @@ using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Level.Lights.Lamps
+namespace Level.Lights.Lamp
 {
 	public class BreakableLamp : FlickeringLamp, IEvent
 	{
@@ -51,7 +51,7 @@ namespace Level.Lights.Lamps
 			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
 		}
 
-		public override void SwitchLampState(bool isEnabled)
+		protected override void SwitchLampState(bool isEnabled)
 		{
 			if (IsLampDestroyed)
 				return;
@@ -103,10 +103,10 @@ namespace Level.Lights.Lamps
 			LampRenderer.gameObject.SetActive(true);
 
 			_electronicalSparkVF.gameObject.SetActive(false);
-	
+
 			SwitchLampState(true);
 
-			StartFlashingEvent();				
+			StartFlashingEvent();		
 		}
 
 		[ContextMenu(nameof(BreakLamp))]

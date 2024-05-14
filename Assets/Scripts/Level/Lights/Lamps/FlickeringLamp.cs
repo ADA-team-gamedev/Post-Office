@@ -4,7 +4,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Level.Lights.Lamps
+namespace Level.Lights.Lamp
 {
 	public class FlickeringLamp : Lamp, IEvent 
 	{
@@ -94,7 +94,7 @@ namespace Level.Lights.Lamps
 		[ContextMenu("Start Flashing")]
 		public void StartFlashingEvent()
 		{
-			if (_isFlashing || !CanBeEnabled)
+			if (_isFlashing)
 				return;
 
 			_isFlashing = true;

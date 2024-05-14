@@ -1,6 +1,6 @@
 using Items;
 using Level.Doors;
-using Level.Lights.Lamps;
+using Level.Lights.Lamp;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
