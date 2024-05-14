@@ -3,17 +3,25 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Modification;
 
-namespace Level.Lights.Lamp
+namespace Level.Lights.Lamps
 {
 	[RequireComponent(typeof(BoxCollider))] //triger zone
 	[SelectionBase]
 	public class Lamp : DestructiveBehaviour<Lamp>, IEvent 
 	{
+		#region Lamp Settings
+
 		[field: SerializeField] public bool IsLampEnabled { get; private set; } = true;
 
 		[SerializeField] private string _playerTag = "Player";
 
 		[field: SerializeField] protected Light Light { get; private set; }
+
+		public bool CanBeEnabled { get; set; } = true;
+
+		#endregion
+
+		#region Renderer
 
 		[field: SerializeField] protected Renderer LampRenderer { get; private set; }
 
@@ -25,10 +33,16 @@ namespace Level.Lights.Lamp
 
 		protected Color DisabledLampColor { get; private set; } = Color.black;
 
+		#endregion
+
+		#region Lamp events
+
 		[Space(10)]
 		[SerializeField] private UnityEvent OnStay;
 
 		public event Action<bool> OnLampStateChanged;
+
+		#endregion
 
 		protected virtual void Awake()
 		{
@@ -53,15 +67,12 @@ namespace Level.Lights.Lamp
 			OnStay.Invoke();
 		}
 
-		public void SwitchLamp(bool isEnabled)
+		public virtual void SwitchLampState(bool isEnabled)
 		{
-			SwitchLampState(isEnabled);
-		}
-
-		protected virtual void SwitchLampState(bool isEnabled)
-		{
-			if (!gameObject.activeInHierarchy)
+			if (!gameObject.activeInHierarchy || !CanBeEnabled)
 				return;
+
+			StopAllCoroutines();
 
 			OnLampStateChanged?.Invoke(isEnabled);
 
