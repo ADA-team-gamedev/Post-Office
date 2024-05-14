@@ -1,4 +1,4 @@
-using Level.Lights.Lamp;
+using Level.Lights.Lamps;
 using UnityEngine;
 using UnityEngine.Modification;
 
