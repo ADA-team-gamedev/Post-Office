@@ -53,6 +53,9 @@ namespace Player
 
 		private List<Item> _inventory;
 
+		[Header("Items On Start")]
+		[SerializeField] private Item[] _itemsOnStart;
+
 		#endregion
 
 		private PlayerDeathController _playerDeathController;
@@ -96,8 +99,10 @@ namespace Player
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
 			_playerDeathController.OnDied += ClearInventory;
+			
+			_inventory = new(InventorySlotsAmount);
 
-			_inventory = new(InventorySlotsAmount);		
+			AddStartedItems();
 		}
 
 		#region Pickup system
@@ -406,6 +411,23 @@ namespace Player
 		#endregion
 
 		#endregion
+
+		private void AddStartedItems()
+		{
+			foreach (Item item in _itemsOnStart)
+			{
+				if (_inventory.Count >= InventorySlotsAmount)
+					break;
+
+				_currentObjectTransform = item.transform;
+				_currentObjectRigidbody = item.GetComponent<Rigidbody>();
+				_currentObjectCollider = item.GetComponent<Collider>();
+
+				SetPickedItem();
+
+				AddItem(item);
+			}
+		}
 
 		private void ClearInventory()
 		{
