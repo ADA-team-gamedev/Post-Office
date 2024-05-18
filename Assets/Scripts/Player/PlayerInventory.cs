@@ -134,7 +134,7 @@ namespace Player
 
 					SetPickedItem();
 
-					item.OnPickUpItem?.Invoke(item);
+					item.InvokePickup();
 
 					OnItemPicked?.Invoke(item);
 
@@ -152,7 +152,7 @@ namespace Player
 
 			if (_currentObjectTransform.TryGetComponent(out Item item))
 			{
-				item.OnDropItem?.Invoke(item);
+				item.InvokeDrop();
 
 				OnItemDroped?.Invoke(item);
 			}
@@ -424,6 +424,8 @@ namespace Player
 				_currentObjectCollider = item.GetComponent<Collider>();
 
 				SetPickedItem();
+
+				item.InvokePickup();
 
 				AddItem(item);
 			}

@@ -34,9 +34,9 @@ namespace Items
 
 		[field: SerializeField] public ItemIcon ItemIcon { get; private set; }
 
-		public Action<Item> OnPickUpItem { get; set; }
+		public event Action<Item> OnPickUpItem;
 
-		public Action<Item> OnDropItem { get; set; }
+		public event Action<Item> OnDropItem;
 
 		public Action OnItemPickingPropertyChanged {  get; set; }
 
@@ -111,5 +111,15 @@ namespace Items
 		}
 
 		#endregion
+
+		public void InvokePickup()
+		{
+			OnPickUpItem?.Invoke(this);
+		}
+
+		public void InvokeDrop()
+		{
+			OnDropItem?.Invoke(this);
+		}
 	}
 }
