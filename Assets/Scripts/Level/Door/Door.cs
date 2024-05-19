@@ -12,9 +12,12 @@ namespace Level.Doors
 		Negative = -1,
 	}
 
+	[RequireComponent(typeof(BoxCollider))]
 	[RequireComponent(typeof(HingeJoint))] //don't forget to set up them, change rigidbody to static
-	public class Door : MonoBehaviour, IInteractable
+	public class Door : MonoBehaviour, IInteractable, IHighlightable
 	{
+		public bool IsHighlightable => true;
+
 		#region Door rotation
 
 		#region Parameters

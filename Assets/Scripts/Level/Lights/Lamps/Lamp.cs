@@ -1,3 +1,4 @@
+using Player;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
@@ -7,7 +8,7 @@ namespace Level.Lights.Lamps
 {
 	[RequireComponent(typeof(BoxCollider))] //triger zone
 	[SelectionBase]
-	public class Lamp : DestructiveBehaviour<Lamp>, IEvent 
+	public class Lamp : DestructiveBehaviour<Lamp>, IEvent
 	{
 		#region Lamp Settings
 

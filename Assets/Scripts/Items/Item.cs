@@ -3,13 +3,16 @@ using UnityEngine;
 using Items.Icon;
 using Audio;
 using UnityEngine.Modification;
+using Player;
 
 namespace Items
 {
 	[RequireComponent(typeof(Rigidbody))]
 	[RequireComponent(typeof(Collider))]
-	public class Item : DestructiveBehaviour<Item>
+	public class Item : DestructiveBehaviour<Item>, IHighlightable
 	{
+		public bool IsHighlightable => _canBePicked;
+
 		[field: Header("Item")]
 
 		[field: SerializeField] private bool _canBePicked = true;
@@ -38,7 +41,7 @@ namespace Items
 
 		public event Action<Item> OnDropItem;
 
-		public Action OnItemPickingPropertyChanged {  get; set; }
+		public Action OnItemPickingPropertyChanged {  get; set; }	
 
 		protected virtual void Start()
 		{

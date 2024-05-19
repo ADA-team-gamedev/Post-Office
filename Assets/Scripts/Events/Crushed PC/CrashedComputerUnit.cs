@@ -9,8 +9,10 @@ namespace Events.CrushedPC
 {
 	[SelectionBase]
 	[RequireComponent(typeof(BoxCollider))]
-	public class CrashedComputerUnit : DestructiveBehaviour<CrashedComputerUnit>, IInteractable, IEvent
+	public class CrashedComputerUnit : DestructiveBehaviour<CrashedComputerUnit>, IInteractable, IHighlightable, IEvent
     {
+		public bool IsHighlightable => _isPCCrashed;
+
 		[Header("Sounds")]
 		[SerializeField] private string _pcErrorSound = "PC Error";
 

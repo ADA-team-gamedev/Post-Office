@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 488914673138629444}
   - component: {fileID: 732529921535383751}
   - component: {fileID: 2947007665188607982}
+  - component: {fileID: 6660771202648906245}
   m_Layer: 6
   m_Name: Door Pivot Right
   m_TagString: Untagged
@@ -117,6 +118,7 @@ MonoBehaviour:
   _doorDragingDistance: 3
   _doorOpeningForce: 10
   _doorRotationSpeed: 5000
+  _rotationDegressThreshold: 45
   _doorModel: {fileID: 8784381952287011911}
   _playerInteractor: {fileID: 0}
   <IsClosed>k__BackingField: 1
@@ -125,6 +127,27 @@ MonoBehaviour:
   _closedDoor: Door Closed
   _fullyClosedDoor: Fully Closed Door
   _doorRotationSound: Door Rotation
+--- !u!65 &6660771202648906245
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 660978895538145633}
+  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.45, y: 2.85, z: 0.08}
+  m_Center: {x: 0.7, y: 1.4, z: 0}
 --- !u!1 &1233221495324690600
 GameObject:
   m_ObjectHideFlags: 0
@@ -171,6 +194,7 @@ GameObject:
   - component: {fileID: 4115847024974526742}
   - component: {fileID: 3340080339628387296}
   - component: {fileID: 5184672779126190404}
+  - component: {fileID: 5573982877873124949}
   m_Layer: 6
   m_Name: Door Pivot Left
   m_TagString: Untagged
@@ -233,7 +257,7 @@ HingeJoint:
   m_Anchor: {x: 0, y: 0, z: 0}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 1
-  m_ConnectedAnchor: {x: -129.57452, y: 0.035726845, z: 122.80701}
+  m_ConnectedAnchor: {x: -3.368, y: -1.824, z: 4.525}
   serializedVersion: 2
   m_UseSpring: 0
   m_Spring:
@@ -276,6 +300,7 @@ MonoBehaviour:
   _doorDragingDistance: 3
   _doorOpeningForce: 10
   _doorRotationSpeed: 5000
+  _rotationDegressThreshold: 45
   _doorModel: {fileID: 2663780504881206693}
   _playerInteractor: {fileID: 0}
   <IsClosed>k__BackingField: 1
@@ -284,6 +309,27 @@ MonoBehaviour:
   _closedDoor: Door Closed
   _fullyClosedDoor: Fully Closed Door
   _doorRotationSound: Door Rotation
+--- !u!65 &5573982877873124949
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1804604431220112194}
+  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1.45, y: 2.85, z: 0.08}
+  m_Center: {x: 0.7, y: 1.4, z: 0}
 --- !u!1 &6260693930823573584
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,7 +339,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2663780504881206693}
-  - component: {fileID: 3949261913080232169}
   m_Layer: 6
   m_Name: DoorCenter
   m_TagString: Untagged
@@ -317,27 +362,6 @@ Transform:
   m_Father: {fileID: 962557340265810874}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &3949261913080232169
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6260693930823573584}
-  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.42, y: 2.9, z: 0.12}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6985611839577592816
 GameObject:
   m_ObjectHideFlags: 0
@@ -347,7 +371,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8784381952287011911}
-  - component: {fileID: 5449619366659685185}
   m_Layer: 6
   m_Name: DoorCenter
   m_TagString: Untagged
@@ -371,27 +394,6 @@ Transform:
   m_Father: {fileID: 1898469514970952001}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5449619366659685185
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6985611839577592816}
-  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1.42, y: 2.9, z: 0.12}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &583265941343801942
 PrefabInstance:
   m_ObjectHideFlags: 0

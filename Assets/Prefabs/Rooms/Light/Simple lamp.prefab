@@ -230,10 +230,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5315869992489511047}
+  - component: {fileID: 7038620401916953459}
   - component: {fileID: 2816876177583828192}
   - component: {fileID: 5340364884852306247}
   - component: {fileID: 3897142070960382466}
-  m_Layer: 2
+  m_Layer: 0
   m_Name: Simple lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -257,6 +258,27 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
+--- !u!65 &7038620401916953459
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5039700582005339892}
+  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.12, y: 0.13, z: 1.9}
+  m_Center: {x: -0.055, y: 0.07, z: 0}
 --- !u!65 &2816876177583828192
 BoxCollider:
   m_ObjectHideFlags: 0

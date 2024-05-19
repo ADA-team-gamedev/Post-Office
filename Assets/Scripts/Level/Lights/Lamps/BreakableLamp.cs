@@ -1,12 +1,15 @@
 using Audio;
+using Player;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Level.Lights.Lamps
 {
-	public class BreakableLamp : FlickeringLamp, IEvent
+	public class BreakableLamp : FlickeringLamp, IEvent, IHighlightable
 	{
+		public bool IsHighlightable => IsLampDestroyed;
+
 		public bool IsLampDestroyed { get; private set; } = false;
 
 		[Header("Destroying Lamp Event")]
