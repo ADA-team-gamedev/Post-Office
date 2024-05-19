@@ -62,7 +62,7 @@ namespace Player
 
 		private void FixedUpdate()
 		{
-			ChangeCrossHair();
+			ChangeCrosshair();
 		}
 
 		private void OnUpdateInteract()
@@ -73,50 +73,32 @@ namespace Player
 			_interactableObject?.UpdateInteract();
 		}
 
-		private void ChangeCrossHair()
+		private void ChangeCrosshair()
 		{
 			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);
 
-			bool isHaveInteractableParent = false;
-
+			bool isHighlightable = isHitted && hit.transform.TryGetComponent(out IHighlightable highlightableObject) && highlightableObject.IsHighlightable;
+			
 			if (isHitted)
 			{
-				bool isPickableItem = hit.transform.TryGetComponent(out Item item) && item.CanBePicked;
-
-				bool isInteractable = hit.transform.TryGetComponent(out IInteractable _);
-
-                if (hit.transform.TryGetComponent(out Door door))
-				{
-					isInteractable = true;
-
-					if (door.IsClosed)
-						_crosshairImage.sprite = _crosshairLock;
-					else
-						_crosshairImage.sprite = _defaultCrosshair;
-				}
+				if (isHighlightable)
+					_crosshairImage.color = _interactableCrosshairColor;
 				else
-				{
-					_crosshairImage.sprite = _defaultCrosshair;		
-				}
+					_crosshairImage.color = _defaultCrosshairColor;
 
-				if (hit.transform.parent) //hit object with col or parent object(door or something, what doesn't have collider on himself)
-				{
-					isHaveInteractableParent = hit.transform.parent.TryGetComponent(out IInteractable _) || hit.transform.parent.TryGetComponent(out Lamp _);		
-				} 
+				bool isClosedDoor = hit.transform.TryGetComponent(out Door door) && door.IsClosed;
 
-				_isHitInteractableObject = isInteractable || isHaveInteractableParent || isPickableItem;
+				if (isClosedDoor)
+					_crosshairImage.sprite = _crosshairLock;
+				else
+					_crosshairImage.sprite = _defaultCrosshair;
 			}
 			else
 			{
-				_isHitInteractableObject = false;
+				_crosshairImage.color = _defaultCrosshairColor;
 
 				_crosshairImage.sprite = _defaultCrosshair;
-			}
-
-			if (_isHitInteractableObject)
-				_crosshairImage.color = _interactableCrosshairColor;
-			else
-				_crosshairImage.color = _defaultCrosshairColor;
+			}	
 		}
 
 		#region Input Actions
@@ -125,26 +107,16 @@ namespace Player
 		{
 			if (Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance))
 			{
-				if (hit.collider.TryGetComponent(out _interactableObject))
-				{
-					_interactableObject.StartInteract();
-				}
-				else if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
-				{
-					if (hit.transform.TryGetComponent(out _interactableObject))
-						_interactableObject.StartInteract();
-				}
+				if (hit.collider.TryGetComponent(out _interactableObject))				
+					_interactableObject.StartInteract();			
 			}
 		}	
 
 		private void OnStopInteract(InputAction.CallbackContext context)
 		{
-			if (_interactableObject != null)
-			{
-				_interactableObject.StopInteract();
+			_interactableObject?.StopInteract();
 
-				_interactableObject = null;
-			}
+			_interactableObject = null;	
 		}
 
 		#endregion
