@@ -1,14 +1,15 @@
 using Audio;
-using Player;
+using Player.Inventory;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Items.Keys
 {
 	public class KeyBunch : Item
 	{
+		#region KeyBunch
+
 		[SerializeField] private Transform _pickedKeysParent;
 
 		private List<DoorKeyType> _keyTypes = new();
@@ -18,6 +19,8 @@ namespace Items.Keys
 		[SerializeField] private BunchKey[] _keyModels;
 
 		private MaterialPropertyBlock _propertyBlock;
+
+		#endregion
 
 		protected override void Start()
 		{
@@ -33,8 +36,6 @@ namespace Items.Keys
 			FillBunchOnStart();
 
 			OnPickUpItem += OnPlayerPickupBunch;
-
-			OnDropItem += OnPlayerDropBunch;
 		}
 
 		public void AddKey(Key key)
@@ -80,16 +81,16 @@ namespace Items.Keys
 
 		private void OnPlayerPickupBunch(Item item)
 		{
-			PlayerInventory.Instance.OnItemPicked += OnPlayerPickUpItem;
+			Interactor.Inventory.OnItemPicked += OnPlayerPickUpRandomItem;
 
 			bool addedKey = false;
 
 			for (int i = 0; i < PlayerInventory.InventorySlotsAmount; i++)
 			{
-				if (!PlayerInventory.Instance.TryGetItem(out Key key))
+				if (!Interactor.Inventory.TryGetItem(out Key key))
 					break;		
 
-				if (TryAddKey(key) && PlayerInventory.Instance.TryRemoveItem(key))
+				if (TryAddKey(key) && Interactor.Inventory.TryRemoveItem(key))
 				{
 					addedKey = true;
 
@@ -101,12 +102,14 @@ namespace Items.Keys
 				AudioManager.Instance.PlaySound("Pickup Key", transform.position);
 		}
 
-		private void OnPlayerDropBunch(Item item)
+		protected override void OnItemDroped(Item item)
 		{
-			PlayerInventory.Instance.OnItemPicked -= OnPlayerPickUpItem;
+			Interactor.Inventory.OnItemPicked -= OnPlayerPickUpRandomItem;
+
+			base.OnItemDroped(item);
 		}
 
-		private void OnPlayerPickUpItem(Item item)
+		private void OnPlayerPickUpRandomItem(Item item)
 		{
 			if (!item.TryGetComponent(out Key key) || IsContainsKey(key.KeyType))
 				return;
@@ -114,7 +117,7 @@ namespace Items.Keys
 			if (!TryAddKey(key))
 				return;
 
-			if (PlayerInventory.Instance.TryRemoveItem(key))
+			if (Interactor.Inventory.TryRemoveItem(key))
 			{
 				Destroy(key.gameObject);
 
@@ -165,8 +168,6 @@ namespace Items.Keys
 			base.OnDestroy();
 
 			OnPickUpItem -= OnPlayerPickupBunch;
-
-			OnDropItem -= OnPlayerDropBunch;
 		}
 	}
 

@@ -1,6 +1,7 @@
 using Audio;
 using Items.Keys;
 using Player;
+using Player.Inventory;
 using UnityEngine;
 
 [RequireComponent(typeof(HingeJoint))]
@@ -80,14 +81,14 @@ public class DragableDoor : MonoBehaviour, IInteractable
 
 	#region Key Open
 
-	private void TryOpenDoorByKey()
+	private void TryOpenDoorByKey(IReadOnlyInventory interactorInventory)
 	{
 		if (!IsClosed)
 			return;
 
-		bool hasRightKeyInInventory = PlayerInventory.Instance.TryGetCurrentItem(out Key key) && key.KeyType == DoorKeyType;
+		bool hasRightKeyInInventory = interactorInventory.TryGetCurrentItem(out Key key) && key.KeyType == DoorKeyType;
 
-		bool hasRightKeyInKeyBunch = PlayerInventory.Instance.TryGetCurrentItem(out KeyBunch keyBunch) && keyBunch.IsContainsKey(DoorKeyType);
+		bool hasRightKeyInKeyBunch = hasRightKeyInInventory || (interactorInventory.TryGetCurrentItem(out KeyBunch keyBunch) && keyBunch.IsContainsKey(DoorKeyType));
 
 		if (hasRightKeyInInventory || hasRightKeyInKeyBunch)
 		{
@@ -186,19 +187,19 @@ public class DragableDoor : MonoBehaviour, IInteractable
 
 	#region Interaction
 
-	public void StartInteract()
+	public void StartInteract(Interactor interactor)
 	{
-		TryOpenDoorByKey();
+		TryOpenDoorByKey(interactor.Inventory);
 
 		StartRotateDoor();
 	}
 
-	public void UpdateInteract()
+	public void UpdateInteract(Interactor interactor)
 	{
 		RotateDoor();
 	}
 
-	public void StopInteract()
+	public void StopInteract(Interactor interactor)
 	{
 		StopRotateDoor();
 	}

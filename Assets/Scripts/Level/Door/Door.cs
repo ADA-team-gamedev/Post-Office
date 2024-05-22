@@ -2,6 +2,7 @@ using UnityEngine;
 using Items.Keys;
 using Player;
 using Audio;
+using Player.Inventory;
 
 namespace Level.Doors
 {
@@ -37,9 +38,7 @@ namespace Level.Doors
 
 		[Header("Objects")]
 
-		[SerializeField] private Transform _doorModel;
-
-		[SerializeField] private Interactor _playerInteractor;	
+		[SerializeField] private Transform _doorModel;		
 
 		private Transform _interactorCameraTransform => _playerInteractor.PlayerCamera.transform;
 
@@ -77,6 +76,8 @@ namespace Level.Doors
 
 		private bool _isPlayerDragDoor = false;
 
+		private Interactor _playerInteractor;
+
 		private void Start()
 		{
 			_hingeJoint ??= GetComponent<HingeJoint>();
@@ -94,14 +95,14 @@ namespace Level.Doors
 
 		#region Key open
 
-		private void TryOpenDoorByKey()
+		private void TryOpenDoorByKey(IReadOnlyInventory interactorInventory)
 		{
 			if (!IsClosed)
 				return;
 
-			bool hasRightKeyInInventory = PlayerInventory.Instance.TryGetCurrentItem(out Key key) && key.KeyType == DoorKeyType;
+			bool hasRightKeyInInventory = interactorInventory.TryGetCurrentItem(out Key key) && key.KeyType == DoorKeyType;
 
-			bool hasRightKeyInKeyBunch = PlayerInventory.Instance.TryGetCurrentItem(out KeyBunch keyBunch) && keyBunch.IsContainsKey(DoorKeyType);
+			bool hasRightKeyInKeyBunch = hasRightKeyInInventory || (interactorInventory.TryGetCurrentItem(out KeyBunch keyBunch) && keyBunch.IsContainsKey(DoorKeyType));
 
 			if (hasRightKeyInInventory || hasRightKeyInKeyBunch)
 			{
@@ -206,29 +207,33 @@ namespace Level.Doors
 
 		#endregion
 
-		public void StartInteract()
+		public void StartInteract(Interactor interactor)
 		{
 			if (_isPlayerDragDoor)
 				return;
 
+			_playerInteractor = interactor;
+
 			if (IsClosed)
-				TryOpenDoorByKey();
+				TryOpenDoorByKey(interactor.Inventory);
 
 			StartRotateDoor();
 		}
 
-		public void UpdateInteract()
+		public void UpdateInteract(Interactor interactor)
 		{
 			TryRotateDoor();
 		}
 
-		public void StopInteract()
+		public void StopInteract(Interactor interactor)
 		{
+			_playerInteractor = null;
+
 			StopRotateDoor();
 		}
 
 		private bool IsPlayerInInteractionZone()
-			=> Vector3.Magnitude(_interactorCameraTransform.position - _doorModel.position) <= _playerInteractor.InteractionDistance;
+			=> _playerInteractor != null && Vector3.Magnitude(_interactorCameraTransform.position - _doorModel.position) <= _playerInteractor.InteractionDistance;
 
 		private void OnValidate()
 		{
@@ -241,11 +246,14 @@ namespace Level.Doors
 
 			Gizmos.DrawSphere(_playerClickedViewPoint, 0.1f);
 
-			Gizmos.color = Color.blue;
-			Gizmos.DrawRay(_interactorCameraTransform.position, _interactorCameraTransform.forward * _doorDragingDistance);
+			if (_playerInteractor != null)
+			{
+				Gizmos.color = Color.blue;
+				Gizmos.DrawRay(_interactorCameraTransform.position, _interactorCameraTransform.forward * _doorDragingDistance);
 
-			Gizmos.color = IsPlayerInInteractionZone() ? Color.green : Color.red; //interaction zone; is player can rotate door
-			Gizmos.DrawLine(_interactorCameraTransform.position, _doorModel.position);
+				Gizmos.color = IsPlayerInInteractionZone() ? Color.green : Color.red; //interaction zone; is player can rotate door
+				Gizmos.DrawLine(_interactorCameraTransform.position, _doorModel.position);
+			}	
 		}
 	}
 }

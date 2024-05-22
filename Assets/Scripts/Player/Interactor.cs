@@ -1,6 +1,5 @@
-using Items;
 using Level.Doors;
-using Level.Lights.Lamps;
+using Player.Inventory;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -8,12 +7,17 @@ using Zenject;
 
 namespace Player
 {
+	[RequireComponent(typeof(PlayerInventory))]
 	[RequireComponent(typeof(PlayerDeathController))]
 	public class Interactor : MonoBehaviour
 	{
 		[field: SerializeField] public Camera PlayerCamera { get; private set; }
 
 		[field: SerializeField, Range(0.5f, 10f)] public float InteractionDistance { get; private set; } = 3f;
+
+		public IReadOnlyInventory Inventory => _playerInventory;
+
+		#region UI
 
 		[Header("Crosshair")]
 		[SerializeField] private Image _crosshairImage;
@@ -25,13 +29,17 @@ namespace Player
 		[SerializeField] private Color _defaultCrosshairColor = new(108, 108, 108, 255);
 		[SerializeField] private Color _interactableCrosshairColor = new(152, 152, 152, 255);
 
-		private PlayerDeathController _playerDeathController;
+		#endregion
 
-		private IInteractable _interactableObject;
+		private IInteractable _interactableObject;	
 
 		private Ray _interactionRay => new(PlayerCamera.transform.position, PlayerCamera.transform.forward);
 
 		private bool _isHitInteractableObject = false;
+
+		private PlayerDeathController _playerDeathController;
+
+		private PlayerInventory _playerInventory;
 
 		private PlayerInput _playerInput;
 
@@ -40,8 +48,14 @@ namespace Player
 		{
 			_playerInput = playerInput;
 
+			_playerInput.Player.PickUpItem.performed += OnPickUpItem;
+
+			_playerInput.Player.DropItem.performed += OnDropItem;
+
+			_playerInput.Player.UseItem.performed += OnUseItem;
+
 			_playerInput.Player.Interact.performed += OnStartInteract;
-			_playerInput.Player.Interact.canceled += OnStopInteract;
+			_playerInput.Player.Interact.canceled += OnStopInteract;		
 		}
 
 		private void Start()
@@ -49,10 +63,12 @@ namespace Player
 			_crosshairImage.sprite = _defaultCrosshair;
 
 			_crosshairImage.color = _defaultCrosshairColor;
-
+			
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
 			_playerDeathController.OnDied += DisableInteractor;
+
+			_playerInventory = GetComponent<PlayerInventory>();
 		}
 
 		private void Update()
@@ -70,7 +86,7 @@ namespace Player
 			if (!_playerInput.Player.Interact.IsPressed())
 				return;
 
-			_interactableObject?.UpdateInteract();
+			_interactableObject?.UpdateInteract(this);
 		}
 
 		private void ChangeCrosshair()
@@ -103,21 +119,36 @@ namespace Player
 
 		#region Input Actions
 
+		private void OnPickUpItem(InputAction.CallbackContext context)
+		{
+			_playerInventory.PickupObject(this);
+		}
+
+		private void OnDropItem(InputAction.CallbackContext context)
+		{
+			_playerInventory.DropItem();
+		}
+
+		private void OnUseItem(InputAction.CallbackContext context)
+		{
+			_playerInventory.UseItem(this);
+		}
+
 		private void OnStartInteract(InputAction.CallbackContext context)
 		{
 			if (Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance))
 			{
 				if (hit.collider.TryGetComponent(out _interactableObject))				
-					_interactableObject.StartInteract();			
+					_interactableObject.StartInteract(this);			
 			}
 		}	
 
 		private void OnStopInteract(InputAction.CallbackContext context)
 		{
-			_interactableObject?.StopInteract();
+			_interactableObject?.StopInteract(this);
 
 			_interactableObject = null;	
-		}
+		}	
 
 		#endregion
 
@@ -142,8 +173,14 @@ namespace Player
 		{
 			if (_playerInput != null)
 			{
+				_playerInput.Player.PickUpItem.performed -= OnPickUpItem;
+
+				_playerInput.Player.DropItem.performed -= OnDropItem;
+
+				_playerInput.Player.UseItem.performed -= OnUseItem;
+
 				_playerInput.Player.Interact.performed -= OnStartInteract;
-				_playerInput.Player.Interact.canceled -= OnStopInteract;
+				_playerInput.Player.Interact.canceled -= OnStopInteract;			
 			}
 		}
 	}

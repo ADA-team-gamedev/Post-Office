@@ -43,6 +43,8 @@ namespace Items
 
 		public Action OnItemPickingPropertyChanged {  get; set; }	
 
+		protected Interactor Interactor { get; private set; }
+
 		protected virtual void Start()
 		{
 			InitializeItem();
@@ -88,16 +90,18 @@ namespace Items
 			OnDropItem -= ItemIcon.ShowIcon;
 		}
 
-		private void OnItemPicked(Item item)
+		protected virtual void OnItemPicked(Item item)
 		{
 			IsPicked = true;
 
 			AudioManager.Instance.PlaySound(_pickupSound, transform.position);
 		}
 
-		private void OnItemDroped(Item item)
+		protected virtual void OnItemDroped(Item item)
 		{
 			IsPicked = false;
+
+			Interactor = null;
 
 			AudioManager.Instance.PlaySound(_dropSound, transform.position);
 		}
@@ -115,8 +119,10 @@ namespace Items
 
 		#endregion
 
-		public void InvokePickup()
+		public void InvokePickup(Interactor interactor)
 		{
+			Interactor = interactor;
+
 			OnPickUpItem?.Invoke(this);
 		}
 

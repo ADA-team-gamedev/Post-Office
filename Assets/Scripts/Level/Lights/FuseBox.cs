@@ -249,7 +249,7 @@ namespace Level.Lights
 			{
 				OnFuseEnabled.AddListener(computerUnit.EnableComputer);
 
-				OnFuseDisabled.AddListener(computerUnit.DisableCpmputer);
+				OnFuseDisabled.AddListener(computerUnit.DisablePC);
 			}
 		}
 
