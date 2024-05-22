@@ -8,13 +8,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
 
-namespace Player
+namespace Player.Inventory
 {
+	[RequireComponent(typeof(Interactor))]
 	[RequireComponent(typeof(PlayerDeathController))]
-	public class PlayerInventory : MonoBehaviour
+	public class PlayerInventory : MonoBehaviour, IReadOnlyInventory
 	{
-		public static PlayerInventory Instance { get; private set; }
-
 		#region Pickup fields 
 
 		[SerializeField] private LayerMask _itemLayer;
@@ -60,6 +59,8 @@ namespace Player
 
 		private PlayerDeathController _playerDeathController;
 
+		private Interactor _interactor;
+
 		private Tablet _tablet;
 
 		private PlayerInput _playerInput;
@@ -70,12 +71,6 @@ namespace Player
 			_playerInput = playerInput;
 
 			_tablet = tablet;
-
-			_playerInput.Player.PickUpItem.performed += OnPickUpItem;
-
-			_playerInput.Player.DropItem.performed += OnDropItem;
-
-			_playerInput.Player.UseItem.performed += OnUseItem;
 
 			_playerInput.Player.ScrollWheelY.performed += OnScrollWheelYChanged;
 
@@ -88,26 +83,22 @@ namespace Player
 			_playerInput.Player.Hotbar4.performed += OnHotBar4Clicked;
 		}
 
-		private void Awake()
-		{
-			if (Instance == null)
-				Instance = this;
-		}
-
 		private void Start()
 		{
 			_playerDeathController = GetComponent<PlayerDeathController>();
+
+			_interactor = GetComponent<Interactor>();
 
 			_playerDeathController.OnDied += ClearInventory;
 			
 			_inventory = new(InventorySlotsAmount);
 
-			AddStartedItems();
+			AddStartedItems(_interactor);
 		}
 
 		#region Pickup system
 
-		private void TryPickupObject()
+		public void PickupObject(Interactor interactor)
 		{
 			if (TryGetCurrentItem(out Box box) && box.TryGetComponent(out BoxEnemy boxEnemy) && !boxEnemy.IsPicked) //for box animation
 				return;
@@ -134,7 +125,7 @@ namespace Player
 
 					SetPickedItem();
 
-					item.InvokePickup();
+					item.InvokePickup(interactor);
 
 					OnItemPicked?.Invoke(item);
 
@@ -190,6 +181,20 @@ namespace Player
 		#endregion
 
 		#region Inventory system
+
+		public void UseItem(Interactor interactor)
+		{
+			if (_currentSlotIndex < 0)
+				return;
+
+			var item = _inventory[_currentSlotIndex];
+
+			if (item == null)
+				return;
+
+			if (item.TryGetComponent(out IUsable usableItem))
+				usableItem.Use(interactor);
+		}
 
 		public bool IsContainsItem<T>(T item) where T : Item
 		{
@@ -333,11 +338,6 @@ namespace Player
 
 		#region Input entry points
 
-		private void OnPickUpItem(InputAction.CallbackContext context)
-		{
-			TryPickupObject();
-		}
-
 		private void OnHotBar1Clicked(InputAction.CallbackContext context)
 		{
 			HotbarSlotChange(1);
@@ -356,28 +356,6 @@ namespace Player
 		private void OnHotBar4Clicked(InputAction.CallbackContext context)
 		{
 			HotbarSlotChange(4);
-		}
-
-		private void OnDropItem(InputAction.CallbackContext context)
-		{
-			if (!context.performed)
-				return;
-
-			DropItem();
-		}
-
-		private void OnUseItem(InputAction.CallbackContext context)
-		{
-			if (_currentSlotIndex < 0)
-				return;
-
-			var item = _inventory[_currentSlotIndex];
-
-			if (item == null)
-				return;
-
-			if (item.TryGetComponent(out IUsable usableItem))
-				usableItem.Use();
 		}
 
 		#region Inventory
@@ -412,7 +390,7 @@ namespace Player
 
 		#endregion
 
-		private void AddStartedItems()
+		private void AddStartedItems(Interactor interactor)
 		{
 			foreach (Item item in _itemsOnStart)
 			{
@@ -425,7 +403,7 @@ namespace Player
 
 				SetPickedItem();
 
-				item.InvokePickup();
+				item.InvokePickup(interactor);
 
 				AddItem(item);
 			}
@@ -445,12 +423,6 @@ namespace Player
 		{
 			if (_playerInput != null)
 			{
-				_playerInput.Player.PickUpItem.performed -= OnPickUpItem;
-
-				_playerInput.Player.DropItem.performed -= OnDropItem;
-
-				_playerInput.Player.UseItem.performed -= OnUseItem;
-
 				_playerInput.Player.ScrollWheelY.performed -= OnScrollWheelYChanged;
 
 				_playerInput.Player.Hotbar1.performed -= OnHotBar1Clicked;
