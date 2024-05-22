@@ -65,7 +65,7 @@ namespace Level.Lights
 
 		#region Player Interaction
 
-		public void StartInteract()
+		public void StartInteract(Interactor interactor)
 		{
 			OnClickedOnSwitch?.Invoke();
 
@@ -83,12 +83,12 @@ namespace Level.Lights
 			AudioManager.Instance.PlaySound("Fuse Switch Change", transform.position, spatialBlend: 1);
 		}
 
-		public void UpdateInteract() 
+		public void UpdateInteract(Interactor interactor) 
 		{ 
 
 		}
 
-		public void StopInteract()
+		public void StopInteract(Interactor interactor)
 		{
 
 		}

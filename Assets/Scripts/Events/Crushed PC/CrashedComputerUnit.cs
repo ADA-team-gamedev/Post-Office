@@ -143,7 +143,7 @@ namespace Events.CrushedPC
 
 		#endregion
 
-		public void DisableCpmputer()
+		public void DisablePC()
 		{
 			_screenError.SetActive(false);
 		}
@@ -163,7 +163,7 @@ namespace Events.CrushedPC
 
 		#region Interaction
 
-		public void StartInteract()
+		public void StartInteract(Interactor interactor)
 		{
 			if (!_isPCCrashed)
 				return;
@@ -171,7 +171,7 @@ namespace Events.CrushedPC
 			AudioManager.Instance.PlaySound(_startHoldingButton, transform.position, spatialBlend: 1f);
 		}
 
-		public void UpdateInteract()
+		public void UpdateInteract(Interactor interactor)
 		{
 			if (!_isPCCrashed || !IsPCEnabled)
 				return;
@@ -182,7 +182,12 @@ namespace Events.CrushedPC
 				FixPC();		
 		}
 
-		public void StopInteract()
+		public void StopInteract(Interactor interactor)
+		{
+			StopInteract();
+		}
+
+		private void StopInteract()
 		{
 			_buttonHoldingTime = 0;
 		}
