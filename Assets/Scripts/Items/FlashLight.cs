@@ -1,4 +1,5 @@
 using Audio;
+using Player;
 using UnityEngine;
 
 namespace Items
@@ -28,7 +29,7 @@ namespace Items
             OnDropItem += EnableOnDrop;
 		}
 
-		public void Use()
+		public void Use(Interactor interactor)
         {
             if (!IsWorking)
                 TurnOn();

@@ -19,7 +19,7 @@ namespace Items
 
         private bool _isUsing = false;
 
-        public void Use()
+        public void Use(Interactor interactor)
         {
             if (IsHaveCharge())
             {

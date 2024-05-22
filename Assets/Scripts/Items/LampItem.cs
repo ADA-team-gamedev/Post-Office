@@ -8,7 +8,7 @@ namespace Items
 	{
 		[SerializeField] private Interactor _playerInteractor;
 		
-		public void Use()
+		public void Use(Interactor interactor)
 		{
 			if (Physics.Raycast(_playerInteractor.PlayerCamera.transform.position, _playerInteractor.PlayerCamera.transform.forward, out RaycastHit hit, _playerInteractor.InteractionDistance))
 			{
@@ -18,9 +18,8 @@ namespace Items
 				{
 					lamp.RepairLamp();
 
-					PlayerInventory.Instance.DropItem();
-
-					Destroy(gameObject);		
+					if (interactor.Inventory.TryRemoveItem(this))
+						Destroy(gameObject);		
 				}			
 			}
 		}
