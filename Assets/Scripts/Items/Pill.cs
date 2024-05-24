@@ -15,8 +15,6 @@ namespace Items
         [SerializeField] private float _sanityAddingNumber;
         [SerializeField] private float _sanityAddingDelay;
 
-        [SerializeField] private PlayerSanity _sanity;
-
         private bool _isUsing = false;
 
         public void Use(Interactor interactor)
@@ -31,7 +29,7 @@ namespace Items
 #endif
                     AudioManager.Instance.PlaySound("Use Pills", transform.position);
 
-					StartCoroutine(RestoreeSanity());
+					StartCoroutine(RestoreeSanity(interactor.Sanity));
                 }
             }
             else
@@ -46,7 +44,7 @@ namespace Items
         private bool IsHaveCharge()
             => _countOfUses > 0;
 
-        private IEnumerator RestoreeSanity()
+        private IEnumerator RestoreeSanity(PlayerSanity sanity)
         {
             _isUsing = true;
 
@@ -56,7 +54,7 @@ namespace Items
             {
                 timer -= Time.deltaTime;
 
-                _sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
+				sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
 
                 yield return new WaitForSeconds(Time.deltaTime);
             }

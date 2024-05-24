@@ -16,7 +16,5 @@ namespace Player.Inventory
 		public bool TryGetItem<T>(out T item) where T : Item;
 			
 		public bool TryGetCurrentItem<T>(out T item) where T : Item;
-
-		public bool TryRemoveItem<T>(T item) where T : Item;
 	}
 }

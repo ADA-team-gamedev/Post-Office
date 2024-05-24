@@ -7,15 +7,16 @@ using Zenject;
 
 namespace Player
 {
-	[RequireComponent(typeof(PlayerInventory))]
-	[RequireComponent(typeof(PlayerDeathController))]
+	[RequireComponent(typeof(PlayerDeathController), typeof(PlayerInventory), typeof(PlayerSanity))]
 	public class Interactor : MonoBehaviour
 	{
 		[field: SerializeField] public Camera PlayerCamera { get; private set; }
 
 		[field: SerializeField, Range(0.5f, 10f)] public float InteractionDistance { get; private set; } = 3f;
 
-		public IReadOnlyInventory Inventory => _playerInventory;
+		public PlayerInventory Inventory { get; private set; }
+
+		public PlayerSanity Sanity { get; private set; }
 
 		#region UI
 
@@ -38,8 +39,6 @@ namespace Player
 		private bool _isHitInteractableObject = false;
 
 		private PlayerDeathController _playerDeathController;
-
-		private PlayerInventory _playerInventory;
 
 		private PlayerInput _playerInput;
 
@@ -68,7 +67,9 @@ namespace Player
 
 			_playerDeathController.OnDied += DisableInteractor;
 
-			_playerInventory = GetComponent<PlayerInventory>();
+			Inventory = GetComponent<PlayerInventory>();
+
+			Sanity = GetComponent<PlayerSanity>();
 		}
 
 		private void Update()
@@ -121,17 +122,17 @@ namespace Player
 
 		private void OnPickUpItem(InputAction.CallbackContext context)
 		{
-			_playerInventory.PickupObject(this);
+			Inventory.PickupObject(this);
 		}
 
 		private void OnDropItem(InputAction.CallbackContext context)
 		{
-			_playerInventory.DropItem();
+			Inventory.DropItem();
 		}
 
 		private void OnUseItem(InputAction.CallbackContext context)
 		{
-			_playerInventory.UseItem(this);
+			Inventory.UseItem(this);
 		}
 
 		private void OnStartInteract(InputAction.CallbackContext context)
