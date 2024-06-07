@@ -11,6 +11,8 @@ namespace Items
 	[RequireComponent(typeof(BoxCollider))]
 	public class RemoteControl : Item, IUsable
 	{
+		[SerializeField] private LayerMask _garageDoorLayer;
+
 		[SerializeField] private TaskData _findRemoteControlTask;
 
 		protected override void Start()
@@ -60,12 +62,26 @@ namespace Items
 		public void Use(Interactor interactor)
 		{
 			AudioManager.Instance.PlaySound("Use Remote Control", transform.position);
+			
+			Transform playerCameraTransform = interactor.PlayerCamera.transform;
 
-			if (Physics.Raycast(interactor.PlayerCamera.transform.position, interactor.PlayerCamera.transform.forward, out RaycastHit hit))
+			if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out RaycastHit hit, Mathf.Infinity, _garageDoorLayer))
 			{
+				Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.green, 2);
+
 				if (hit.transform.parent && hit.transform.parent.TryGetComponent(out GarageDoor garageDoor)) //transform.parent.TryGetComponent() - because garage door script lying on object without collider
-					garageDoor.InteractRemotely();			
+				{
+					garageDoor.InteractRemotely();
+
+					Debug.Log("Hitted garage door!");
+				}
+				else
+				{
+					Debug.Log($"NOT garage door! - {hit.collider.name}");
+				}
 			}
+			else
+				Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.red, 2);
 		}
 
 		protected override void OnDestroy()
