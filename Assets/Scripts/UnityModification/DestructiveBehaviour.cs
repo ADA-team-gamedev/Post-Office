@@ -1,6 +1,7 @@
 using System;
+using UnityEngine;
 
-namespace UnityEngine.Modification
+namespace UnityModification
 {
 	public abstract class DestructiveBehaviour<T> : MonoBehaviour where T : DestructiveBehaviour<T>
 	{

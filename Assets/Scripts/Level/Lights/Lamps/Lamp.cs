@@ -2,7 +2,7 @@ using Player;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Modification;
+using UnityModification;
 
 namespace Level.Lights.Lamps
 {

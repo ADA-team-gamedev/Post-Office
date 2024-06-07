@@ -6,8 +6,7 @@ using System;
 using TaskSystem;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Modification;
-using static UnityEngine.InputSystem.Controls.AxisControl;
+using UnityModification;
 
 namespace Level.Lights
 {

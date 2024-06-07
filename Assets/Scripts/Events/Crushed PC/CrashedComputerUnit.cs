@@ -3,7 +3,7 @@ using Player;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using UnityEngine.Modification;
+using UnityModification;
 
 namespace Events.CrushedPC
 {

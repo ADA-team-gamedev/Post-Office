@@ -1,6 +1,6 @@
 using Level.Lights.Lamps;
 using UnityEngine;
-using UnityEngine.Modification;
+using UnityModification;
 
 namespace TaskSystem.TaskGivers
 {

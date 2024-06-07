@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
-using UnityEngine.Modification;
+using UnityModification;
 
 namespace Level.Spawners.LostItemSpawner
 {
