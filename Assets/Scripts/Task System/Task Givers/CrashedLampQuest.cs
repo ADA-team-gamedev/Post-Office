@@ -27,9 +27,8 @@ namespace TaskSystem.TaskGivers
 		{
 			if (_breakableLamps.Length <= 0 || !TaskManager.Instance.TryAddNewTask(_crashedLampTask))
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning("We can't add crashed lamp task!");
-#endif
+				EditorDebug.LogWarning("We can't add crashed lamp task!");
+
 				return;
 			}
 
@@ -63,9 +62,8 @@ namespace TaskSystem.TaskGivers
 		{
 			if (lamp is not BreakableLamp)
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning($"You subscribe breakableLamp method to Lamp, not BreakableLamp!");
-#endif
+				EditorDebug.LogWarning($"You subscribe breakableLamp method to Lamp, not BreakableLamp!");
+
 				return;
 			}
 

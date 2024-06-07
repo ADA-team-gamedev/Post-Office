@@ -47,9 +47,7 @@ namespace TaskSystem
 			}
 			else
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning($"{this} Instance already exists!");
-#endif
+				EditorDebug.LogWarning($"{this} Instance already exists!");
 			}
 			
 			_tablet.SubcribeOnTaskManager();
@@ -78,9 +76,8 @@ namespace TaskSystem
 		{
 			if (index < 0 || index >= _tasks.Count)
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning($"Can't set task, as current with index[{index}]");
-#endif
+				EditorDebug.LogWarning($"Can't set task, as current with index[{index}]");
+
 				return;
 			}
 
@@ -102,14 +99,12 @@ namespace TaskSystem
 		{
 			if (!TryGetTask(task.ID, out Task _))
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we try to add task automatically");
-#endif
+				EditorDebug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we try to add task automatically");
+
 				if (!TryAddNewTask(task))
 				{
-#if UNITY_EDITOR
-					Debug.LogWarning($"Couldn't add this task({task.Name}!)");
-#endif
+					EditorDebug.LogWarning($"Couldn't add this task({task.Name}!)");
+
 					return;
 				}
 			}
@@ -130,9 +125,8 @@ namespace TaskSystem
 		{
 			if (IsContainsTask(task.ID))
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
-#endif
+				EditorDebug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
+
 				return false;
 			}
 
@@ -165,9 +159,7 @@ namespace TaskSystem
 			if (TaskCount > 0 && isCompleteTaskIsCurrent)
 				SetNewCurrentTask(0);
 
-#if UNITY_EDITOR
-			Debug.Log($"Task: {completedTask.Name} has been completed");
-#endif
+			EditorDebug.Log($"Task: {completedTask.Name} has been completed");
 		}
 
 		protected override void OnDestroy()

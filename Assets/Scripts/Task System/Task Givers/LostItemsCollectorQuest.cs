@@ -31,9 +31,8 @@ namespace TaskSystem.TaskGivers
 
 			if (lostItems.Count <= 0 || !TaskManager.Instance.TryAddNewTask(_lostItemsTask))
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning($"Can't add \"Find Lost Item\" task!");
-#endif
+				EditorDebug.LogWarning($"Can't add \"Find Lost Item\" task!");
+
 				return;
 			}
 

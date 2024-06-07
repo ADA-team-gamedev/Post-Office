@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
+using UnityModification;
 
 namespace Audio
 {
@@ -19,11 +20,7 @@ namespace Audio
 			if (Instance == null)
 				Instance = this;
 			else
-			{
-#if UNITY_EDITOR
-				Debug.LogError($"{nameof(AudioManager)} Instance already exists!");
-#endif
-			}
+				EditorDebug.LogError($"{nameof(AudioManager)} Instance already exists!");	
 
 			FillAudioSource();
 
@@ -48,9 +45,8 @@ namespace Audio
 
 				if (_soundclips.ContainsValue(clip))
 				{
-#if UNITY_EDITOR
-					Debug.LogError($"{clip.Name} already exists in sound collection!");
-#endif
+					EditorDebug.LogError($"{clip.Name} already exists in sound collection!");
+
 					continue;
 				}
 				
@@ -138,9 +134,9 @@ namespace Audio
 		{
 			if (_soundclips.TryGetValue(clipName, out soundClip))
 				return true;
-#if UNITY_EDITOR
-			Debug.LogWarning($"No clip with name - ({clipName})");
-#endif
+
+			EditorDebug.LogWarning($"No clip with name - ({clipName})");
+
 			return false;
 		}
 
@@ -148,9 +144,9 @@ namespace Audio
 		{
 			if (_audioSources.TryGetValue(mixerGroup, out basedAudioSource))
 				return true;
-#if UNITY_EDITOR
-			Debug.LogWarning($"No audio source with {mixerGroup}");
-#endif
+
+			EditorDebug.LogWarning($"No audio source with {mixerGroup}");
+
 			return false;
 		}
 	}

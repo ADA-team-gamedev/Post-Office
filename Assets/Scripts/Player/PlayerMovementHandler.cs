@@ -2,6 +2,7 @@ using Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityModification;
 using Zenject;
 
 namespace Player
@@ -335,8 +336,8 @@ namespace Player
 			float rayLength = playerHalfHeight * 1.25f;
 
 			bool isGrounded = Physics.Raycast(playerBodyCenter, Vector3.down, rayLength, _groundMask);
-			
-			Debug.DrawRay(playerBodyCenter, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
+
+			EditorDebug.DrawRay(playerBodyCenter, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
 
 			_rb.drag = isGrounded ? _groundDrag : 0;
 		}

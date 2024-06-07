@@ -20,9 +20,9 @@ namespace Player
         {
             if (!IsAlive)
                 return;
-#if UNITY_EDITOR
-            Debug.Log("The player has died!");
-#endif
+
+			EditorDebug.Log("The player has died!");
+
             IsAlive = false;
 
             OnDied?.Invoke();

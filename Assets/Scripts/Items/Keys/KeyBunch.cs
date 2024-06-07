@@ -3,6 +3,7 @@ using Player.Inventory;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityModification;
 
 namespace Items.Keys
 {
@@ -42,9 +43,8 @@ namespace Items.Keys
 		{
 			if (!TryAddKey(key))
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning("Can't add key!");
-#endif
+				EditorDebug.LogWarning("Can't add key!");
+
 				return;
 			}
 
@@ -60,9 +60,8 @@ namespace Items.Keys
 
 			if (IsContainsKey(key.KeyType))
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning($"Key {key.KeyType} is already contains in key bunch!");
-#endif
+				EditorDebug.LogWarning($"Key {key.KeyType} is already contains in key bunch!");
+
 				return false;
 			}
 

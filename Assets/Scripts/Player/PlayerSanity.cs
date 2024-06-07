@@ -6,6 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.UI;
+using UnityModification;
 using Zenject;
 
 namespace Player
@@ -104,7 +105,7 @@ namespace Player
 		public void IncreaseSanity(float value)
 		{
 			if (_sanityDecreaseSpeed * _taskAmount >= value)
-				Debug.LogWarning("Sanity increase value simillar or less then sanity decreas speed");
+				EditorDebug.LogWarning("Sanity increase value simillar or less then sanity decreas speed");
 
 			Sanity += Time.deltaTime * value;
 		}

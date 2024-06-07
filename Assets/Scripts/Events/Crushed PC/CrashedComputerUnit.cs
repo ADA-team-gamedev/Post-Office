@@ -131,7 +131,7 @@ namespace Events.CrushedPC
 			AudioManager.Instance.PlaySound(_endHoldingButton, transform.position, spatialBlend: 1f);
 
 			_isPCCrashed = false;
-
+			
 			OnPCFixed?.Invoke();
 
 			_screenError.SetActive(false);

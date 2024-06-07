@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityModification;
 
 namespace Enemy
 {
@@ -207,10 +208,7 @@ namespace Enemy
 					Attacking();
 					break;
 				default:
-#if UNITY_EDITOR
-					Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
-
-#endif
+					EditorDebug.Log($"{gameObject} doesn't have state - {_enemyState}");
 					break;
 			}
 		}
@@ -318,9 +316,9 @@ namespace Enemy
 
 				possiblePointsToMove.Remove(randomPoint);
 			}
-#if UNITY_EDITOR
-			Debug.LogError($"No reachable points in {points} collection!");
-#endif
+
+			EditorDebug.LogError($"No reachable points in {points} collection!");
+
 			pointToMove = Vector3.zero;
 
 			return false;
@@ -367,9 +365,7 @@ namespace Enemy
 			}
 			else
 			{
-#if UNITY_EDITOR
-				Debug.LogError($"Can't start fleeing because the {gameObject.name} doesn't have points to hide");
-#endif
+				EditorDebug.LogError($"Can't start fleeing because the {gameObject.name} doesn't have points to hide");
 			}
 		}
 
@@ -395,9 +391,7 @@ namespace Enemy
 			}
 			else
 			{
-#if UNITY_EDITOR
-				Debug.Log($"Can't go to that point({point}), because i can't reach it!");
-#endif
+				EditorDebug.Log($"Can't go to that point({point}), because i can't reach it!");
 			}
 		}
 
@@ -433,9 +427,8 @@ namespace Enemy
 
 			if (!_fieldOfView.Target.TryGetComponent(out PlayerDeathController playerDeath))
 			{
-#if UNITY_EDITOR
-				Debug.LogError($"No {nameof(PlayerDeathController)} in the target({_fieldOfView.Target})");
-#endif
+				EditorDebug.LogError($"No {nameof(PlayerDeathController)} in the target({_fieldOfView.Target})");
+
 				return;
 			}
 

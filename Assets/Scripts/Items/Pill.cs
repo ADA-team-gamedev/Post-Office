@@ -3,6 +3,7 @@ using Player;
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityModification;
 
 namespace Items
 {
@@ -24,9 +25,9 @@ namespace Items
                 if (!_isUsing)
                 {
                     _countOfUses--;
-#if UNITY_EDITOR
-					Debug.Log($"{gameObject.name}s are used");
-#endif
+
+					EditorDebug.Log($"{gameObject.name}s are used");
+
                     AudioManager.Instance.PlaySound("Use Pills", transform.position);
 
 					StartCoroutine(RestoreeSanity(interactor.Sanity));
@@ -34,9 +35,8 @@ namespace Items
             }
             else
             {
-#if UNITY_EDITOR
-				Debug.Log($"These {gameObject.name} pills are empty");
-#endif
+				EditorDebug.Log($"These {gameObject.name} pills are empty");
+
                 AudioManager.Instance.PlaySound("Pill Empty", transform.position);
 			}
         }

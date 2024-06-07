@@ -4,6 +4,7 @@ using Level.Spawners;
 using TaskSystem.NoteBook;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityModification;
 
 namespace Level
 {
@@ -55,9 +56,7 @@ namespace Level
 			if (_dataService.TryLoadData(out WeekDay weekDay, JsonDataService.WeekDayPath, true))
 				_currentWeekDay = weekDay;
 
-#if UNITY_EDITOR
-			Debug.Log($"Loaded current week day as {_currentWeekDay}");
-#endif
+			EditorDebug.Log($"Loaded current week day as {_currentWeekDay}");
 
 			SaveDayProgress();
 		}

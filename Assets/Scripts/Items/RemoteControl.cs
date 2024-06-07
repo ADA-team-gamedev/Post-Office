@@ -4,6 +4,7 @@ using TaskSystem;
 using Level.Doors;
 using Audio;
 using Player;
+using UnityModification;
 
 namespace Items
 {
@@ -67,21 +68,15 @@ namespace Items
 
 			if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out RaycastHit hit, Mathf.Infinity, _garageDoorLayer))
 			{
-				Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.green, 2);
+				EditorDebug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.green, 2);
 
 				if (hit.transform.parent && hit.transform.parent.TryGetComponent(out GarageDoor garageDoor)) //transform.parent.TryGetComponent() - because garage door script lying on object without collider
-				{
-					garageDoor.InteractRemotely();
-
-					Debug.Log("Hitted garage door!");
-				}
-				else
-				{
-					Debug.Log($"NOT garage door! - {hit.collider.name}");
-				}
+					garageDoor.InteractRemotely();			
 			}
 			else
-				Debug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.red, 2);
+			{
+				EditorDebug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.red, 2);
+			}
 		}
 
 		protected override void OnDestroy()

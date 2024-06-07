@@ -126,9 +126,7 @@ namespace Level.Lights
 			if (!Application.IsPlaying(this) || !IsEnabled)
 				return;
 
-#if UNITY_EDITOR
-			Debug.Log("Generator has disabled");
-#endif
+			EditorDebug.Log("Generator has disabled");
 
 			IsEnabled = false;
 
@@ -152,9 +150,7 @@ namespace Level.Lights
 			if (!Application.IsPlaying(this) || IsEnabled)
 				return;
 
-#if UNITY_EDITOR
-			Debug.Log("Generator has enabled");
-#endif
+			EditorDebug.Log("Generator has enabled");
 
 			IsEnabled = true;
 

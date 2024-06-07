@@ -3,6 +3,7 @@ using Items.Keys;
 using Player;
 using Audio;
 using Player.Inventory;
+using UnityModification;
 
 namespace Level.Doors
 {
@@ -114,9 +115,7 @@ namespace Level.Doors
 			}
 			else
 			{
-#if UNITY_EDITOR
-				Debug.Log("Player doesn't have right key to open this door");
-#endif
+				EditorDebug.Log("Player doesn't have right key to open this door");
 			}
 
 			AudioManager.Instance.PlaySound(_closedDoor, transform.position, spatialBlend: 0.8f);

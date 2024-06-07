@@ -2,6 +2,7 @@ using Items;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityModification;
 using Random = UnityEngine.Random;
 
 namespace Level.Spawners
@@ -23,9 +24,8 @@ namespace Level.Spawners
         {
             if (_itemsToSpawn.Length <= 0)
             {
-#if UNITY_EDITOR
-                Debug.LogWarning("No Items to place!");
-#endif
+				EditorDebug.LogWarning("No Items to place!");
+
                 return;
             }
 
@@ -35,9 +35,8 @@ namespace Level.Spawners
 				{
 					if (item.SpecificPlacePoints.Count <= 0)
 					{
-#if UNITY_EDITOR
-						Debug.LogWarning("Item must be placed in specific points but item doesn't have them!");
-#endif
+						EditorDebug.LogWarning("Item must be placed in specific points but item doesn't have them!");
+
 						continue;
 					}
 
@@ -47,9 +46,8 @@ namespace Level.Spawners
 				{
 					if (_deffaultPointsToPlace.Count <= 0)
 					{
-#if UNITY_EDITOR
-						Debug.LogWarning("No deffault points to place!");
-#endif
+						EditorDebug.LogWarning("No deffault points to place!");
+
 						continue;
 					}
 
@@ -79,9 +77,8 @@ namespace Level.Spawners
 				
 				if (_usedSpecificPoints.Contains(point))
 				{
-#if UNITY_EDITOR
-					Debug.LogWarning($"{item} has specific point which we already used to spawn another one!");
-#endif
+					EditorDebug.LogWarning($"{item} has specific point which we already used to spawn another one!");
+
 					item.RemoveSpecificPoint(point);
 
 					continue;
@@ -105,9 +102,8 @@ namespace Level.Spawners
 				
 				if (_usedSpecificPoints.Contains(point))
 				{
-#if UNITY_EDITOR
-					Debug.LogWarning($"{item} want to be place on specific point({point}) which we already used to spawn another one!");
-#endif
+					EditorDebug.LogWarning($"{item} want to be place on specific point({point}) which we already used to spawn another one!");
+
 					_deffaultPointsToPlace.Remove(point);
 
 					continue;

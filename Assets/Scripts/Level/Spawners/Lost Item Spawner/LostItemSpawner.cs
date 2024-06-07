@@ -41,9 +41,7 @@ namespace Level.Spawners.LostItemSpawner
 			}
 			else
 			{
-#if UNITY_EDITOR
-				Debug.LogWarning("Can't add task, because you don't set lost items!");
-#endif
+				EditorDebug.LogWarning("Can't add task, because you don't set lost items!");
 			}
 		}
 
