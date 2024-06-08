@@ -92,12 +92,17 @@ namespace Player
 
 		private void ChangeCrosshair()
 		{
-			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);
-
-			bool isHighlightable = isHitted && hit.transform.TryGetComponent(out IHighlightable highlightableObject) && highlightableObject.IsHighlightable;
+			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);		
 			
 			if (isHitted)
 			{
+				IHighlightable highlightableObject;
+
+				bool isHighlightableObject = hit.transform.TryGetComponent(out highlightableObject) ||
+					(hit.transform.parent && hit.transform.parent.TryGetComponent(out highlightableObject));
+
+				bool isHighlightable = isHighlightableObject && highlightableObject.IsHighlightable;
+
 				if (isHighlightable)
 					_crosshairImage.color = _interactableCrosshairColor;
 				else
