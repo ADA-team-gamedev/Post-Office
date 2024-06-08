@@ -108,7 +108,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 6135
+    m_Bits: 14327
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -371,6 +371,7 @@ MonoBehaviour:
   _playChangeItemAnimation: 1
   _itemChangeAnimator: {fileID: 7788346136454836495}
   _itemChangeTriggerName: ItemChange
+  _itemsOnStart: []
 --- !u!114 &1035198397113733364
 MonoBehaviour:
   m_ObjectHideFlags: 0

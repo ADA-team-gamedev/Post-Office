@@ -8,10 +8,12 @@ namespace Items
 	public class LampItem : Item, IUsable
 	{
 		[SerializeField] private Interactor _playerInteractor;
+
+		[SerializeField] private LayerMask _lampLayer;
 		
 		public void Use(Interactor interactor)
 		{
-			if (Physics.Raycast(_playerInteractor.PlayerCamera.transform.position, _playerInteractor.PlayerCamera.transform.forward, out RaycastHit hit, _playerInteractor.InteractionDistance))
+			if (Physics.Raycast(_playerInteractor.PlayerCamera.transform.position, _playerInteractor.PlayerCamera.transform.forward, out RaycastHit hit, _playerInteractor.InteractionDistance, _lampLayer))
 			{
 				EditorDebug.DrawRay(_playerInteractor.PlayerCamera.transform.position, _playerInteractor.PlayerCamera.transform.forward * _playerInteractor.InteractionDistance);
 

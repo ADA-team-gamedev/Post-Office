@@ -104,8 +104,10 @@ MonoBehaviour:
     <IconTargetToLook>k__BackingField: {fileID: 0}
     <EnableOnStart>k__BackingField: 0
     <ChangeIconStateAutomatically>k__BackingField: 0
-  _playerCamera: {fileID: 0}
-  _interactionDistance: 1.71
+  _playerInteractor: {fileID: 0}
+  _lampLayer:
+    serializedVersion: 2
+    m_Bits: 8192
 --- !u!1 &7891116621608048175
 GameObject:
   m_ObjectHideFlags: 0
