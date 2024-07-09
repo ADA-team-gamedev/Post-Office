@@ -3,10 +3,11 @@ using Level.Spawners.LostItemSpawner;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using UnityModification;
 
 namespace TaskSystem.TaskGivers
 {
-	public class LostItemsCollectorQuest : MonoBehaviour
+	public class LostItemsCollectorQuest : DestructiveBehaviour<LostItemsCollectorQuest>
 	{
 		[SerializeField] private TaskData _lostItemsTask;
 
@@ -20,6 +21,8 @@ namespace TaskSystem.TaskGivers
 			_lostItemSpawner = lostItemSpawner;
 
 			_lostItemSpawner.OnLostItemSpawned += GiveLostItemQuest;
+
+			_lostItemSpawner.OnObjectDestroyed += OnLostItemSpawnerDestroyed;
 		}
 
 		private void GiveLostItemQuest(Dictionary<Item, LostItemSticker> lostItems)
@@ -28,7 +31,7 @@ namespace TaskSystem.TaskGivers
 
 			if (lostItems.Count <= 0 || !TaskManager.Instance.TryAddNewTask(_lostItemsTask))
 			{
-				Debug.LogWarning($"Can't add \"Find Lost Item\" task!");
+				EditorDebug.LogWarning($"Can't add \"Find Lost Item\" task!");
 
 				return;
 			}
@@ -60,6 +63,13 @@ namespace TaskSystem.TaskGivers
 				return;
 
 			task.Complete();
+		}
+
+		private void OnLostItemSpawnerDestroyed(LostItemSpawner lostItemSpawner)
+		{
+			lostItemSpawner.OnObjectDestroyed -= OnLostItemSpawnerDestroyed;
+
+			lostItemSpawner.OnLostItemSpawned -= GiveLostItemQuest;
 		}
 	}
 }

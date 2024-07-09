@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1392044495230565853}
   - component: {fileID: 2875436219647736157}
   - component: {fileID: 3573831588885483870}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 9107947208059203672}
   - component: {fileID: 5787579633289754172}
   - component: {fileID: 6828229254194128802}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,7 +134,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -210,8 +210,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2531893105645606569}
-  - component: {fileID: 7081871520468438207}
-  m_Layer: 0
+  - component: {fileID: 1882331228339492879}
+  m_Layer: 13
   m_Name: lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,14 +236,14 @@ Transform:
   m_Father: {fileID: 5298754104024927658}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &7081871520468438207
+--- !u!65 &1882331228339492879
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4199775859124230391}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -255,8 +255,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5.93, y: 5.68, z: 95}
-  m_Center: {x: -2.7, y: 2.96, z: 0}
+  m_Size: {x: 6.33, y: 5.53, z: 94.52}
+  m_Center: {x: -2.78, y: 3.08, z: 0}
 --- !u!1 &4486066385857792827
 GameObject:
   m_ObjectHideFlags: 0
@@ -268,7 +268,7 @@ GameObject:
   - component: {fileID: 1187212508896699445}
   - component: {fileID: 5293872175915126047}
   - component: {fileID: 7056712036718057578}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Karkas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -412,6 +412,7 @@ MonoBehaviour:
   <IsLampEnabled>k__BackingField: 1
   _playerTag: Player
   <Light>k__BackingField: {fileID: 5787579633289754172}
+  <LampRenderer>k__BackingField: {fileID: 3573831588885483870}
   OnStay:
     m_PersistentCalls:
       m_Calls: []
@@ -423,10 +424,11 @@ MonoBehaviour:
   _minFlashingDelay: 1
   _maxFlashingDelay: 7
   _flashingCurves: {fileID: 11400000, guid: 564591a613ff6f741ac8e2c9af728a24, type: 2}
-  <LampRenderer>k__BackingField: {fileID: 3573831588885483870}
+  _lampFlashingSoundName: Lamp Flashing
   _electronicalSparkVF: {fileID: 6020625768119497919}
   _minLampLifeDelayBeforeBreaking: 120
   _maxLampLifeDelayBeforeBreaking: 360
+  _lampCrushSoundName: Lamp Crush
 --- !u!205 &8356895055831143616
 LODGroup:
   m_ObjectHideFlags: 0
@@ -460,6 +462,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Electonical Spark VF
+      objectReference: {fileID: 0}
+    - target: {fileID: 7032403229864216214, guid: 29bd304f8e9fe344e9b6444a38d98c68,
+        type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 7032403229864216214, guid: 29bd304f8e9fe344e9b6444a38d98c68,
         type: 3}

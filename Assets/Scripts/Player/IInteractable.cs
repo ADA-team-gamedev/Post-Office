@@ -2,8 +2,10 @@ namespace Player
 {
     public interface IInteractable
     {
-        public void StartInteract();
+        public void StartInteract(Interactor interactor);
 
-        public void StopInteract();
+        public void UpdateInteract(Interactor interactor);
+
+        public void StopInteract(Interactor interactor);
     }
 }

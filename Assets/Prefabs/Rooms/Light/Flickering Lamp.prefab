@@ -72,6 +72,7 @@ MonoBehaviour:
   <IsLampEnabled>k__BackingField: 1
   _playerTag: Player
   <Light>k__BackingField: {fileID: 9054486722243454009}
+  <LampRenderer>k__BackingField: {fileID: 930907785034465957}
   OnStay:
     m_PersistentCalls:
       m_Calls: []
@@ -83,7 +84,7 @@ MonoBehaviour:
   _minFlashingDelay: 1
   _maxFlashingDelay: 7
   _flashingCurves: {fileID: 11400000, guid: 564591a613ff6f741ac8e2c9af728a24, type: 2}
-  <LampRenderer>k__BackingField: {fileID: 930907785034465957}
+  _lampFlashingSoundName: Lamp Flashing
 --- !u!205 &7847750736144876921
 LODGroup:
   m_ObjectHideFlags: 0
@@ -115,7 +116,7 @@ GameObject:
   - component: {fileID: 4678260515539619538}
   - component: {fileID: 3569730689812823387}
   - component: {fileID: 8742628718090973336}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Karkas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -197,7 +198,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7103845116959014288}
   - component: {fileID: 345854388801683060}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +229,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5727922468791022157}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -240,8 +241,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5.93, y: 5.68, z: 95}
-  m_Center: {x: -2.7, y: 2.96, z: 0}
+  m_Size: {x: 6.33, y: 5.53, z: 94.52}
+  m_Center: {x: -2.78, y: 3.08, z: 0}
 --- !u!1 &7468461882099913890
 GameObject:
   m_ObjectHideFlags: 0
@@ -253,7 +254,7 @@ GameObject:
   - component: {fileID: 1338458884699567466}
   - component: {fileID: 9054486722243454009}
   - component: {fileID: 2963934916473511637}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -293,7 +294,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -371,7 +372,7 @@ GameObject:
   - component: {fileID: 159848683228439015}
   - component: {fileID: 7715857891669838631}
   - component: {fileID: 930907785034465957}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}

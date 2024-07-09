@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using TaskSystem.NoteBook;
 using UnityEngine;
 using Zenject;
+using UnityModification;
 
 namespace TaskSystem.TaskGivers
 {
 	[RequireComponent(typeof(BoxCollider))]
-	public class ItemCollectorQuest : MonoBehaviour
+	public class ItemCollectorQuest : DestructiveBehaviour<ItemCollectorQuest>
 	{
 		[Header("Task")]
 		[SerializeField] private string _playerTag = "Player";
@@ -37,6 +38,13 @@ namespace TaskSystem.TaskGivers
 		private void Start()
 		{
 			GetComponent<BoxCollider>().isTrigger = true;
+
+			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
+
+			foreach (var item in _neededItems)
+			{
+				item.OnObjectDestroyed += OnItemDestroyed;
+			}
 
 			if (_giveTaskOnStart)
 				GiveTaskToPlayer();
@@ -190,5 +198,35 @@ namespace TaskSystem.TaskGivers
 		}
 
 		#endregion
+
+		private void OnItemDestroyed(Item item)
+		{
+			item.OnObjectDestroyed -= OnItemDestroyed;
+
+			item.OnPickUpItem -= item.ItemIcon.HideIcon;
+
+			item.OnDropItem -= OnItemDroped;
+		}
+
+		private void OnTaskManagerDestroyed(TaskManager taskManager)
+		{
+			taskManager.OnObjectDestroyed -= OnTaskManagerDestroyed;
+
+			taskManager.OnNewCurrentTaskSet -= ChangeQuestIconsState;
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			foreach (Item item in _neededItems)
+			{
+				item.ItemIcon.HideIcon();
+
+				item.OnPickUpItem -= item.ItemIcon.HideIcon;
+
+				item.OnDropItem -= OnItemDroped;
+			}
+		}
 	}
 }

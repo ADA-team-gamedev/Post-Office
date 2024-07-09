@@ -3,14 +3,15 @@ using Player;
 using System;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityModification;
 
 namespace Level.Lights
 {
-	public class FuseSwitch : MonoBehaviour, IInteractable
+	public class FuseSwitch : DestructiveBehaviour<FuseSwitch>, IInteractable
 	{
 		[field: SerializeField] public bool IsEnabled { get; private set; } = false;
 
-		[Header("Switch Aniamtion")]
+		[Header("Switch Animation")]
 
 		[SerializeField] private float _newSwitchYPosition = -1f;
 
@@ -24,6 +25,8 @@ namespace Level.Lights
 		public UnityEvent OnSwitchDisabled;
 
 		public event Action OnSwitchStateChanged;
+
+		public event Action OnClickedOnSwitch;
 
 		private FuseBox _generator;
 
@@ -62,17 +65,30 @@ namespace Level.Lights
 
 		#region Player Interaction
 
-		public void StartInteract()
+		public void StartInteract(Interactor interactor)
 		{
+			OnClickedOnSwitch?.Invoke();
+
 			if (IsEnabled)
+			{
 				DisableSwitch();
+			}
 			else
+			{
 				EnableSwitch();
+
+				_generator.EnableFuse();
+			}
 
 			AudioManager.Instance.PlaySound("Fuse Switch Change", transform.position, spatialBlend: 1);
 		}
 
-		public void StopInteract()
+		public void UpdateInteract(Interactor interactor) 
+		{ 
+
+		}
+
+		public void StopInteract(Interactor interactor)
 		{
 
 		}
@@ -86,8 +102,8 @@ namespace Level.Lights
 			IsEnabled = false;
 
 			OnSwitchStateChanged?.Invoke();
-
-			OnSwitchDisabled.Invoke();
+			
+			OnSwitchDisabled?.Invoke();
 
 			_generator.OnFuseEnabled.RemoveListener(ActiveSwitchLater);
 		}
@@ -99,7 +115,7 @@ namespace Level.Lights
 			OnSwitchStateChanged?.Invoke();
 
 			if (_generator.IsEnabled)
-				OnSwitchEnabled.Invoke();
+				OnSwitchEnabled?.Invoke();		
 			else
 				_generator.OnFuseEnabled.AddListener(ActiveSwitchLater);
 		}
@@ -110,5 +126,14 @@ namespace Level.Lights
 		}
 
 		#endregion
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			OnSwitchEnabled.RemoveAllListeners();
+
+			OnSwitchDisabled.RemoveAllListeners();
+		}
 	}
 }

@@ -1,12 +1,16 @@
 using Audio;
+using Events.CrushedPC;
 using Items.Icon;
+using Level.Lights.Lamps;
+using System;
 using TaskSystem;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityModification;
 
 namespace Level.Lights
 {
-	public class FuseBox : MonoBehaviour
+	public class FuseBox : DestructiveBehaviour<FuseBox>
 	{
 		public bool IsEnabled { get; private set; } = true;
 
@@ -28,7 +32,9 @@ namespace Level.Lights
 		[SerializeField] private Icon _fuseIconForTask;
 
 		[Header("Switches")]
-		[SerializeField] private FuseSwitch[] generatorSwitches;
+		[SerializeField] private FuseSwitch[] _switches;
+
+		private Lamp[] _lamps;
 
 		[Header("Events")]
 		[Space(5)]
@@ -47,23 +53,17 @@ namespace Level.Lights
 				if (value >= _maxEnergyAmount)
 				{
 					_energyAmount = _maxEnergyAmount;
-
-					Debug.Log("Generator has charged");
-
-					EnableFuse();
 				}
 				else if (value <= 0)
 				{
 					_energyAmount = 0;
 
-					IsEnabled = false;
-
-					Debug.Log("Generator has disabled");
-
 					DisableFuse();
 				}
 				else
+				{
 					_energyAmount = value;
+				}
 			}
 		}
 
@@ -73,16 +73,17 @@ namespace Level.Lights
 
 		private void Start()
 		{
-			_energyAmount = _maxEnergyAmount;	
-
+			_energyAmount = _maxEnergyAmount;
+			
 			CountNumberOfActivatedSwitches();
 
-			foreach (var fuseSwitch in generatorSwitches)
-			{
-				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
+			_lamps = FindObjectsOfType<Lamp>();
 
-				fuseSwitch.OnSwitchEnabled.AddListener(CompleteTask);
-			}
+			SubscribePcOnFuseEvents();
+
+			SubscribeFuseSwitchOnFuseEvents();		
+
+			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
 		}
 
 		private void Update()
@@ -112,30 +113,53 @@ namespace Level.Lights
 		{
 			_activatedSwitchesCount = 0;
 
-			foreach (var switches in generatorSwitches)
+			foreach (var switches in _switches)
 			{
 				if (switches.IsEnabled)
 					_activatedSwitchesCount++;
 			}
 		}
 
+		[ContextMenu(nameof(DisableFuse))]
 		private void DisableFuse()
 		{
-			foreach (var switches in generatorSwitches)
-				switches.DisableSwitch();
+			if (!Application.IsPlaying(this) || !IsEnabled)
+				return;
+
+			EditorDebug.Log("Generator has disabled");
+
+			IsEnabled = false;
 
 			OnFuseDisabled?.Invoke();
 
+			foreach (var lamp in _lamps)
+			{
+				lamp.CanBeEnabled = false;
+			}
+
 			AudioManager.Instance.PlaySound("Fuse Off", transform.position, spatialBlend: 0.5f);
+
+			EnergyAmount = _maxEnergyAmount; //if we want to wait, until fuse box charging to 100%, delete this line and add enable to max energy amount property set
 
 			GiveTask();	
 		}
 
-		private void EnableFuse()
+		[ContextMenu(nameof(EnableFuse))]
+		public void EnableFuse()
 		{
+			if (!Application.IsPlaying(this) || IsEnabled)
+				return;
+
+			EditorDebug.Log("Generator has enabled");
+
 			IsEnabled = true;
 
-			OnFuseEnabled?.Invoke();
+			foreach (var lamp in _lamps)
+			{
+				lamp.CanBeEnabled = true;
+			}
+
+			OnFuseEnabled?.Invoke();			
 		}
 
 		#region Logic for task
@@ -161,6 +185,11 @@ namespace Level.Lights
 
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeIconState;
 
+			foreach (var fuseSwitch in _switches)
+			{
+				fuseSwitch.OnClickedOnSwitch += CompleteTask;
+			}
+
 			_isTaskAdded = true;
 		}
 
@@ -175,19 +204,70 @@ namespace Level.Lights
 
 				_isTaskCompleted = true;
 
-				foreach (var fuseSwitch in generatorSwitches)
+				foreach (var fuseSwitch in _switches)
 				{
-					fuseSwitch.OnSwitchEnabled.RemoveListener(CompleteTask);
+					fuseSwitch.OnClickedOnSwitch -= CompleteTask;
 				}
 			}
 		}
 
 		#endregion
 
+		private void OnSwitchObjectDestroyed(FuseSwitch fuseSwitch)
+		{
+			fuseSwitch.OnObjectDestroyed -= OnSwitchObjectDestroyed;
+
+			fuseSwitch.OnSwitchStateChanged -= CountNumberOfActivatedSwitches;
+
+			fuseSwitch.OnClickedOnSwitch -= CompleteTask;
+		}
+
+		private void SubscribeFuseSwitchOnFuseEvents()
+		{
+			foreach (var fuseSwitch in _switches)
+			{
+				fuseSwitch.OnObjectDestroyed += OnSwitchObjectDestroyed;
+
+				fuseSwitch.OnSwitchStateChanged += CountNumberOfActivatedSwitches;
+
+				OnFuseEnabled.AddListener(fuseSwitch.EnableSwitch);
+
+				OnFuseDisabled.AddListener(fuseSwitch.DisableSwitch);
+			}
+		}
+
+		private void SubscribePcOnFuseEvents()
+		{
+			CrashedComputerUnit[] computerUnits = FindObjectsOfType<CrashedComputerUnit>();
+
+			foreach (var computerUnit in computerUnits)
+			{
+				OnFuseEnabled.AddListener(computerUnit.EnableComputer);
+
+				OnFuseDisabled.AddListener(computerUnit.DisablePC);
+			}
+		}
+
+		private void OnTaskManagerDestroyed(TaskManager taskManager)
+		{
+			TaskManager.Instance.OnObjectDestroyed -= OnTaskManagerDestroyed;
+
+			TaskManager.Instance.OnNewCurrentTaskSet -= ChangeIconState;
+		}
+
 		private void OnValidate()
 		{
 			if (_maxEnergyAmount <= 0)
 				_maxEnergyAmount++;
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			OnFuseDisabled.RemoveAllListeners();
+
+			OnFuseEnabled.RemoveAllListeners();
 		}
 	}
 }

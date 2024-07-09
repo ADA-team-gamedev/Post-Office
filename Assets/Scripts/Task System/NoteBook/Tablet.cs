@@ -5,10 +5,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using Zenject;
+using UnityModification;
 
 namespace TaskSystem.NoteBook
 {
-	public class Tablet : MonoBehaviour
+	public class Tablet : DestructiveBehaviour<Tablet>
 	{
 		#region Text
 
@@ -22,13 +23,23 @@ namespace TaskSystem.NoteBook
 
 		[SerializeField] private GameObject _taskHintArrows;
 
+		[Header("MiniMap")]
+		[SerializeField] private Camera _miniMapCamera;
+		[SerializeField, Min(0.01f)] private float _zoomSpeed = 0.1f;
+		[SerializeField, Min(1)] private float _maxCameraSizeInPercent = 2f;
+		[SerializeField, Min(0.1f)] private float _minCameraSizeInPercent = 1f;
+
+		private float _minCameraMapSize;
+		private float _deffaultMapCameraSize;
+		private float _maxCameraMapSize;
+
+		private float _zoomTime = 0f;
+
 		private string _emptyTextField => string.Empty;
 
 		private const string _addedTaskHint = "Added new tak";
 		private const string _selectedNewTaskHint = "Selected new task";
 		private const string _completedTaskHint = "Task is completed";
-
-		private FontStyles _defaultFontStyle;
 
 		#endregion
 
@@ -64,6 +75,10 @@ namespace TaskSystem.NoteBook
 			_playerInput.Player.NoteBook.canceled += OnNoteBook;
 
 			_playerInput.Player.ScrollWheelY.performed += OnTaskScroll;
+
+			_playerInput.Player.ZoomMapIn.performed += OnZoomValueChanged;
+
+			_playerInput.Player.ZoomMapOut.performed += OnZoomValueChanged;
 		}
 
 		private void Awake()
@@ -72,9 +87,15 @@ namespace TaskSystem.NoteBook
 
 			_playerDeathController.OnDied += DisableNoteBook;
 
-			_defaultFontStyle = _taskName.fontStyle;
-
 			_deffaultScreenInfoScale = _tabletScreenInfo.transform.localScale.x;
+
+			_deffaultMapCameraSize = _miniMapCamera.orthographicSize;
+
+			_minCameraMapSize = _miniMapCamera.orthographicSize * _minCameraSizeInPercent;
+
+			_maxCameraMapSize = _miniMapCamera.orthographicSize * _maxCameraSizeInPercent;
+
+			TaskManager.Instance.OnObjectDestroyed += OnTaskManagerDestroyed;
 		}
 
 		private void Update()
@@ -83,6 +104,13 @@ namespace TaskSystem.NoteBook
 				OpenNoteBook();
 			else
 				CloseNoteBook();
+
+			if (_playerInput.Player.ZoomMapIn.IsPressed())
+				ZoomIn();
+			else if (_playerInput.Player.ZoomMapOut.IsPressed())
+				ZoomOut();
+			else
+				ZoomToDeffault();
 		}
 
 		public void SubcribeOnTaskManager()
@@ -93,26 +121,17 @@ namespace TaskSystem.NoteBook
 
 			ChangeArrowState();
 
-			TaskManager.Instance.OnAddedNewTask += () =>
-			{
-				WriteHintText(_addedTaskHint, Color.green);
-			};
+			TaskManager.Instance.OnAddedNewTask += OnAddedTaskHint;
 
 			TaskManager.Instance.OnAddedNewTask += ChangeArrowState;
 
 			TaskManager.Instance.OnNewCurrentTaskSet += WriteTextInNoteBook;
 
-			TaskManager.Instance.OnNewCurrentTaskSet += (Task Task) =>
-			{
-				WriteHintText(_selectedNewTaskHint, Color.green);
-			};
+			TaskManager.Instance.OnNewCurrentTaskSet += OnNewCurrentTaskSetHint;
 
 			TaskManager.Instance.OnCurrentTaskCompleted += ClearNotebookTaskInfo;
 
-			TaskManager.Instance.OnCurrentTaskCompleted += () =>
-			{
-				WriteHintText(_completedTaskHint, Color.green);
-			};
+			TaskManager.Instance.OnCurrentTaskCompleted -= OnCurrentTaskCompletedHint;
 
 			TaskManager.Instance.OnTaskCompleted += ChangeArrowState;
 
@@ -154,6 +173,45 @@ namespace TaskSystem.NoteBook
 			}
 		}
 
+		private void OnZoomValueChanged(InputAction.CallbackContext context)
+		{
+			_zoomTime = 0f;
+		}
+
+		#region MiniMap
+
+		private void ZoomIn()
+		{
+			if (!IsViewing || !_playerInput.Player.ZoomMapIn.IsPressed())
+				return;
+
+			_zoomTime += _zoomSpeed * Time.deltaTime;
+
+			_miniMapCamera.orthographicSize = Mathf.Lerp(_miniMapCamera.orthographicSize, _minCameraMapSize, _zoomTime);
+		}
+
+		private void ZoomOut()
+		{
+			if (!IsViewing || !_playerInput.Player.ZoomMapOut.IsPressed())
+				return;
+
+			_zoomTime += _zoomSpeed * Time.deltaTime;
+
+			_miniMapCamera.orthographicSize = Mathf.Lerp(_miniMapCamera.orthographicSize, _maxCameraMapSize, _zoomTime);
+		}
+
+		private void ZoomToDeffault()
+		{
+			if (!IsViewing)
+				return;
+
+			_zoomTime += _zoomSpeed * Time.deltaTime;
+
+			_miniMapCamera.orthographicSize = Mathf.Lerp(_miniMapCamera.orthographicSize, _deffaultMapCameraSize, _zoomTime);
+		}
+
+		#endregion
+
 		#endregion
 
 		#region NoteBook Animations
@@ -193,6 +251,21 @@ namespace TaskSystem.NoteBook
 		#region Text Methods
 
 		#region Hint
+
+		private void OnAddedTaskHint()
+		{
+			WriteHintText(_addedTaskHint, Color.green);
+		}
+
+		private void OnNewCurrentTaskSetHint(Task taks)
+		{
+			WriteHintText(_selectedNewTaskHint, Color.green);
+		}
+
+		private void OnCurrentTaskCompletedHint()
+		{
+			WriteHintText(_completedTaskHint, Color.green);
+		}
 
 		private void ChangeArrowState()
 		{
@@ -261,6 +334,12 @@ namespace TaskSystem.NoteBook
 			Destroy(this);
 		}
 
+		private void OnValidate()
+		{
+			if (_minCameraSizeInPercent > 1f)
+				_minCameraSizeInPercent = 1f;
+		}
+
 		private void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.green;
@@ -268,6 +347,42 @@ namespace TaskSystem.NoteBook
 			Vector3 tabletPosition = Application.isPlaying ? _defaultPosition : transform.position;
 
 			Gizmos.DrawWireSphere(tabletPosition + _openedPositionOffset, 0.01f);
+		}
+
+		private void OnTaskManagerDestroyed(TaskManager taskManager)
+		{
+			taskManager.OnObjectDestroyed -= OnTaskManagerDestroyed;
+
+			taskManager.OnAddedNewTask -= OnAddedTaskHint;
+
+			taskManager.OnAddedNewTask -= ChangeArrowState;
+
+			taskManager.OnNewCurrentTaskSet -= WriteTextInNoteBook;
+
+			taskManager.OnNewCurrentTaskSet -= OnNewCurrentTaskSetHint;
+
+			taskManager.OnCurrentTaskCompleted -= ClearNotebookTaskInfo;
+
+			taskManager.OnCurrentTaskCompleted -= OnCurrentTaskCompletedHint;
+
+			taskManager.OnTaskCompleted -= ChangeArrowState;
+		}
+
+		protected override void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.NoteBook.performed -= OnNoteBook;
+				_playerInput.Player.NoteBook.canceled -= OnNoteBook;
+
+				_playerInput.Player.ScrollWheelY.performed -= OnTaskScroll;
+
+				_playerInput.Player.ZoomMapIn.performed -= OnZoomValueChanged;
+
+				_playerInput.Player.ZoomMapOut.performed -= OnZoomValueChanged;
+			}
+
+			_playerDeathController.OnDied -= DisableNoteBook;	
 		}
 	}
 }

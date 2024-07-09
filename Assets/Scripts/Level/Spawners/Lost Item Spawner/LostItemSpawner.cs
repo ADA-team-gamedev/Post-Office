@@ -3,10 +3,11 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
+using UnityModification;
 
 namespace Level.Spawners.LostItemSpawner
 {
-    public class LostItemSpawner : MonoBehaviour
+    public class LostItemSpawner : DestructiveBehaviour<LostItemSpawner>
     {
 		[Header("Sticker")]
 
@@ -35,9 +36,13 @@ namespace Level.Spawners.LostItemSpawner
 		private void Start()
 		{
 			if (TrySpawnLostItems(out Dictionary<Item, LostItemSticker> lostItems))
+			{
 				OnLostItemSpawned?.Invoke(lostItems);
+			}
 			else
-				Debug.LogWarning("Can't add task, because you don't set lost items!");
+			{
+				EditorDebug.LogWarning("Can't add task, because you don't set lost items!");
+			}
 		}
 
 		private bool TrySpawnLostItems(out Dictionary<Item, LostItemSticker> lostItems)

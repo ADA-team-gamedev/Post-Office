@@ -1,6 +1,7 @@
 using Audio;
 using Items.Keys;
 using Player;
+using Player.Inventory;
 using UnityEngine;
 
 [RequireComponent(typeof(HingeJoint))]
@@ -28,7 +29,7 @@ public class DragableDoor : MonoBehaviour, IInteractable
 
 	[field: SerializeField] public bool IsClosed { get; private set; } = true;
 
-	[field: SerializeField] public DoorKeyTypes DoorKeyType { get; private set; }
+	[field: SerializeField] public DoorKeyType DoorKeyType { get; private set; }
 
 	#endregion
 
@@ -78,21 +79,16 @@ public class DragableDoor : MonoBehaviour, IInteractable
 		transform.rotation = Quaternion.Euler(0, _angle, 0);
 	}
 
-	private void Update()
-	{
-		RotateDoor();
-	}
-
 	#region Key Open
 
-	private void TryOpenDoorByKey()
+	private void TryOpenDoorByKey(IReadOnlyInventory interactorInventory)
 	{
 		if (!IsClosed)
 			return;
 
-		bool hasRightKeyInInventory = PlayerInventory.Instance.TryGetCurrentItem(out Key key) && key.KeyType == DoorKeyType;
+		bool hasRightKeyInInventory = interactorInventory.TryGetCurrentItem(out Key key) && key.KeyType == DoorKeyType;
 
-		bool hasRightKeyInKeyBunch = PlayerInventory.Instance.TryGetCurrentItem(out KeyBunch keyBunch) && keyBunch.IsContainsKey(DoorKeyType);
+		bool hasRightKeyInKeyBunch = hasRightKeyInInventory || (interactorInventory.TryGetCurrentItem(out KeyBunch keyBunch) && keyBunch.IsContainsKey(DoorKeyType));
 
 		if (hasRightKeyInInventory || hasRightKeyInKeyBunch)
 		{
@@ -104,7 +100,9 @@ public class DragableDoor : MonoBehaviour, IInteractable
 		}
 		else
 		{
+#if UNITY_EDITOR
 			Debug.Log("Player doesn't have right key to open this door");
+#endif
 		}
 
 		AudioManager.Instance.PlaySound(_closedDoor, transform.position, spatialBlend: 0.8f);
@@ -189,14 +187,19 @@ public class DragableDoor : MonoBehaviour, IInteractable
 
 	#region Interaction
 
-	public void StartInteract()
+	public void StartInteract(Interactor interactor)
 	{
-		TryOpenDoorByKey();
+		TryOpenDoorByKey(interactor.Inventory);
 
 		StartRotateDoor();
 	}
 
-	public void StopInteract()
+	public void UpdateInteract(Interactor interactor)
+	{
+		RotateDoor();
+	}
+
+	public void StopInteract(Interactor interactor)
 	{
 		StopRotateDoor();
 	}

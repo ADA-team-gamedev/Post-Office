@@ -3,6 +3,7 @@ using Player;
 using System;
 using System.Collections;
 using UnityEngine;
+using UnityModification;
 
 namespace Items
 {
@@ -15,11 +16,9 @@ namespace Items
         [SerializeField] private float _sanityAddingNumber;
         [SerializeField] private float _sanityAddingDelay;
 
-        [SerializeField] private PlayerSanity _sanity;
-
         private bool _isUsing = false;
 
-        public void Use()
+        public void Use(Interactor interactor)
         {
             if (IsHaveCharge())
             {
@@ -27,25 +26,25 @@ namespace Items
                 {
                     _countOfUses--;
 
-                    Debug.Log($"{gameObject.name}s are used");
+					EditorDebug.Log($"{gameObject.name}s are used");
 
-					AudioManager.Instance.PlaySound("Use Pills", transform.position);
+                    AudioManager.Instance.PlaySound("Use Pills", transform.position);
 
-					StartCoroutine(RestoreeSanity());
+					StartCoroutine(RestoreeSanity(interactor.Sanity));
                 }
             }
             else
             {
-                Debug.Log($"These {gameObject.name} pills are empty");
+				EditorDebug.Log($"These {gameObject.name} pills are empty");
 
-				AudioManager.Instance.PlaySound("Pill Empty", transform.position);
+                AudioManager.Instance.PlaySound("Pill Empty", transform.position);
 			}
         }
 
         private bool IsHaveCharge()
             => _countOfUses > 0;
 
-        private IEnumerator RestoreeSanity()
+        private IEnumerator RestoreeSanity(PlayerSanity sanity)
         {
             _isUsing = true;
 
@@ -55,7 +54,7 @@ namespace Items
             {
                 timer -= Time.deltaTime;
 
-                _sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
+				sanity.Sanity += _sanityAddingNumber / _sanityAddingDelay * Time.deltaTime;
 
                 yield return new WaitForSeconds(Time.deltaTime);
             }

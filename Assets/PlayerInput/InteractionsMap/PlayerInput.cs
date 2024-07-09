@@ -91,15 +91,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""PlaceItem"",
-                    ""type"": ""Button"",
-                    ""id"": ""73918d3c-dca1-466c-9818-bc1801c892b8"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """",
-                    ""initialStateCheck"": false
-                },
-                {
                     ""name"": ""DropItem"",
                     ""type"": ""Button"",
                     ""id"": ""d38466f0-2ef7-47fe-8781-a91e1ea7e1bd"",
@@ -175,6 +166,24 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""name"": ""NoteBook"",
                     ""type"": ""Button"",
                     ""id"": ""b00963c1-724c-4f34-bd4f-d2e16265011f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ZoomMapIn"",
+                    ""type"": ""Button"",
+                    ""id"": ""0ef931b9-044a-4bd1-a210-ac9e484910e9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ZoomMapOut"",
+                    ""type"": ""Button"",
+                    ""id"": ""87f4762f-c241-4c2f-ace5-1ed570240546"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -338,17 +347,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""1f15f03d-6efa-422d-bac1-155a7bff1cdf"",
-                    ""path"": ""<Keyboard>/f"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard and Mouse"",
-                    ""action"": ""PlaceItem"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""82e08f9e-4b52-4351-8045-834407c9d467"",
                     ""path"": ""<Mouse>/leftButton"",
                     ""interactions"": """",
@@ -426,6 +424,39 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""c8ad67c7-bb11-412e-8448-c6508ef1f91d"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bc0850fc-c8d0-4fa3-817b-05c8d1b2906a"",
+                    ""path"": ""<Mouse>/middleButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3c4a87c4-7412-4767-b909-d9da84579b50"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""05a3ccd6-068d-49af-9231-71e3709a24b4"",
                     ""path"": ""<Keyboard>/tab"",
                     ""interactions"": ""Tap,Hold(duration=0.2)"",
@@ -443,6 +474,50 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard and Mouse"",
                     ""action"": ""Hotbar 4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e83878ce-5e84-4327-9dd1-ee55db82dd4d"",
+                    ""path"": ""<Keyboard>/equals"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapIn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dbca861b-ea00-48e3-bac7-86ba275e3701"",
+                    ""path"": ""<Keyboard>/numpadPlus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapIn"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fab46d2c-3c3a-4ff6-a3c6-b413a2585eda"",
+                    ""path"": ""<Keyboard>/minus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapOut"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""61ce3075-891c-4510-924b-644229a6abe8"",
+                    ""path"": ""<Keyboard>/numpadMinus"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard and Mouse"",
+                    ""action"": ""ZoomMapOut"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -516,7 +591,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_UseItem = m_Player.FindAction("UseItem", throwIfNotFound: true);
         m_Player_PickUpItem = m_Player.FindAction("PickUpItem", throwIfNotFound: true);
-        m_Player_PlaceItem = m_Player.FindAction("PlaceItem", throwIfNotFound: true);
         m_Player_DropItem = m_Player.FindAction("DropItem", throwIfNotFound: true);
         m_Player_ScrollWheelY = m_Player.FindAction("ScrollWheelY", throwIfNotFound: true);
         m_Player_Hotbar1 = m_Player.FindAction("Hotbar 1", throwIfNotFound: true);
@@ -526,6 +600,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player_FlahsLight = m_Player.FindAction("FlahsLight", throwIfNotFound: true);
         m_Player_AnyKey = m_Player.FindAction("AnyKey", throwIfNotFound: true);
         m_Player_NoteBook = m_Player.FindAction("NoteBook", throwIfNotFound: true);
+        m_Player_ZoomMapIn = m_Player.FindAction("ZoomMapIn", throwIfNotFound: true);
+        m_Player_ZoomMapOut = m_Player.FindAction("ZoomMapOut", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_PauseMenu = m_UI.FindAction("PauseMenu", throwIfNotFound: true);
@@ -597,7 +673,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_UseItem;
     private readonly InputAction m_Player_PickUpItem;
-    private readonly InputAction m_Player_PlaceItem;
     private readonly InputAction m_Player_DropItem;
     private readonly InputAction m_Player_ScrollWheelY;
     private readonly InputAction m_Player_Hotbar1;
@@ -607,6 +682,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_FlahsLight;
     private readonly InputAction m_Player_AnyKey;
     private readonly InputAction m_Player_NoteBook;
+    private readonly InputAction m_Player_ZoomMapIn;
+    private readonly InputAction m_Player_ZoomMapOut;
     public struct PlayerActions
     {
         private @PlayerInput m_Wrapper;
@@ -618,7 +695,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @UseItem => m_Wrapper.m_Player_UseItem;
         public InputAction @PickUpItem => m_Wrapper.m_Player_PickUpItem;
-        public InputAction @PlaceItem => m_Wrapper.m_Player_PlaceItem;
         public InputAction @DropItem => m_Wrapper.m_Player_DropItem;
         public InputAction @ScrollWheelY => m_Wrapper.m_Player_ScrollWheelY;
         public InputAction @Hotbar1 => m_Wrapper.m_Player_Hotbar1;
@@ -628,6 +704,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         public InputAction @FlahsLight => m_Wrapper.m_Player_FlahsLight;
         public InputAction @AnyKey => m_Wrapper.m_Player_AnyKey;
         public InputAction @NoteBook => m_Wrapper.m_Player_NoteBook;
+        public InputAction @ZoomMapIn => m_Wrapper.m_Player_ZoomMapIn;
+        public InputAction @ZoomMapOut => m_Wrapper.m_Player_ZoomMapOut;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -658,9 +736,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @PickUpItem.started += instance.OnPickUpItem;
             @PickUpItem.performed += instance.OnPickUpItem;
             @PickUpItem.canceled += instance.OnPickUpItem;
-            @PlaceItem.started += instance.OnPlaceItem;
-            @PlaceItem.performed += instance.OnPlaceItem;
-            @PlaceItem.canceled += instance.OnPlaceItem;
             @DropItem.started += instance.OnDropItem;
             @DropItem.performed += instance.OnDropItem;
             @DropItem.canceled += instance.OnDropItem;
@@ -688,6 +763,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @NoteBook.started += instance.OnNoteBook;
             @NoteBook.performed += instance.OnNoteBook;
             @NoteBook.canceled += instance.OnNoteBook;
+            @ZoomMapIn.started += instance.OnZoomMapIn;
+            @ZoomMapIn.performed += instance.OnZoomMapIn;
+            @ZoomMapIn.canceled += instance.OnZoomMapIn;
+            @ZoomMapOut.started += instance.OnZoomMapOut;
+            @ZoomMapOut.performed += instance.OnZoomMapOut;
+            @ZoomMapOut.canceled += instance.OnZoomMapOut;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -713,9 +794,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @PickUpItem.started -= instance.OnPickUpItem;
             @PickUpItem.performed -= instance.OnPickUpItem;
             @PickUpItem.canceled -= instance.OnPickUpItem;
-            @PlaceItem.started -= instance.OnPlaceItem;
-            @PlaceItem.performed -= instance.OnPlaceItem;
-            @PlaceItem.canceled -= instance.OnPlaceItem;
             @DropItem.started -= instance.OnDropItem;
             @DropItem.performed -= instance.OnDropItem;
             @DropItem.canceled -= instance.OnDropItem;
@@ -743,6 +821,12 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
             @NoteBook.started -= instance.OnNoteBook;
             @NoteBook.performed -= instance.OnNoteBook;
             @NoteBook.canceled -= instance.OnNoteBook;
+            @ZoomMapIn.started -= instance.OnZoomMapIn;
+            @ZoomMapIn.performed -= instance.OnZoomMapIn;
+            @ZoomMapIn.canceled -= instance.OnZoomMapIn;
+            @ZoomMapOut.started -= instance.OnZoomMapOut;
+            @ZoomMapOut.performed -= instance.OnZoomMapOut;
+            @ZoomMapOut.canceled -= instance.OnZoomMapOut;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -833,7 +917,6 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnUseItem(InputAction.CallbackContext context);
         void OnPickUpItem(InputAction.CallbackContext context);
-        void OnPlaceItem(InputAction.CallbackContext context);
         void OnDropItem(InputAction.CallbackContext context);
         void OnScrollWheelY(InputAction.CallbackContext context);
         void OnHotbar1(InputAction.CallbackContext context);
@@ -843,6 +926,8 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         void OnFlahsLight(InputAction.CallbackContext context);
         void OnAnyKey(InputAction.CallbackContext context);
         void OnNoteBook(InputAction.CallbackContext context);
+        void OnZoomMapIn(InputAction.CallbackContext context);
+        void OnZoomMapOut(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

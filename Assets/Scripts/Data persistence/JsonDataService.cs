@@ -4,11 +4,16 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 using UnityEngine;
+using UnityModification;
 
 namespace DataPersistance
 {
 	public class JsonDataService : IDataService
 	{
+		public const string SettingDataPath = "/Settings";
+		public const string LoadingInfoPath = "/LoadingInfo";
+		public const string WeekDayPath = "/WeekDay";
+
 		private const string Key = "ggdPhkeOoiv6YMiPWa34kIuOdDUL7NwQFg611DVdwN8=";
 		private const string IV = "JZuM0HQsWSBVpRHTeRZMYQ==";
 
@@ -20,16 +25,13 @@ namespace DataPersistance
 			{
 				if (File.Exists(path))
 				{
-#if UNITY_EDITOR
-					Debug.Log($"Data alredy exists in path: {path}. <color=green>Deleting old file and writing a new one!</color>");
-#endif
+					EditorDebug.Log($"Data alredy exists in path: {path}. <color=green>Deleting old file and writing a new one!</color>");
+
 					File.Delete(path);
 				}
 				else
 				{
-#if UNITY_EDITOR
-					Debug.Log("<color=green>Writing file for the first time!</color>");
-#endif
+					EditorDebug.Log("<color=green>Writing file for the first time!</color>");
 				}
 
 				using FileStream stream = File.Create(path);
@@ -47,9 +49,8 @@ namespace DataPersistance
 			}
 			catch (Exception exception)
 			{
-#if UNITY_EDITOR
-				Debug.LogError($"Unable to save data due to: {exception.Message} {exception.StackTrace}");
-#endif
+				EditorDebug.LogError($"Unable to save data due to: {exception.Message} {exception.StackTrace}");
+
 				return false;
 			}
 		}
@@ -67,15 +68,14 @@ namespace DataPersistance
 			cryptoStream.Write(Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(data)));
 		}
 
-		public bool LoadData<T>(out T data, string relativePath, bool encrypted)
+		public bool TryLoadData<T>(out T data, string relativePath, bool encrypted)
 		{
 			string path = $"{Application.persistentDataPath}/{relativePath}";
 			
 			if (!File.Exists(path))
 			{
-#if UNITY_EDITOR
-				Debug.LogError($"Cannot load file at {path}. File doesn't exist!");
-#endif
+				EditorDebug.LogError($"Cannot load file at {path}. File doesn't exist!");
+
 				data = default(T);	
 
 				return false;
@@ -94,9 +94,8 @@ namespace DataPersistance
 			}
 			catch (Exception exception)
 			{
-#if UNITY_EDITOR
-				Debug.LogError($"Failed to load data due to: {exception.Message} {exception.StackTrace}");
-#endif
+				EditorDebug.LogError($"Failed to load data due to: {exception.Message} {exception.StackTrace}");
+
 				data = default(T);
 
 				return false;
@@ -122,9 +121,9 @@ namespace DataPersistance
 			using StreamReader reader = new(cryptoStream);
 
 			string result = reader.ReadToEnd();
-#if UNITY_EDITOR
-			Debug.Log($"<color=green>Decrypted result</color> (if the following is not legible, probably wrond key or iv): {result}");
-#endif
+
+			EditorDebug.Log($"<color=green>Decrypted result</color> (if the following is not legible, probably wrond key or iv): {result}");
+
 			return JsonConvert.DeserializeObject<T>(result);
 		}
 	}

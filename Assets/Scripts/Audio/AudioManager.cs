@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using System.Collections.Generic;
+using UnityModification;
 
 namespace Audio
 {
@@ -17,9 +18,9 @@ namespace Audio
 		private void Awake()
 		{
 			if (Instance == null)
-				Instance = this;		
+				Instance = this;
 			else
-				Debug.LogError($"{nameof(AudioManager)} Instance already exists!");
+				EditorDebug.LogError($"{nameof(AudioManager)} Instance already exists!");	
 
 			FillAudioSource();
 
@@ -29,7 +30,7 @@ namespace Audio
 		private void FillAudioSource()
 		{
 			AudioSource[] audioSources = FindObjectsOfType<AudioSource>();
-
+			
 			foreach (var source in audioSources)
 			{
 				_audioSources.TryAdd(source.outputAudioMixerGroup, source);
@@ -44,7 +45,7 @@ namespace Audio
 
 				if (_soundclips.ContainsValue(clip))
 				{
-					Debug.LogError($"{clip.Name} already exists in sound collection!");
+					EditorDebug.LogError($"{clip.Name} already exists in sound collection!");
 
 					continue;
 				}
@@ -54,6 +55,11 @@ namespace Audio
 		}
 
 		#region Play Sound
+
+		public void PlaySound(string clipName)
+		{
+			PlaySound(clipName, transform.position);
+		}
 
 		public void PlaySound(string clipName, Vector3 spawnPosition, float volume = 1f, float spatialBlend = 0)
 		{
@@ -120,6 +126,8 @@ namespace Audio
 			audioSource.outputAudioMixerGroup = audioSourceParameters.MixerGroup;
 
 			audioSource.spatialBlend = audioSourceParameters.SpatialBlend;
+
+			audioSource.loop = audioSourceParameters.IsLooped;
 		}
 
 		private bool TryGetClipFromCollection(string clipName, out SoundClip soundClip)
@@ -127,7 +135,7 @@ namespace Audio
 			if (_soundclips.TryGetValue(clipName, out soundClip))
 				return true;
 
-			Debug.LogWarning($"No clip with name - ({clipName})");
+			EditorDebug.LogWarning($"No clip with name - ({clipName})");
 
 			return false;
 		}
@@ -137,7 +145,7 @@ namespace Audio
 			if (_audioSources.TryGetValue(mixerGroup, out basedAudioSource))
 				return true;
 
-			Debug.LogWarning($"No audio source with {mixerGroup}");
+			EditorDebug.LogWarning($"No audio source with {mixerGroup}");
 
 			return false;
 		}

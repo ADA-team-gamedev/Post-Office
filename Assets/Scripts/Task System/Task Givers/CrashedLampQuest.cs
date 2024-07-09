@@ -1,15 +1,15 @@
-using Level.Lights.Lamp;
+using Level.Lights.Lamps;
 using UnityEngine;
+using UnityModification;
 
 namespace TaskSystem.TaskGivers
 {
-	public class CrashedLampQuest : MonoBehaviour
+	public class CrashedLampQuest : DestructiveBehaviour<CrashedLampQuest>
 	{
 		[Header("Task")]
 		[SerializeField] private TaskData _crashedLampTask;
 
-		[Header("Lamps")]
-		[SerializeField] private BreakableLamp[] _breakableLamps;
+		private BreakableLamp[] _breakableLamps;
 
 		private void Start()
 		{
@@ -17,6 +17,8 @@ namespace TaskSystem.TaskGivers
 
 			foreach (var lamp in _breakableLamps)
 			{
+				lamp.OnObjectDestroyed += OnLampObjectDestroyed;
+
 				lamp.OnLampDestroyed += GiveTaskToPlayer;
 			}
 		}
@@ -25,7 +27,7 @@ namespace TaskSystem.TaskGivers
 		{
 			if (_breakableLamps.Length <= 0 || !TaskManager.Instance.TryAddNewTask(_crashedLampTask))
 			{
-				Debug.LogWarning("We can't add crashed lamp task!");
+				EditorDebug.LogWarning("We can't add crashed lamp task!");
 
 				return;
 			}
@@ -54,6 +56,22 @@ namespace TaskSystem.TaskGivers
 		private void FillLamps()
 		{
 			_breakableLamps = FindObjectsOfType<BreakableLamp>();
+		}
+
+		private void OnLampObjectDestroyed(Lamp lamp)
+		{
+			if (lamp is not BreakableLamp)
+			{
+				EditorDebug.LogWarning($"You subscribe breakableLamp method to Lamp, not BreakableLamp!");
+
+				return;
+			}
+
+			BreakableLamp breakableLamp = (BreakableLamp)lamp;
+
+			breakableLamp.OnObjectDestroyed -= OnLampObjectDestroyed;
+
+			breakableLamp.OnLampDestroyed -= GiveTaskToPlayer;
 		}
 	}
 }

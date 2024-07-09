@@ -1,4 +1,5 @@
 using Audio;
+using Player;
 using UnityEngine;
 
 namespace Items
@@ -12,9 +13,9 @@ namespace Items
 
         public bool IsWorking { get; private set; } = false;
 
-        private void Start()
+		protected override void Start()
         {
-            InitializeItem();
+			base.Start();
 		}
 
 		protected override void InitializeItem()
@@ -28,7 +29,7 @@ namespace Items
             OnDropItem += EnableOnDrop;
 		}
 
-		public void Use()
+		public void Use(Interactor interactor)
         {
             if (!IsWorking)
                 TurnOn();
@@ -56,5 +57,12 @@ namespace Items
         {
             TurnOn();
 		}
-    }
+
+		protected override void OnDestroy()
+		{
+            base.OnDestroy();
+
+			OnDropItem -= EnableOnDrop;
+		}
+	}
 }

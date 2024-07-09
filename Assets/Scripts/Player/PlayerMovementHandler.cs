@@ -2,6 +2,7 @@ using Audio;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityModification;
 using Zenject;
 
 namespace Player
@@ -123,7 +124,7 @@ namespace Player
 
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
-			_playerDeathController.OnDied += DisableMovement;
+			//_playerDeathController.OnDied += DisableMovement;
 
 			_playerSpeed = _playerWalkSpeed;
 
@@ -225,6 +226,8 @@ namespace Player
 				_isSprintOnCooldown = true;
 
 				MovementState = MovementState.Walking;
+
+				AudioManager.Instance.PlaySound("OutOfBreath");
 			}
 		}
 
@@ -326,11 +329,15 @@ namespace Player
 
 		private void CheckGround()
 		{
-			float playerHalfHeight = transform.localScale.y * 0.5f;
+			float playerHalfHeight = _playerCollider.height * 0.5f;
 
-			Vector3 playerBodyCenter = new(transform.position.x, playerHalfHeight, transform.position.z);
+			Vector3 playerBodyCenter = new(transform.position.x, transform.position.y, transform.position.z);
 
-			bool isGrounded = Physics.Raycast(playerBodyCenter, Vector3.down, playerHalfHeight + 0.2f, _groundMask);
+			float rayLength = playerHalfHeight * 1.25f;
+
+			bool isGrounded = Physics.Raycast(playerBodyCenter, Vector3.down, rayLength, _groundMask);
+
+			EditorDebug.DrawRay(playerBodyCenter, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
 
 			_rb.drag = isGrounded ? _groundDrag : 0;
 		}
@@ -424,6 +431,30 @@ namespace Player
 			_rb ??= GetComponent<Rigidbody>();
 
 			_playerCollider ??= GetComponent<CapsuleCollider>();
+		}
+
+		private void OnDrawGizmosSelected()
+		{
+			//float playerHalfHeight = transform.localScale.y * 0.5f;
+
+			//Vector3 playerBodyCenter = new(transform.position.x, playerHalfHeight, transform.position.z);
+			
+			//Gizmos.DrawRay(new(playerBodyCenter, new(0, -(playerHalfHeight + 0.2f), 0)));
+		}
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.Move.performed -= OnMove;
+				_playerInput.Player.Move.canceled -= OnMove;
+
+				_playerInput.Player.Sprint.performed -= OnSprint;
+				_playerInput.Player.Sprint.canceled -= OnSprint;
+
+				_playerInput.Player.Crouch.performed -= OnCrouch;
+				_playerInput.Player.Crouch.canceled -= OnCrouch;
+			}
 		}
 	}
 }

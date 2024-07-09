@@ -1,6 +1,7 @@
 using System;
 using TaskSystem.NoteBook;
 using UnityEngine;
+using UnityModification;
 
 namespace TaskSystem
 {
@@ -44,7 +45,7 @@ namespace TaskSystem
 		public void Complete()
 		{
 			if (IsCompleted)
-				Debug.LogWarning($"Task is already completed but you still trying to complete him");
+				EditorDebug.LogWarning($"Task is already completed but you still trying to complete him");
 
 			IsCompleted = true;
 

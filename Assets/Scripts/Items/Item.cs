@@ -2,13 +2,17 @@ using System;
 using UnityEngine;
 using Items.Icon;
 using Audio;
+using Player;
+using UnityModification;
 
 namespace Items
 {
 	[RequireComponent(typeof(Rigidbody))]
 	[RequireComponent(typeof(Collider))]
-	public class Item : MonoBehaviour
+	public class Item : DestructiveBehaviour<Item>, IHighlightable
 	{
+		public bool IsHighlightable => _canBePicked;
+
 		[field: Header("Item")]
 
 		[field: SerializeField] private bool _canBePicked = true;
@@ -33,18 +37,20 @@ namespace Items
 
 		[field: SerializeField] public ItemIcon ItemIcon { get; private set; }
 
-		public Action<Item> OnPickUpItem { get; set; }
+		public event Action<Item> OnPickUpItem;
 
-		public Action<Item> OnDropItem { get; set; }
+		public event Action<Item> OnDropItem;
 
-		public Action OnItemPickingPropertyChanged {  get; set; }
+		public Action OnItemPickingPropertyChanged {  get; set; }	
 
-		private void Start()
+		protected Interactor Interactor { get; private set; }
+
+		protected virtual void Start()
 		{
 			InitializeItem();
 		}
 
-		private void Update()
+		protected virtual void Update()
 		{
 			ItemIcon.RotateIconToObject();
 		}
@@ -84,20 +90,45 @@ namespace Items
 			OnDropItem -= ItemIcon.ShowIcon;
 		}
 
-		private void OnItemPicked(Item item)
+		protected virtual void OnItemPicked(Item item)
 		{
 			IsPicked = true;
 
 			AudioManager.Instance.PlaySound(_pickupSound, transform.position);
 		}
 
-		private void OnItemDroped(Item item)
+		protected virtual void OnItemDroped(Item item)
 		{
 			IsPicked = false;
 
+			Interactor = null;
+
 			AudioManager.Instance.PlaySound(_dropSound, transform.position);
-		}		
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy(); 
+			
+			OnPickUpItem -= ItemIcon.HideIcon;
+
+			OnDropItem -= ItemIcon.ShowIcon;
+
+			ItemIcon.HideIcon();
+		}
 
 		#endregion
+
+		public void InvokePickup(Interactor interactor)
+		{
+			Interactor = interactor;
+
+			OnPickUpItem?.Invoke(this);
+		}
+
+		public void InvokeDrop()
+		{
+			OnDropItem?.Invoke(this);
+		}
 	}
 }

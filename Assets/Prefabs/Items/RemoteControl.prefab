@@ -104,8 +104,11 @@ MonoBehaviour:
     <IconTargetToLook>k__BackingField: {fileID: 0}
     <EnableOnStart>k__BackingField: 0
     <ChangeIconStateAutomatically>k__BackingField: 0
-  _playerCamera: {fileID: 0}
-  _findRemoteControlTask: {fileID: 0}
+  _garageDoorLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  _findRemoteControlTask: {fileID: 11400000, guid: 6d0f5021e5aebf04f92bed5ac878a02d,
+    type: 2}
 --- !u!1 &8936858545506054445
 GameObject:
   m_ObjectHideFlags: 0

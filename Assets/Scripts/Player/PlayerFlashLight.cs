@@ -1,5 +1,6 @@
 using Audio;
 using Items;
+using Player.Inventory;
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -114,5 +115,11 @@ namespace Player
 		}
 
 		#endregion
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+				_playerInput.Player.FlahsLight.performed -= UseFlashLight;
+		}
 	}
 }

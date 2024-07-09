@@ -1,52 +1,66 @@
 using Audio;
-using Player;
+using Player.Inventory;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityModification;
 
 namespace Items.Keys
 {
 	public class KeyBunch : Item
 	{
+		#region KeyBunch
+
 		[SerializeField] private Transform _pickedKeysParent;
 
-		private List<DoorKeyTypes> _keyTypes = new();
+		private List<DoorKeyType> _keyTypes = new();
 
-		[SerializeField] private Key[] _keysOnStart;
+		[SerializeField] private List<Key> _keysOnStart;
 
-		[SerializeField] private GameObject[] _keyModels;
+		[SerializeField] private BunchKey[] _keyModels;
 
-		private void Start()
+		private MaterialPropertyBlock _propertyBlock;
+
+		#endregion
+
+		protected override void Start()
 		{
-			InitializeItem();
+			base.Start();
+
+			_propertyBlock = new();
 
 			foreach (var key in _keyModels)
 			{
-				key.SetActive(false);
+				key.KeyObject.SetActive(false);
 			}
 
 			FillBunchOnStart();
 
 			OnPickUpItem += OnPlayerPickupBunch;
-
-			OnPickUpItem += (item) =>
-			{
-				PlayerInventory.Instance.OnItemPicked += OnPlayerPickUpItem;
-			};
-
-			OnDropItem += (item) =>
-			{
-				PlayerInventory.Instance.OnItemPicked -= OnPlayerPickUpItem;
-			};		
 		}
 
-		public bool TryAddKey(Key key)
+		public void AddKey(Key key)
+		{
+			if (!TryAddKey(key))
+			{
+				EditorDebug.LogWarning("Can't add key!");
+
+				return;
+			}
+
+			Destroy(key.gameObject);
+
+			AudioManager.Instance.PlaySound("Pickup Key", transform.position);
+		}
+
+		private bool TryAddKey(Key key)
 		{
 			if (_keyModels.Length <= 0 || _keyTypes.Count >= _keyModels.Length)
 				return false;
 
 			if (IsContainsKey(key.KeyType))
 			{
-				Debug.LogWarning($"Key {key.KeyType} is already contains in key bunch!");
+				EditorDebug.LogWarning($"Key {key.KeyType} is already contains in key bunch!");
 
 				return false;
 			}
@@ -55,21 +69,27 @@ namespace Items.Keys
 
 			int keyIndex = Mathf.Clamp(_keyTypes.Count - 1, 0, _keyModels.Length - 1);
 
-			_keyModels[keyIndex].SetActive(true);
+			BunchKey bunchKey = _keyModels[keyIndex];
+
+			PaintKeyLabel(bunchKey, key);
+
+			bunchKey.KeyObject.SetActive(true);
 
 			return true;
 		}
 
 		private void OnPlayerPickupBunch(Item item)
 		{
+			Interactor.Inventory.OnItemPicked += OnPlayerPickUpRandomItem;
+
 			bool addedKey = false;
 
 			for (int i = 0; i < PlayerInventory.InventorySlotsAmount; i++)
 			{
-				if (!PlayerInventory.Instance.TryGetItem(out Key key))
+				if (!Interactor.Inventory.TryGetItem(out Key key))
 					break;		
 
-				if (TryAddKey(key) && PlayerInventory.Instance.TryRemoveItem(key))
+				if (TryAddKey(key) && Interactor.Inventory.TryRemoveItem(key))
 				{
 					addedKey = true;
 
@@ -81,7 +101,14 @@ namespace Items.Keys
 				AudioManager.Instance.PlaySound("Pickup Key", transform.position);
 		}
 
-		private void OnPlayerPickUpItem(Item item)
+		protected override void OnItemDroped(Item item)
+		{
+			Interactor.Inventory.OnItemPicked -= OnPlayerPickUpRandomItem;
+
+			base.OnItemDroped(item);
+		}
+
+		private void OnPlayerPickUpRandomItem(Item item)
 		{
 			if (!item.TryGetComponent(out Key key) || IsContainsKey(key.KeyType))
 				return;
@@ -89,7 +116,7 @@ namespace Items.Keys
 			if (!TryAddKey(key))
 				return;
 
-			if (PlayerInventory.Instance.TryRemoveItem(key))
+			if (Interactor.Inventory.TryRemoveItem(key))
 			{
 				Destroy(key.gameObject);
 
@@ -97,7 +124,7 @@ namespace Items.Keys
 			}
 		}
 
-		public bool IsContainsKey(DoorKeyTypes keyType)
+		public bool IsContainsKey(DoorKeyType keyType)
 		{
 			foreach (var key in _keyTypes)
 			{
@@ -110,18 +137,44 @@ namespace Items.Keys
 
 		private void FillBunchOnStart()
 		{
-			if (_keysOnStart.Length <= 0)
+			if (_keysOnStart.Count <= 0)
 				return;
 
-			foreach (var key in _keysOnStart)
+			while (_keysOnStart.Count > 0 && _keysOnStart.Count < _keyModels.Length)
 			{
+				var key = _keysOnStart[0];
+
 				if (TryAddKey(key))
 				{
 					key.ItemIcon.HideIcon();
-					
+
+					_keysOnStart.Remove(key);
+
 					Destroy(key.gameObject);
 				}
 			}
+		}	
+
+		private void PaintKeyLabel(BunchKey bunchKey, Key key)
+		{
+			_propertyBlock.SetColor(Key.LabelBaseColorName, key.LabelColor);
+
+			bunchKey.LabelRenderer.SetPropertyBlock(_propertyBlock);
 		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			OnPickUpItem -= OnPlayerPickupBunch;
+		}
+	}
+
+	[Serializable]
+	public struct BunchKey
+	{
+		[field: SerializeField] public GameObject KeyObject { get; private set; }
+
+		[field: SerializeField] public Renderer LabelRenderer { get; private set; }
 	}
 }

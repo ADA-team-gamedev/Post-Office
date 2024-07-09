@@ -1,10 +1,11 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityModification;
 
 namespace TaskSystem.NoteBook
 {
-	public class TimeClock : MonoBehaviour
+	public class TimeClock : DestructiveBehaviour<TimeClock>
 	{
 		[Header("Clock settings")]
 		[SerializeField] private TextMeshProUGUI _clockText;
@@ -71,7 +72,7 @@ namespace TaskSystem.NoteBook
 
 			_isGameCompleted = true;
 
-			Debug.Log("The game is completed!");
+			EditorDebug.Log("The game is completed!");
 
 			OnGameCompleted?.Invoke();
 		}

@@ -31,7 +31,7 @@ namespace Effects
 			_image.material = mat;
 
 			_image.material.SetTexture(DissolveEffectTexture, _dissolveTexture);
-
+			
 			_image.material.SetFloat(DissolveEffectStrengthName, MinDissolveEffectStrength);
 		}
 

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Zenject;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -13,22 +14,29 @@ public class SceneLoader : MonoBehaviour
 
     private AsyncOperation _asyncOperation;
 
-	private PlayerInput _playerInput;
-
 	private IDataService _dataService = new JsonDataService();
 
 	public const string LoadingSceneName = "Loading";
-	public const string LoadingInfoPath = "/LoadingInfo";
+
+	private PlayerInput _playerInput;
+
+	[Inject]
+	private void Construct(PlayerInput playerInput)
+	{
+		_playerInput = playerInput;
+
+		playerInput.Enable();
+
+		_playerInput.Player.AnyKey.performed += OnAnyKeyPressed;
+	}
 
 	private void Start()
 	{
-		_playerInput.Player.AnyKey.performed += OnAnyKeyPressed;
-
 		_canLoadSceneHint.gameObject.SetActive(false);
 
 		_loadingProgressBar.value = 0;
 		
-		if (_dataService.LoadData(out string loadedSceneName, LoadingInfoPath, true))
+		if (_dataService.TryLoadData(out string loadedSceneName, JsonDataService.LoadingInfoPath, true))
 			StartCoroutine(AsyncSceneLoading(loadedSceneName));		
 	}
 
@@ -64,15 +72,9 @@ public class SceneLoader : MonoBehaviour
 		_canLoadSceneHint.gameObject.SetActive(true);
 	}	
 
-	private void OnEnable()
+	private void OnDestroy()
 	{
-		_playerInput = new();
-
-		_playerInput.Enable();
-	}
-
-	private void OnDisable()
-	{
-		_playerInput.Disable();
-	}
+		if (_playerInput != null)
+			_playerInput.Player.AnyKey.performed -= OnAnyKeyPressed;
+	}	
 }

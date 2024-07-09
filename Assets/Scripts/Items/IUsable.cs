@@ -1,7 +1,9 @@
-﻿namespace Items
+﻿using Player;
+
+namespace Items
 {
 	public interface IUsable
 	{
-		public void Use();
+		public void Use(Interactor interactor);
 	}
 }

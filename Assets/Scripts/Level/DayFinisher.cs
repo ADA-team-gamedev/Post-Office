@@ -1,32 +1,37 @@
+using Audio;
 using DataPersistance;
-using Effects;
 using Level.Spawners;
-using System.Collections;
 using TaskSystem.NoteBook;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityModification;
 
 namespace Level
 {
 	public class DayFinisher : MonoBehaviour
 	{
-		[SerializeField] private string _menuSceneName = "Menu";
-		[SerializeField] private TimeClock _timeClock;
+		[Header("Effect")]
+		[SerializeField] private Animator _dissolveEffect;
+		[SerializeField] private string _dissolveEffectTrigger = "Show";
+		[SerializeField, Min(1f)] private float _dissolveEffectDelay = 1f;
 
-		[SerializeField] private DissolveEffect _dissolveEffect;
+		[Header("Scene Name")]
+		[SerializeField] private string _menuSceneName = "Menu";
+
+		[Header("Time Clock")]
+		[SerializeField] private TimeClock _timeClock;
 
 		private IDataService _dataService = new JsonDataService();
 
-		private WeekDay _currentWeekDay = WeekDay.Monday;
-		public const string WeekDayPath = "/WeekDay";
+		private WeekDay _currentWeekDay = WeekDay.Monday;	
 
 		private void Start()
 		{
-			_dissolveEffect.gameObject.SetActive(false);
-			
 			_timeClock.OnGameCompleted += FinishDayWork;
 
 			_timeClock.OnGameCompleted += IncreasePlayerDayProgress;
+
+			_timeClock.OnObjectDestroyed += OnTimeClockDetoryed;
 
 			LoadDayProgress();
 		}
@@ -36,9 +41,11 @@ namespace Level
 		{
 			_timeClock.OnGameCompleted -= FinishDayWork;
 
-			_dissolveEffect.gameObject.SetActive(true);
+			AudioManager.Instance.PlaySound("Prosper", transform.position);
 
-			StartCoroutine(PlayDissolveEffect());
+			_dissolveEffect.SetTrigger(_dissolveEffectTrigger);
+
+			Invoke(nameof(LoadMenu), _dissolveEffectDelay);
 		}
 
 		#region Save & Load Systems
@@ -46,10 +53,10 @@ namespace Level
 		[ContextMenu("Save & Load/" + nameof(LoadDayProgress))]
 		public void LoadDayProgress()
 		{
-			if (_dataService.LoadData(out WeekDay weekDay, WeekDayPath, true))
+			if (_dataService.TryLoadData(out WeekDay weekDay, JsonDataService.WeekDayPath, true))
 				_currentWeekDay = weekDay;
 
-			Debug.Log($"Loaded current week day as {_currentWeekDay}");
+			EditorDebug.Log($"Loaded current week day as {_currentWeekDay}");
 
 			SaveDayProgress();
 		}
@@ -57,7 +64,7 @@ namespace Level
 		[ContextMenu("Save & Load/" + nameof(SaveDayProgress))]
 		public void SaveDayProgress()
 		{
-			_dataService.SaveData(WeekDayPath, _currentWeekDay, true);
+			_dataService.SaveData(JsonDataService.WeekDayPath, _currentWeekDay, true);
 		}
 
 		[ContextMenu("Save & Load/" + nameof(ResetSaves))]
@@ -80,22 +87,20 @@ namespace Level
 			SaveDayProgress();
 		}
 
+		private void LoadMenu()
+		{
+			SceneManager.LoadScene(_menuSceneName);
+		}
+
 		#endregion
 
-		private IEnumerator PlayDissolveEffect()
+		private void OnTimeClockDetoryed(TimeClock timeClock)
 		{
-			float dissolveEffectStrength = DissolveEffect.MinDissolveEffectStrength;
+			timeClock.OnObjectDestroyed -= OnTimeClockDetoryed;
 
-			while (dissolveEffectStrength < DissolveEffect.MaxDissolveEffectStrength)
-			{
-				_dissolveEffect.ChangeEffectStrength(dissolveEffectStrength);
+			timeClock.OnGameCompleted -= FinishDayWork;
 
-				dissolveEffectStrength += Time.deltaTime;
-
-				yield return null;
-			}
-
-			SceneManager.LoadScene(_menuSceneName);
+			timeClock.OnGameCompleted -= IncreasePlayerDayProgress;
 		}
 	}
 }

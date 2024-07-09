@@ -1,37 +1,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityModification;
 
 namespace Audio
 {
     public class AmbientMaker : MonoBehaviour
     {
 		[Header("Clip names")]
-		[SerializeField] private string _mainNoiseMusicName = "Room Ambient";
+		[SerializeField] private List<string> _backgroundMusicClipsName = new();
 
 		[SerializeField] private List<string> _ambientSoundsName = new();
 
 		[Header("Values")]
-		[SerializeField, Delayed] private float _minDelayBeforeAmbientPlaying;
+		[SerializeField, Delayed] private float _minDelayBeforeAmbientPlaying = 10;
 
-		[SerializeField, Delayed] private float _maxDelayBeforeAmbientPlaying;
+		[SerializeField, Delayed] private float _maxDelayBeforeAmbientPlaying = 20;
+
+		private Dictionary<string, float> _musicClipsParameters;
 
 		private Dictionary<string, float> _ambientSounds;
 
-		private float _clipPauseDelay;
+		private float _musicClipPauseDelay = 1f;
+
+		private float _ambientClipPauseDelay = 1f;
 
 		private void Start()
 		{
-			FillSoundClips();
+			FillBackgroundMusicClips();
 
-			_clipPauseDelay = Random.Range(_minDelayBeforeAmbientPlaying, _maxDelayBeforeAmbientPlaying);
+			FillAmbientSoundClips();
 
-			AudioManager.Instance.PlayLoopedSound(_mainNoiseMusicName, transform.position);
+			_ambientClipPauseDelay = Random.Range(_minDelayBeforeAmbientPlaying, _maxDelayBeforeAmbientPlaying);		
 
-			StartCoroutine(PlayMusic());			
+			StartCoroutine(PlayAmbient());
+
+			StartCoroutine(PlayMusic());
 		}
 
-		private void FillSoundClips()
+		private void FillBackgroundMusicClips()
+		{
+			_musicClipsParameters = new();
+
+			foreach (var clipName in _backgroundMusicClipsName)
+			{
+				if (AudioManager.Instance.TryGetSound(clipName, out AudioClip clip))
+					_musicClipsParameters.Add(clipName, clip.length);
+			}
+		}
+
+		private void FillAmbientSoundClips()
 		{
 			_ambientSounds = new(_ambientSoundsName.Count);
 
@@ -44,14 +62,41 @@ namespace Audio
 
 		private IEnumerator PlayMusic()
 		{
+			if (_musicClipsParameters.Count <= 0)
+			{
+				EditorDebug.LogWarning("No music clips!");
+
+				yield break;
+			}
+
+			yield return new WaitForSeconds(_musicClipPauseDelay);
+
+			int ambientIndex = Random.Range(0, _backgroundMusicClipsName.Count);
+			
+			string clipName = _backgroundMusicClipsName[ambientIndex];
+
+			if (_musicClipsParameters.ContainsKey(clipName))
+			{
+				float clipLength = _musicClipsParameters[clipName];
+
+				AudioManager.Instance.PlaySound(clipName, transform.position);
+
+				_musicClipPauseDelay = clipLength;
+			}
+
+			StartCoroutine(PlayMusic());
+		}
+
+		private IEnumerator PlayAmbient()
+		{
 			if (_ambientSounds.Count <= 0)
 			{
-				Debug.LogWarning("No music clips!");
+				EditorDebug.LogWarning("No ambient clips!");
 
 				yield break;
 			}	
 
-			yield return new WaitForSeconds(_clipPauseDelay);
+			yield return new WaitForSeconds(_ambientClipPauseDelay);
 
 			int ambientIndex = Random.Range(0, _ambientSoundsName.Count);
 
@@ -65,10 +110,10 @@ namespace Audio
 
 				float newClipPauseDelay = Random.Range(_minDelayBeforeAmbientPlaying, _maxDelayBeforeAmbientPlaying);
 
-				_clipPauseDelay = Mathf.Clamp(newClipPauseDelay, clipLength, _maxDelayBeforeAmbientPlaying);
+				_ambientClipPauseDelay = Mathf.Clamp(newClipPauseDelay, clipLength, _maxDelayBeforeAmbientPlaying);
 			}	
 
-			StartCoroutine(PlayMusic());
+			StartCoroutine(PlayAmbient());
 		}
 
 		private void OnValidate()

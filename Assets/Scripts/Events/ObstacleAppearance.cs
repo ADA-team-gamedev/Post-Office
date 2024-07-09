@@ -1,6 +1,7 @@
 using Player;
 using System;
 using UnityEngine;
+using UnityModification;
 
 namespace Events
 {
@@ -92,7 +93,7 @@ namespace Events
 			{
 				if (!IsCanSpawnObstacle())
 				{
-					Debug.Log($"Player looking on obstacle which we want to spawn. We can't do that!");
+					EditorDebug.Log($"Player looking on obstacle which we want to spawn. We can't do that!");
 
 					return;
 				}
@@ -110,7 +111,7 @@ namespace Events
 			{
 				if (!IsCanDiactivateObject())
 				{
-					Debug.Log($"Player looking on obstacle which we want to diactivate. We can't do that!");
+					EditorDebug.Log($"Player looking on obstacle which we want to diactivate. We can't do that!");
 
 					return;
 				}

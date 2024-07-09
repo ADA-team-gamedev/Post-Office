@@ -1,6 +1,5 @@
-using Items;
 using Level.Doors;
-using Level.Lights.Lamp;
+using Player.Inventory;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -8,12 +7,18 @@ using Zenject;
 
 namespace Player
 {
-	[RequireComponent(typeof(PlayerDeathController))]
+	[RequireComponent(typeof(PlayerDeathController), typeof(PlayerInventory), typeof(PlayerSanity))]
 	public class Interactor : MonoBehaviour
 	{
 		[field: SerializeField] public Camera PlayerCamera { get; private set; }
 
 		[field: SerializeField, Range(0.5f, 10f)] public float InteractionDistance { get; private set; } = 3f;
+
+		public PlayerInventory Inventory { get; private set; }
+
+		public PlayerSanity Sanity { get; private set; }
+
+		#region UI
 
 		[Header("Crosshair")]
 		[SerializeField] private Image _crosshairImage;
@@ -25,13 +30,15 @@ namespace Player
 		[SerializeField] private Color _defaultCrosshairColor = new(108, 108, 108, 255);
 		[SerializeField] private Color _interactableCrosshairColor = new(152, 152, 152, 255);
 
-		private PlayerDeathController _playerDeathController;
+		#endregion
 
-		private IInteractable _interactableObject;
+		private IInteractable _interactableObject;	
 
 		private Ray _interactionRay => new(PlayerCamera.transform.position, PlayerCamera.transform.forward);
 
 		private bool _isHitInteractableObject = false;
+
+		private PlayerDeathController _playerDeathController;
 
 		private PlayerInput _playerInput;
 
@@ -40,8 +47,14 @@ namespace Player
 		{
 			_playerInput = playerInput;
 
+			_playerInput.Player.PickUpItem.performed += OnPickUpItem;
+
+			_playerInput.Player.DropItem.performed += OnDropItem;
+
+			_playerInput.Player.UseItem.performed += OnUseItem;
+
 			_playerInput.Player.Interact.performed += OnStartInteract;
-			_playerInput.Player.Interact.canceled += OnStopInteract;
+			_playerInput.Player.Interact.canceled += OnStopInteract;		
 		}
 
 		private void Start()
@@ -49,96 +62,107 @@ namespace Player
 			_crosshairImage.sprite = _defaultCrosshair;
 
 			_crosshairImage.color = _defaultCrosshairColor;
-
+			
 			_playerDeathController = GetComponent<PlayerDeathController>();
 
 			_playerDeathController.OnDied += DisableInteractor;
+
+			Inventory = GetComponent<PlayerInventory>();
+
+			Sanity = GetComponent<PlayerSanity>();
 		}
 
 		private void Update()
 		{
-			ChangeCrossHair();
+			OnUpdateInteract();
 		}
 
-		private void ChangeCrossHair()
+		private void FixedUpdate()
 		{
-			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);
+			ChangeCrosshair();
+		}
 
-			bool isHaveInteractableParent = false;
+		private void OnUpdateInteract()
+		{
+			if (!_playerInput.Player.Interact.IsPressed())
+				return;
 
+			_interactableObject?.UpdateInteract(this);
+		}
+
+		private void ChangeCrosshair()
+		{
+			bool isHitted = Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance);		
+			
 			if (isHitted)
 			{
-				bool isPickableItem = hit.transform.TryGetComponent(out Item item) && item.CanBePicked;
+				IHighlightable highlightableObject;
 
-				bool isInteractable = hit.transform.TryGetComponent(out IInteractable _);
+				bool isHighlightableObject = hit.transform.TryGetComponent(out highlightableObject) ||
+					(hit.transform.parent && hit.transform.parent.TryGetComponent(out highlightableObject));
 
-                if (hit.transform.TryGetComponent(out Door door))
-				{
-					isInteractable = true;
+				bool isHighlightable = isHighlightableObject && highlightableObject.IsHighlightable;
 
-					if (door.IsClosed)
-						_crosshairImage.sprite = _crosshairLock;
-					else
-						_crosshairImage.sprite = _defaultCrosshair;
-				}
+				if (isHighlightable)
+					_crosshairImage.color = _interactableCrosshairColor;
 				else
-				{
-					_crosshairImage.sprite = _defaultCrosshair;		
-				}
+					_crosshairImage.color = _defaultCrosshairColor;
 
-				if (hit.transform.parent) //hit object with col or parent object(door or something, what doesn't have collider on himself)
-				{
-					isHaveInteractableParent = hit.transform.parent.TryGetComponent(out IInteractable _) || hit.transform.parent.TryGetComponent(out Lamp _);		
-				} 
+				bool isClosedDoor = hit.transform.TryGetComponent(out Door door) && door.IsClosed;
 
-				_isHitInteractableObject = isInteractable || isHaveInteractableParent || isPickableItem;
+				if (isClosedDoor)
+					_crosshairImage.sprite = _crosshairLock;
+				else
+					_crosshairImage.sprite = _defaultCrosshair;
 			}
 			else
 			{
-				_isHitInteractableObject = false;
+				_crosshairImage.color = _defaultCrosshairColor;
 
 				_crosshairImage.sprite = _defaultCrosshair;
-			}
-
-			if (_isHitInteractableObject)
-				_crosshairImage.color = _interactableCrosshairColor;
-			else
-				_crosshairImage.color = _defaultCrosshairColor;
+			}	
 		}
 
 		#region Input Actions
+
+		private void OnPickUpItem(InputAction.CallbackContext context)
+		{
+			Inventory.PickupObject(this);
+		}
+
+		private void OnDropItem(InputAction.CallbackContext context)
+		{
+			Inventory.DropItem();
+		}
+
+		private void OnUseItem(InputAction.CallbackContext context)
+		{
+			Inventory.UseItem(this);
+		}
 
 		private void OnStartInteract(InputAction.CallbackContext context)
 		{
 			if (Physics.Raycast(_interactionRay, out RaycastHit hit, InteractionDistance))
 			{
-				if (hit.collider.TryGetComponent(out _interactableObject))
-				{
-					_interactableObject.StartInteract();
-				}
-				else if (hit.transform) //hit object with col or parent object(door or something, what doesn't have collider on himself)
-				{
-					if (hit.transform.TryGetComponent(out _interactableObject))
-						_interactableObject.StartInteract();
-				}
+				if (hit.collider.TryGetComponent(out _interactableObject))				
+					_interactableObject.StartInteract(this);			
 			}
-		}
+		}	
 
 		private void OnStopInteract(InputAction.CallbackContext context)
 		{
-			if (_interactableObject != null)
-			{
-				_interactableObject.StopInteract();
+			_interactableObject?.StopInteract(this);
 
-				_interactableObject = null;
-			}
-		}
+			_interactableObject = null;	
+		}	
 
 		#endregion
 
 		private void DisableInteractor()
 		{
 			Destroy(this);
+
+			_playerDeathController.OnDied -= DisableInteractor;
 		}
 
 		private void OnDrawGizmosSelected()
@@ -149,6 +173,21 @@ namespace Player
 				Gizmos.color = Color.red;
 
 			Gizmos.DrawRay(_interactionRay.origin, _interactionRay.direction * InteractionDistance);
+		}
+
+		private void OnDestroy()
+		{
+			if (_playerInput != null)
+			{
+				_playerInput.Player.PickUpItem.performed -= OnPickUpItem;
+
+				_playerInput.Player.DropItem.performed -= OnDropItem;
+
+				_playerInput.Player.UseItem.performed -= OnUseItem;
+
+				_playerInput.Player.Interact.performed -= OnStartInteract;
+				_playerInput.Player.Interact.canceled -= OnStopInteract;			
+			}
 		}
 	}
 }

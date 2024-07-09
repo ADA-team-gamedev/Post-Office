@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using TaskSystem.NoteBook;
 using UnityEngine;
 using Zenject;
+using UnityModification;
 
 namespace TaskSystem
 {
-	public class TaskManager : MonoBehaviour
+	public class TaskManager : DestructiveBehaviour<TaskManager>
 	{
 		#region Task System
 
@@ -41,10 +42,14 @@ namespace TaskSystem
 		private void Awake()
 		{
 			if (Instance == null)
+			{
 				Instance = this;
+			}
 			else
-				Debug.LogWarning($"{this} Instance already exists!");
-
+			{
+				EditorDebug.LogWarning($"{this} Instance already exists!");
+			}
+			
 			_tablet.SubcribeOnTaskManager();
 
 			foreach (var taskData in _taskDatas)
@@ -71,7 +76,7 @@ namespace TaskSystem
 		{
 			if (index < 0 || index >= _tasks.Count)
 			{
-				Debug.LogWarning($"Can't set task, as current with index[{index}]");
+				EditorDebug.LogWarning($"Can't set task, as current with index[{index}]");
 
 				return;
 			}
@@ -94,11 +99,11 @@ namespace TaskSystem
 		{
 			if (!TryGetTask(task.ID, out Task _))
 			{
-				Debug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we try to add task automatically");
+				EditorDebug.LogWarning($"You are trying to set task({task.Name}) which doesn't exists in task collection therefore we try to add task automatically");
 
 				if (!TryAddNewTask(task))
 				{
-					Debug.LogWarning($"Couldn't add this task({task.Name}!)");
+					EditorDebug.LogWarning($"Couldn't add this task({task.Name}!)");
 
 					return;
 				}
@@ -120,7 +125,7 @@ namespace TaskSystem
 		{
 			if (IsContainsTask(task.ID))
 			{
-				Debug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
+				EditorDebug.LogWarning($"You are trying to add task({task.Name}) which already exists in task collection. We can't add him!");
 
 				return false;
 			}
@@ -154,7 +159,17 @@ namespace TaskSystem
 			if (TaskCount > 0 && isCompleteTaskIsCurrent)
 				SetNewCurrentTask(0);
 
-			Debug.Log($"Task: {completedTask.Name} has been completed");
+			EditorDebug.Log($"Task: {completedTask.Name} has been completed");
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+			
+			foreach (var task in _tasks)
+			{
+				task.Value.OnCompleted -= CompleteTask;
+			}
 		}
 	}
 }

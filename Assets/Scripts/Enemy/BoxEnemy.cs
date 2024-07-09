@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityModification;
 
 namespace Enemy
 {
@@ -106,6 +107,8 @@ namespace Enemy
 
 			DisableAI();
 
+			_boxItem.OnObjectDestroyed += OnItemDestroyed;
+
 			_boxItem.OnPickUpItem += PickUpItem;
 
 			_boxItem.OnDropItem += DropItem;
@@ -205,7 +208,7 @@ namespace Enemy
 					Attacking();
 					break;
 				default:
-					Debug.Log($"{gameObject} doesn't have state - {_enemyState}");
+					EditorDebug.Log($"{gameObject} doesn't have state - {_enemyState}");
 					break;
 			}
 		}
@@ -314,7 +317,7 @@ namespace Enemy
 				possiblePointsToMove.Remove(randomPoint);
 			}
 
-			Debug.LogError($"No reachable points in {points} collection!");
+			EditorDebug.LogError($"No reachable points in {points} collection!");
 
 			pointToMove = Vector3.zero;
 
@@ -357,9 +360,13 @@ namespace Enemy
 			_animator.speed *= 1.5f;
 
 			if (TryMoveTo(_hiddenPoints, _runningSpeed, _fleeingAnimationSpeed))
+			{
 				_isFleeing = true;		
+			}
 			else
-				Debug.LogError($"Can't start fleeing because the {gameObject.name} doesn't have points to hide");		
+			{
+				EditorDebug.LogError($"Can't start fleeing because the {gameObject.name} doesn't have points to hide");
+			}
 		}
 
 		#endregion
@@ -383,7 +390,9 @@ namespace Enemy
 				_isFleeing = false;
 			}
 			else
-				Debug.Log($"Can't go to that point({point}), because i can't reach it!");
+			{
+				EditorDebug.Log($"Can't go to that point({point}), because i can't reach it!");
+			}
 		}
 
 		private void Attacking()
@@ -418,7 +427,7 @@ namespace Enemy
 
 			if (!_fieldOfView.Target.TryGetComponent(out PlayerDeathController playerDeath))
 			{
-				Debug.LogError($"No {nameof(PlayerDeathController)} in the target({_fieldOfView.Target})");
+				EditorDebug.LogError($"No {nameof(PlayerDeathController)} in the target({_fieldOfView.Target})");
 
 				return;
 			}
@@ -440,9 +449,10 @@ namespace Enemy
 
 		private void PickUpItem(Item item)
 		{
-			DisableAI();
+			if (IsAIActivated)
+				_animator.SetTrigger(BecomeBoxTrigger);
 
-			_animator.SetTrigger(BecomeBoxTrigger);
+			DisableAI();	
 			
 			StartCoroutine(TransformFromInsectToBox(TranfromToBoxDelay));	
 		}
@@ -471,6 +481,8 @@ namespace Enemy
 			_isPatroling = false;
 			_isFleeing = false;
 			_isWaiting = false;
+
+			_isReachedHidenPoint = false;
 
 			_enemyState = EnemyState.None;
 		}	
@@ -535,6 +547,17 @@ namespace Enemy
 			IsPicked = false;
 
 			StartCoroutine(TransformFromBoxToInsect(TranfromToEnemyDelay));
+		}
+
+		private void OnItemDestroyed(Item item)
+		{
+			_boxItem.OnObjectDestroyed -= OnItemDestroyed;
+
+			_boxItem.OnPickUpItem -= PickUpItem;
+
+			_boxItem.OnDropItem -= DropItem;
+
+			_boxItem.OnItemPickingPropertyChanged -= OnItemPickingPropertyChanged;
 		}
 
 		private void OnValidate()

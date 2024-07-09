@@ -3,6 +3,8 @@ using Items.Icon;
 using TaskSystem;
 using Level.Doors;
 using Audio;
+using Player;
+using UnityModification;
 
 namespace Items
 {
@@ -10,14 +12,13 @@ namespace Items
 	[RequireComponent(typeof(BoxCollider))]
 	public class RemoteControl : Item, IUsable
 	{
-		[Header("Remote control")]
-		[SerializeField] private Camera _playerCamera;
+		[SerializeField] private LayerMask _garageDoorLayer;
 
 		[SerializeField] private TaskData _findRemoteControlTask;
 
-		private void Start()
+		protected override void Start()
 		{
-			InitializeItem();
+			base.Start();
 		}
 
 		protected override void InitializeItem()
@@ -29,11 +30,6 @@ namespace Items
 			TaskManager.Instance.OnNewCurrentTaskSet += ChangeItemIconState;
 
 			TaskManager.Instance.TryAddNewTask(_findRemoteControlTask);
-		}
-
-		private void Update()
-		{
-			ItemIcon.RotateIconToObject();
 		}
 
 		private void ChangeItemIconState(Task currentTask)
@@ -64,15 +60,30 @@ namespace Items
 			ActivateAutoIconStateChanging();
 		}
 
-		public void Use()
+		public void Use(Interactor interactor)
 		{
 			AudioManager.Instance.PlaySound("Use Remote Control", transform.position);
+			
+			Transform playerCameraTransform = interactor.PlayerCamera.transform;
 
-			if (Physics.Raycast(_playerCamera.transform.position, _playerCamera.transform.forward, out RaycastHit hit))
+			if (Physics.Raycast(playerCameraTransform.position, playerCameraTransform.forward, out RaycastHit hit, Mathf.Infinity, _garageDoorLayer))
 			{
+				EditorDebug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.green, 2);
+
 				if (hit.transform.parent && hit.transform.parent.TryGetComponent(out GarageDoor garageDoor)) //transform.parent.TryGetComponent() - because garage door script lying on object without collider
 					garageDoor.InteractRemotely();			
 			}
+			else
+			{
+				EditorDebug.DrawRay(playerCameraTransform.position, playerCameraTransform.forward, Color.red, 2);
+			}
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
+
+			OnPickUpItem -= Completetask;
 		}
 	}
 }

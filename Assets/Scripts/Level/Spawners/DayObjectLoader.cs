@@ -1,6 +1,5 @@
 using AYellowpaper.SerializedCollections;
 using DataPersistance;
-using TaskSystem.NoteBook;
 using UnityEngine;
 
 namespace Level.Spawners
@@ -26,7 +25,6 @@ namespace Level.Spawners
 		private IDataService _dataService = new JsonDataService();
 
 		private WeekDay _currentWeekDay = WeekDay.Monday;
-        public const string WeekDayPath = "/WeekDay";
 
         private void Start()
         {
@@ -37,7 +35,7 @@ namespace Level.Spawners
 
 		private void LoadDayProgress()
 		{
-			if (_dataService.LoadData(out WeekDay weekDay, WeekDayPath, true))
+			if (_dataService.TryLoadData(out WeekDay weekDay, JsonDataService.WeekDayPath, true))
 				_currentWeekDay = weekDay;
 		}
 

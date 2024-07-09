@@ -1,12 +1,15 @@
 using Audio;
+using Player;
 using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Level.Lights.Lamp
+namespace Level.Lights.Lamps
 {
-	public class BreakableLamp : FlickeringLamp
+	public class BreakableLamp : FlickeringLamp, IEvent, IHighlightable
 	{
+		public bool IsHighlightable => IsLampDestroyed;
+
 		public bool IsLampDestroyed { get; private set; } = false;
 
 		[Header("Destroying Lamp Event")]
@@ -16,6 +19,9 @@ namespace Level.Lights.Lamp
 		[Header("Lamp Life Time Delay")]
 		[SerializeField] private float _minLampLifeDelayBeforeBreaking = 40;
 		[SerializeField] private float _maxLampLifeDelayBeforeBreaking = 180;
+
+		[Space(10)]
+		[SerializeField] private string _lampCrushSoundName = "Lamp Crush";
 
 		private float _lampDelayBeforeBreakingRemaining;
 
@@ -48,6 +54,14 @@ namespace Level.Lights.Lamp
 			_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
 		}
 
+		public override void SwitchLampState(bool isEnabled)
+		{
+			if (IsLampDestroyed)
+				return;
+
+			base.SwitchLampState(isEnabled);
+		}
+
 		private void TryBreakLamp()
 		{
 			if (!IsLampDestroyed)
@@ -58,7 +72,9 @@ namespace Level.Lights.Lamp
 					BreakLamp();
 			}
 			else if (_lampDelayBeforeBreakingRemaining <= 0)
+			{
 				_lampDelayBeforeBreakingRemaining = Random.Range(_minLampLifeDelayBeforeBreaking, _maxLampLifeDelayBeforeBreaking);
+			}
 		}
 
 		protected override void TryInvokeLamp(Collider other)
@@ -90,10 +106,10 @@ namespace Level.Lights.Lamp
 			LampRenderer.gameObject.SetActive(true);
 
 			_electronicalSparkVF.gameObject.SetActive(false);
-
+	
 			SwitchLampState(true);
 
-			StartFlashingEvent();		
+			StartFlashingEvent();				
 		}
 
 		[ContextMenu(nameof(BreakLamp))]
@@ -102,7 +118,9 @@ namespace Level.Lights.Lamp
 			if (IsLampDestroyed)
 				return;
 
-			AudioManager.Instance.PlaySound("Lamp Crush", transform.position, spatialBlend: 1f);
+			AudioManager.Instance.PlaySound(_lampCrushSoundName, transform.position, spatialBlend: 1f);
+
+			SwitchLampState(false);
 
 			OnLampDestroyed?.Invoke();
 
@@ -110,9 +128,12 @@ namespace Level.Lights.Lamp
 
 			LampRenderer.gameObject.SetActive(false);
 
-			SwitchLampState(false);
-
 			_electronicalSparkVF.gameObject.SetActive(true);
+		}
+
+		public new void PlayEvent()
+		{
+			BreakLamp();
 		}
 
 		protected override void OnValidate()
@@ -124,6 +145,11 @@ namespace Level.Lights.Lamp
 
 			if (_maxLampLifeDelayBeforeBreaking < _minLampLifeDelayBeforeBreaking)
 				_maxLampLifeDelayBeforeBreaking = _minLampLifeDelayBeforeBreaking;
+		}
+
+		protected override void OnDestroy()
+		{
+			base.OnDestroy();
 		}
 	}
 }

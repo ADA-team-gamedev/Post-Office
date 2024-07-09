@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6381019847049935777}
   - component: {fileID: 6534660383494387069}
   - component: {fileID: 2370094034542831453}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -93,7 +93,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1929330341153762250}
   - component: {fileID: 5952471537702670367}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: lamp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3067556867819520399}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: adc0a0fa5f6585e408620fce47989976, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -136,8 +136,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5.93, y: 5.68, z: 95}
-  m_Center: {x: -2.7, y: 2.96, z: 0}
+  m_Size: {x: 6.33, y: 5.53, z: 94.52}
+  m_Center: {x: -2.78, y: 3.08, z: 0}
 --- !u!1 &3102101575265464000
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,7 +149,7 @@ GameObject:
   - component: {fileID: 2961221958007265338}
   - component: {fileID: 9193706651916318987}
   - component: {fileID: 5914022788079723374}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Karkas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -328,7 +328,7 @@ GameObject:
   - component: {fileID: 5486081480637404713}
   - component: {fileID: 842143180890729677}
   - component: {fileID: 8467893681898855630}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -368,7 +368,7 @@ Light:
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 1
+    m_Type: 2
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1

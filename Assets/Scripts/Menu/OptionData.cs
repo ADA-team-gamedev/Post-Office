@@ -10,21 +10,13 @@ namespace Menu
 		[field: SerializeField]
 		public Vector2Int[] ScreenResolutions { get; private set; } = 
 		{
+			new(3840, 2160),
+			new(2560, 1440),
 			new(1920, 1080),
-			new(1024, 768),
-			new(1152, 864),
-			new(1280, 720),
-			new(1280, 768),
-			new(1280, 800),
-			new(1280, 960),
-			new(1280, 1024),
-			new(1360, 768),
-			new(1366, 768),
-			new(1440, 900),
-			new(1440, 1080),
 			new(1600, 900),
-			new(1600, 1024),
-			new(1680, 1050),
+			new(1280, 720),
+			new(960, 540),
+			new(640, 360),
 		};
 
 		public int SelectedScreenResolutionIndex
@@ -44,7 +36,7 @@ namespace Menu
 			}
 		}
 
-		private int _selectedScreenResolution = 0;
+		private int _selectedScreenResolution = 2;
 
 		public FullScreenMode FullScreenMode 
 		{
@@ -99,11 +91,9 @@ namespace Menu
 			}
 		}
 
-		private int _selectedFrameRates = 0;
+		private int _selectedFrameRates = 4;
 
 		public bool VSyncCountEnable { get; set; } = false;
-
-		public float ScreenBrightness { get; set; } = 1;
 
 		#endregion
 

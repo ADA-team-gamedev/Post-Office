@@ -78,8 +78,8 @@ Camera:
   m_GameObject: {fileID: 4550157863427707663}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_ClearFlags: 2
+  m_BackGroundColor: {r: 0.3019608, g: 0.3019608, b: 0.3019608, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -101,14 +101,14 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.01
-  far clip plane: 1000
+  far clip plane: 30
   field of view: 60
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 14327
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -242,6 +242,7 @@ GameObject:
   - component: {fileID: 1035198397113733364}
   - component: {fileID: 3266096912257546959}
   - component: {fileID: 5785787840146384623}
+  - component: {fileID: 7048427466404676396}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -365,10 +366,12 @@ MonoBehaviour:
   _pickupRange: 3
   _dropUpForce: 2
   _dropForce: 1
-  _changeItemWhenPickup: 1
   _playerHand: {fileID: 5322286662015815355}
   _playerCamera: {fileID: 4412293600245582168}
-  _noteBook: {fileID: 0}
+  _playChangeItemAnimation: 1
+  _itemChangeAnimator: {fileID: 7788346136454836495}
+  _itemChangeTriggerName: ItemChange
+  _itemsOnStart: []
 --- !u!114 &1035198397113733364
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -383,7 +386,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _maxSanityValue: 100
   _sanityDecreaseSpeed: 0.1
+  _canDieFromLowSanity: 1
+  _playerSanityToStartHeatBeat: 5
+  _playerSanityDeathAnimator: {fileID: 7048427466404676396}
+  _playerSanityDeathTrigger: Sanity Die
   _sanityVolume: {fileID: 0}
+  _sanityPercentText: {fileID: 0}
   _slider: {fileID: 0}
 --- !u!114 &3266096912257546959
 MonoBehaviour:
@@ -398,6 +406,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <PlayerCamera>k__BackingField: {fileID: 4412293600245582168}
+  <InteractionDistance>k__BackingField: 3
   _crosshairImage: {fileID: 0}
   _defaultCrosshair: {fileID: 21300000, guid: 28b087a90c799a8439d5b0ffef0de174, type: 3}
   _crosshairLock: {fileID: 21300000, guid: 138b192230c6c7b4abbf0dc0472a8d9f, type: 3}
@@ -417,6 +426,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _afterDeathDelay: 5
   _dayFinisher: {fileID: 0}
+--- !u!95 &7048427466404676396
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5812303146446129546}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d1c6f66f7b3ccc244a3169a147bbf8ad, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8739696957944709092
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,6 +615,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5322286662015815355}
+  - component: {fileID: 7788346136454836495}
   m_Layer: 8
   m_Name: PlayerHand
   m_TagString: Untagged
@@ -607,6 +638,27 @@ Transform:
   m_Father: {fileID: 8054553274650120671}
   m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &7788346136454836495
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8981819366110239720}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 389fcd7c8e1d1394bb4858e10e57b065, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &4316969678560111115
 PrefabInstance:
   m_ObjectHideFlags: 0
